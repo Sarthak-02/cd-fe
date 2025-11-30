@@ -1,0 +1,105 @@
+export const classSchema = [
+    {
+      "section_title": "Class Information",
+      "fields": [
+        {
+          "id": "class_name",
+          "name": "Class Name",
+          "value": "",
+          "type": "text",
+          "mandatory": true,
+          "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "class_short_name",
+          "name": "Short Name",
+          "value": "",
+          "type": "text",
+          "mandatory": false,
+          "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "class_description",
+          "name": "Description",
+          "value": "",
+          "type": "textarea",
+          "mandatory": false,
+          "width": { "tablet": 12, "desktop": 12, "mobile": 12 }
+        },
+        {
+            "id": "class_room_no",
+            "name": "Room Number",
+            "value": "",
+            "type": "text",
+            "mandatory": false,
+            "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+        },
+        {
+            "id": "class_teacher_id",
+            "name": "Class Teacher",
+            "value": "",
+            "type": "dropdown",
+            "options": [],
+            "mandatory": false,
+            "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+          },
+      ]
+    },
+  
+    {
+      "section_title": "Class Settings",
+      "fields": [
+        {
+          "id": "class_has_sections",
+          "name": "Has Sections",
+          "value": true,
+          "type": "checkbox",
+          "mandatory": false,
+          "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "max_students",
+          "name": "Maximum Students Allowed",
+          "value": "",
+          "type": "number",
+          "mandatory": false,
+          "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
+        }
+      ]
+    },
+  
+    {
+      "section_title": "Class Categorization",
+      "fields": [
+        {
+          "id": "class_type",
+          "name": "Class Type",
+          "value": "",
+          "type": "dropdown",
+          "options": ["Primary", "Secondary", "Higher"],
+          "mandatory": false,
+          "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "class_stream",
+          "name": "Stream",
+          "value": "",
+          "type": "dropdown",
+          "options": ["Science", "Commerce", "Arts"],
+          "mandatory": false,
+          "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "shift",
+          "name": "Shift",
+          "value": "",
+          "type": "dropdown",
+          "options": ["Morning", "Evening"],
+          "mandatory": false,
+          "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
+        }
+      ]
+    },
+
+  ]
+  
