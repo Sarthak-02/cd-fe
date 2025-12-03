@@ -16,3 +16,12 @@ export async function loginApi({userid,password}){
     }
 }
 
+export async function logoutApi() {
+    try{
+        await api.get("/logout")
+    }
+    catch(err){
+        console.log(err.response.data)
+        throw err.response.data
+    }
+}

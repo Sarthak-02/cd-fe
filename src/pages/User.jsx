@@ -1,40 +1,41 @@
 import { useEffect, useState } from "react";
-import UserListing from "../components/user/UserListing";
 import AddEditUser from "../components/user/AddEditUser";
+import UserListing from "../components/user/UserListing";
 import Dialog from "../ui-components/Dialog";
-import { getAllUserApi } from "../api/user.api";
 
+import { MODE } from "../utils/constants/basic";
+import { useUsersStore } from "../store/user.store";
+import { useSchoolsStore } from "../store/school.store";
 //get all pages
 //get all sites
 
 export default function School() {
-  const [allUsers, setAllUsers] = useState([]);
-  const [mode, setMode] = useState(0); // 0 -> close ,  1 -> create mode , 2--> edit mode
+  const [mode, setMode] = useState(MODE.NONE); // 0 -> close ,  1 -> create mode , 2--> edit mode
   const [selectedUser, setSelectedUser] = useState("");
+
+  const { users, loading, fetchUsers , clearUserDetails} = useUsersStore();
+  const {fetchSchools,schools} = useSchoolsStore()
+
+  useEffect(() => {
+    fetchUsers();
+    fetchSchools()
+  }, []);
 
   function handleSelectUser(userid) {
     setSelectedUser(userid);
-    setMode(2);
+    setMode(MODE.EDIT);
   }
-
-
-  useEffect(() => {
-    getAllUserApi()
-      .then((resp) => {
-        setAllUsers(resp.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   function handleAddEditModel(val) {
     setMode(val);
 
-    if(val === 0  || val === 1){
-      setSelectedUser("")
+    if (val === MODE.NONE || val === MODE.CREATE) {
+      setSelectedUser("");
+      clearUserDetails()
     }
+
   }
+
 
   return (
     <>
@@ -42,15 +43,17 @@ export default function School() {
         <Dialog
           open={!!mode}
           fullScreen={true}
-          onClose={() => handleAddEditModel(0)}
+          onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditUser mode={mode} selectedUser={selectedUser} />
+          <AddEditUser mode={mode} selectedUser={selectedUser} handleAddEditModel={handleAddEditModel} all_sites={schools} />
         </Dialog>
       ) : (
         <UserListing
-          handleCreate={() => handleAddEditModel(1)}
-          users={allUsers}
+          handleCreate={() => handleAddEditModel(MODE.CREATE)}
+          users={users}
           handleSelectUser={handleSelectUser}
+          loading={loading}
+          // error={error}
         />
       )}
     </>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button ,TextField } from '../ui-components';
 import { loginApi } from '../api/auth.api';
-import { useUser } from '../state';
+import { useAuth } from '../store/auth.store';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -9,11 +9,11 @@ export default function LoginPage() {
 
   const [userid,setUserid] = useState("")
   const [password,setPassword] = useState("")
-  const {setUser} = useUser.getState()
+  const {setAuth} = useAuth()
   const navigate = useNavigate()
   function handleLogin(){
     loginApi({userid,password}).then((resp)=>{
-      setUser(resp?.data)
+      setAuth(resp?.data)
       localStorage.setItem("token",true)
       navigate("/")
     })

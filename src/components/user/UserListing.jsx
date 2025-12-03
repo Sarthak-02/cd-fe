@@ -57,29 +57,27 @@ const _users = [
   },
 ];
 
-export default function UserListing({ handleCreate ,users,handleSelectUser }) {
-  console.log(users)
-  const [isLoaded, setLoaded] = useState(true);
-  const [selected, setSelected] = useState("");
-  const [search,setSearch] = useState("")
+export default function UserListing({
+  handleCreate,
+  users,
+  handleSelectUser,
+  loading,
+}) {
+  const [search, setSearch] = useState("");
 
-  const options = [
-    { label: "School 1", value: "school1" },
-    { label: "School 2", value: "school2" },
-    { label: "School 3", value: "school3" },
-  ];
-
-
-  const filteredUsers = useMemo(()=>{
-    const _users = users.filter(({userid,username}) => userid.includes(search) || username.includes(search))
-    return _users
-  },[search,users])
+  const filteredUsers = useMemo(() => {
+    const _users = users.filter(
+      ({ userid, username }) =>
+        userid.includes(search) || username.includes(search)
+    );
+    return _users;
+  }, [search, users]);
 
   return (
     <>
       <div className="flex items-center justify-between mb-4 gap-5">
         <div className="w-4/5 ">
-          <SearchBar onChange={setSearch}  value={search}/>
+          <SearchBar onChange={setSearch} value={search} />
         </div>
 
         <div className="w-1/5 md:w-2/5 lg:w-1/5 flex justify-end">
@@ -88,7 +86,7 @@ export default function UserListing({ handleCreate ,users,handleSelectUser }) {
       </div>
 
       <Listing>
-        {isLoaded
+        {!loading
           ? filteredUsers.map((user) => {
               return (
                 <Card

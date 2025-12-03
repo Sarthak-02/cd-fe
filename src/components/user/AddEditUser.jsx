@@ -1,81 +1,74 @@
-import React, { useEffect, useState } from "react";
-import DynamicForm from "../../ui-components/DynamicForm";
+import React, { useEffect, useMemo, useState } from "react";
 import { userSchema } from "../../schemas/user.schema";
-import { validateForm } from "../../utils/validators/form_validation";
-import { createUserApi, getUserApi, updateUserApi } from "../../api/user.api";
+import { useUsersStore } from "../../store/user.store";
+import DynamicForm from "../../ui-components/DynamicForm";
+import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
+import { MODE } from "../../utils/constants/basic";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
+import { validateForm } from "../../utils/validators/form_validation";
 
-const getSchemaUpdates = (mode,all_sites) =>{
-  return {
-    userid : {disabled : mode == 2 ? true : false},
-    site_permissions : {options : all_sites},
-    password : {mandatory :  mode === 1 ? true : false}
-  }
-}
+const getSchemaUpdates = (mode, all_sites) => ({
+  userid: { disabled: mode === MODE.EDIT },
+  site_permissions: { options: all_sites .map(({school_id,school_name})=> ({value:school_id,label:school_name}))},
+  password: { mandatory: mode === MODE.CREATE },
+});
 
-function updatedUserSchema(mode,all_sites){
-  return updateSchema(userSchema,getSchemaUpdates(mode,all_sites))
-}
+export default function AddEditUser({
+  mode,
+  selectedUser,
+  handleAddEditModel,
+  all_sites,
+}) {
+  const {
+    userDetails,
+    loadingUserDetails,
+    fetchUserDetails,
+    createUser,
+    updateUser,
+    
+  } = useUsersStore();
 
-let _userSchema = userSchema
+  const [formData, setFormData] = useState(() =>
+    mode === MODE.EDIT ? userDetails ?? {} : {}
+  );
 
-export default function AddEditUser({ mode, selectedUser , all_sites }) {
-  const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
 
+  if (mode === MODE.EDIT && userDetails && Object.keys(formData).length === 0) {
+    setFormData(userDetails);
+  }
+  //  Memoize schema (no global variable)
+  const computedSchema = useMemo(() => {
+    return updateSchema(userSchema, getSchemaUpdates(mode, all_sites));
+  }, [mode, all_sites]);
+
+  //  Fetch user details in EDIT mode
   useEffect(() => {
-    _userSchema = updatedUserSchema(mode,all_sites)
-    if (mode !== 2) return;
-
-    getUserApi(selectedUser).then((resp) => {
-      setFormData(resp.data);
-    });
-  }, []);
-
-
-  function handleUpdateUser() {
-    updateUserApi(formData)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  function handleCreateUser() {
-    createUserApi(formData)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+    if (mode === MODE.EDIT && selectedUser) {
+      fetchUserDetails(selectedUser);
+    }
+  }, [mode, selectedUser, fetchUserDetails]);
 
   function onSubmit() {
-    const { errors, isError } = validateForm(_userSchema, formData);
+    const { errors, isError } = validateForm(computedSchema, formData);
 
     if (isError) {
-      console.log("form Invalid");
       setErrors(errors);
-      //show an error pop up and highlight all the missed fields
       return;
     }
 
-    switch (mode) {
-      case 1:
-        return handleCreateUser();
+    if (mode === MODE.CREATE) createUser(formData);
+    if (mode === MODE.EDIT) updateUser(formData);
 
-      case 2:
-        return handleUpdateUser();
-    }
+    handleAddEditModel(MODE.NONE);
   }
 
-  return (
+  return loadingUserDetails ? (
+    <FormSkeleton />
+  ) : (
     <div className="w-full p-4 space-y-6">
       <DynamicForm
-        schema={_userSchema}
+        schema={computedSchema}
         formData={formData}
         setFormData={setFormData}
         handleSubmit={onSubmit}

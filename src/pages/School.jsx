@@ -1,49 +1,63 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddEditSchool from "../components/school/AddEditSchool";
 import SchoolListing from "../components/school/SchoolListing";
 import Dialog from "../ui-components/Dialog";
-import { getAllSchoolApi } from "../api/school.api";
+
+import { MODE } from "../utils/constants/basic";
+import { useSchoolsStore } from "../store/school.store";
 
 export default function School() {
-  // const [openAddEdit, setOpenAddEdit] = useState(false);
-  const [mode, setMode] = useState(0); // 0 -> close ,  1 -> create mode , 2--> edit mode
+  const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedSchool, setSelectedSchool] = useState("");
-  const [allSchools, setAllSchools] = useState([]);
 
+  const { schools, loading, fetchSchools, clearSchoolDetails } = useSchoolsStore();
+
+  // Load all schools on mount
+  useEffect(() => {
+    fetchSchools();
+  }, []);
+
+  /** -----------------------------
+   * When user selects a school row
+   * ----------------------------- */
   function handleSelectSchool(school_id) {
     setSelectedSchool(school_id);
-    setMode(2);
+    setMode(MODE.EDIT);
   }
 
-  useEffect(() => {
-      getAllSchoolApi()
-        .then((resp) => {
-          setAllSchools(resp.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }, []);
-
+  /** -----------------------------
+   * Handles opening & closing modal
+   * ----------------------------- */
   function handleAddEditModel(val) {
     setMode(val);
 
-    if (val === 0 || val === 1) {
+    if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedSchool("");
+      clearSchoolDetails();
     }
   }
+
   return (
     <>
       {mode ? (
         <Dialog
-          open={mode}
+          open={!!mode}
           fullScreen={true}
-          onClose={() => handleAddEditModel(0)}
+          onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditSchool selectedSchool={selectedSchool} mode={mode} />
+          <AddEditSchool
+            mode={mode}
+            selectedSchool={selectedSchool}
+            handleAddEditModel={handleAddEditModel}
+          />
         </Dialog>
       ) : (
-        <SchoolListing handleCreate={() => handleAddEditModel(1)} schools={allSchools} handleSelectSchool={handleSelectSchool} />
+        <SchoolListing
+          handleCreate={() => handleAddEditModel(MODE.CREATE)}
+          schools={schools}
+          loading={loading}
+          handleSelectSchool={handleSelectSchool}
+        />
       )}
     </>
   );

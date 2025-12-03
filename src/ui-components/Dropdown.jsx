@@ -69,7 +69,7 @@ export default function Dropdown({
 
       {/* Dropdown List */}
       {open && (
-        <div className="absolute z-20 mt-2 w-full bg-white shadow-lg border rounded-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-20 mt-2 w-full bg-white shadow-lg border rounded-lg ">
           {options.map((opt) => {
             const active = multi
               ? selected?.includes(opt.value)

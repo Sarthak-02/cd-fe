@@ -1,93 +1,89 @@
-import React, { useEffect, useState } from "react";
-import DynamicForm from "../../ui-components/DynamicForm";
+import React, { useEffect, useMemo, useState } from "react";
 import { schoolSchema } from "../../schemas/school.schema";
-import { validateForm } from "../../utils/validators/form_validation";
+import { useSchoolsStore } from "../../store/school.store";
+
+import DynamicForm from "../../ui-components/DynamicForm";
+import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
+
+import { MODE } from "../../utils/constants/basic";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
-import {
-  createSchoolApi,
-  getSchoolApi,
-  updateSchoolApi,
-} from "../../api/school.api";
+import { validateForm } from "../../utils/validators/form_validation";
 
+const getSchemaUpdates = (mode) => ({
+  school_id: { disabled: mode === MODE.EDIT },
+});
 
-function createPayload(form){
-  const {school_id,school_name, school_type,...extras} = form
-  return {school_id,school_name,school_type,extras};
+function createPayload(form) {
+  const { school_id, school_name, school_type, ...extras } = form;
+  return { school_id, school_name, school_type, extras };
 }
 
-const getSchemaUpdates = (mode) => {
-  return {
-    school_id: { disabled: mode == 2 ? true : false },
-  };
-};
-function updatedSchoolSchema(mode) {
-  return updateSchema(schoolSchema, getSchemaUpdates(mode));
-}
+export default function AddEditSchool({ mode, selectedSchool, handleAddEditModel }) {
+  const {
+    schoolDetails,
+    loadingSchoolDetails,
+    fetchSchoolDetails,
+    createSchool,
+    updateSchool,
+  } = useSchoolsStore();
 
-let _schoolSchema = schoolSchema;
-
-export default function AddEditSchool({ mode, selectedSchool }) {
-  const [formData, setFormData] = useState({});
+  /** -----------------------------------
+   * Local form state
+   ------------------------------------ */
+  const [formData, setFormData] = useState(() =>
+    mode === MODE.EDIT ? schoolDetails ?? {} : {}
+  );
   const [formErrors, setErrors] = useState({});
 
+  /** -----------------------------------
+   * Sync fetched details → formData (EDIT)
+   ------------------------------------ */
+  if (mode === MODE.EDIT && schoolDetails && Object.keys(formData).length === 0) {
+    setFormData({...schoolDetails , ...schoolDetails?.extras});
+  }
+
+  /** -----------------------------------
+   * Memoized schema updates
+   ------------------------------------ */
+  const computedSchema = useMemo(() => {
+    return updateSchema(schoolSchema, getSchemaUpdates(mode));
+  }, [mode]);
+
+  /** -----------------------------------
+   * Fetch details on EDIT
+   ------------------------------------ */
   useEffect(() => {
-    _schoolSchema = updatedSchoolSchema(mode);
-    if (mode !== 2) return;
+    if (mode === MODE.EDIT && selectedSchool) {
+      fetchSchoolDetails(selectedSchool);
+    }
+  }, [mode, selectedSchool, fetchSchoolDetails]);
 
-    getSchoolApi(selectedSchool).then((resp) => {
-      const {extras = {} ,...rest} = resp.data
-      const payload = {...extras,...rest}
-      setFormData(payload);
-    });
-  }, []);
-
-  function handleUpdateSchool() {
-    const payload = createPayload(formData)
-
-    updateSchoolApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  function handleCreateSchool() {
-    const payload = createPayload(formData)
-
-    createSchoolApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
+  /** -----------------------------------
+   * Submit Handler
+   ------------------------------------ */
   function onSubmit() {
-    const { errors, isError } = validateForm(_schoolSchema, formData);
+    const { errors, isError } = validateForm(computedSchema, formData);
 
     if (isError) {
-      console.log("form Invalid");
       setErrors(errors);
-      //show an error pop up and highlight all the missed fields
       return;
     }
 
-    switch (mode) {
-      case 1:
-        return handleCreateSchool();
+    if (mode === MODE.CREATE) createSchool(createPayload(formData));
+    if (mode === MODE.EDIT) updateSchool(createPayload(formData));
 
-      case 2:
-        return handleUpdateSchool();
-    }
+    handleAddEditModel(MODE.NONE);
   }
 
-  return (
+  /** -----------------------------------
+   * UI
+   ------------------------------------ */
+  return loadingSchoolDetails ? (
+    <FormSkeleton />
+  ) : (
     <div className="w-full p-4 space-y-6">
       <DynamicForm
-        schema={_schoolSchema}
+        schema={computedSchema}
         formData={formData}
         setFormData={setFormData}
         handleSubmit={onSubmit}

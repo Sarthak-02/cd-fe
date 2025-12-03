@@ -1,34 +1,44 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddEditCampus from "../components/campus/AddEditCampus";
 import CampusListing from "../components/campus/CampusListing";
 import Dialog from "../ui-components/Dialog";
-import { getAllCampusApi } from "../api/campus.api";
+
+import { MODE } from "../utils/constants/basic";
+import { useCampusStore } from "../store/campus.store";
+import { useAuth } from "../store/auth.store";
 
 export default function Campus() {
-  const [mode, setMode] = useState(0); // 0 -> close ,  1 -> create mode , 2 -> edit mode
+  const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedCampus, setSelectedCampus] = useState("");
-  const [allCampuses, setAllCampuses] = useState([]);
 
-  function handleSelectCampus(campus_id) {
-    setSelectedCampus(campus_id);
-    setMode(2);
-  }
+  const { campuses, loading, fetchCampuses, clearCampusDetails } =
+    useCampusStore();
 
+   const {auth:{site_permissions}} = useAuth()
+  // -----------------------------
+  // Load all campuses on mount
+  // -----------------------------
   useEffect(() => {
-    getAllCampusApi()
-      .then((resp) => {
-        setAllCampuses(resp.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    fetchCampuses();
   }, []);
 
+  // -----------------------------
+  // When user selects a campus row
+  // -----------------------------
+  function handleSelectCampus(campus_id) {
+    setSelectedCampus(campus_id);
+    setMode(MODE.EDIT);
+  }
+
+  // -----------------------------
+  // Handles opening & closing modal
+  // -----------------------------
   function handleAddEditModel(val) {
     setMode(val);
 
-    if (val === 0 || val === 1) {
+    if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedCampus("");
+      clearCampusDetails();
     }
   }
 
@@ -36,17 +46,23 @@ export default function Campus() {
     <>
       {mode ? (
         <Dialog
-          open={mode}
+          open={!!mode}
           fullScreen={true}
-          onClose={() => handleAddEditModel(0)}
+          onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditCampus selectedCampus={selectedCampus} mode={mode} />
+          <AddEditCampus
+            mode={mode}
+            selectedCampus={selectedCampus}
+            handleAddEditModel={handleAddEditModel}
+          />
         </Dialog>
       ) : (
         <CampusListing
-          handleCreate={() => handleAddEditModel(1)}
-          campuses={allCampuses}
+          handleCreate={() => handleAddEditModel(MODE.CREATE)}
+          campuses={campuses}
+          loading={loading}
           handleSelectCampus={handleSelectCampus}
+          allSchools={site_permissions}
         />
       )}
     </>
