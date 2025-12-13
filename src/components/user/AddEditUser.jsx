@@ -3,7 +3,7 @@ import { userSchema } from "../../schemas/user.schema";
 import { useUsersStore } from "../../store/user.store";
 import DynamicForm from "../../ui-components/DynamicForm";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
-import { MODE } from "../../utils/constants/basic";
+import { MODE } from "../../utils/constants/globalConstants";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
 

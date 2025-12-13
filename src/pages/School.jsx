@@ -3,14 +3,15 @@ import AddEditSchool from "../components/school/AddEditSchool";
 import SchoolListing from "../components/school/SchoolListing";
 import Dialog from "../ui-components/Dialog";
 
-import { MODE } from "../utils/constants/basic";
+import { MODE } from "../utils/constants/globalConstants";
 import { useSchoolsStore } from "../store/school.store";
 
 export default function School() {
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedSchool, setSelectedSchool] = useState("");
 
-  const { schools, loading, fetchSchools, clearSchoolDetails } = useSchoolsStore();
+  const { schools, loading, fetchSchools, clearSchoolDetails } =
+    useSchoolsStore();
 
   // Load all schools on mount
   useEffect(() => {

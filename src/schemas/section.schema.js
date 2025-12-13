@@ -18,6 +18,15 @@ export const sectionSchema = [
           "mandatory": false,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
+        {
+          "id": "class_id",
+          "name": "Class",
+          "value": "",
+          "type": "dropdown",
+          "options": [],
+          "mandatory": true,
+          "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
+        },
       ]
     },
   

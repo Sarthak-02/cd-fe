@@ -3,20 +3,50 @@ import DynamicForm from "../../ui-components/DynamicForm";
 import { studentSchema } from "../../schemas/student.schema";
 import { validateForm } from "../../utils/validators/form_validation";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
-import {
-  createStudentApi,
-  getStudentApi,
-  updateStudentApi,
-} from "../../api/student.api";
+import { MODE } from "../../utils/constants/globalConstants";
 
+import { useStudentStore } from "../../store/student.store";
+import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
+
+// ----------------------------
+// Payload Formatter
+// ----------------------------
 function createPayload(form) {
-  const { student_id, student_name, student_type, ...extras } = form;
-  return { student_id, student_name, student_type, extras };
+  const {
+    student_id,
+    student_admission_no,
+    student_roll_no,
+    student_first_name,
+    student_middle_name,
+    student_last_name,
+    student_gender,
+    student_dob,
+    student_current_status,
+    campus_id,
+    ...extras
+  } = form;
+
+  return {
+    student_id,
+    student_admission_no,
+    student_roll_no,
+    student_first_name,
+    student_middle_name,
+    student_last_name,
+    student_gender,
+    student_dob: student_dob ? new Date(student_dob).toISOString() : null,
+    student_current_status,
+    campus_id,
+    extras,
+  };
 }
 
+// ----------------------------
+// Update schema rules
+// ----------------------------
 const getSchemaUpdates = (mode) => {
   return {
-    student_id: { disabled: mode == 2 ? true : false },
+    student_id: { disabled: mode === MODE.EDIT },
   };
 };
 
@@ -26,72 +56,86 @@ function updatedStudentSchema(mode) {
 
 let _studentSchema = studentSchema;
 
-export default function AddEditStudent({ mode, selectedStudent }) {
+// ----------------------------
+// Component
+// ----------------------------
+export default function AddEditStudent({
+  mode,
+  selectedStudent,
+  campus_id,
+  handleAddEditModel,
+}) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
 
+  const {
+    fetchStudentDetails,
+    studentDetails,
+    createStudent,
+    updateStudent,
+    loadingStudentDetails,
+  } = useStudentStore();
+
+  // Load student details into form when editing
+  if (
+    mode === MODE.EDIT &&
+    studentDetails &&
+    Object.keys(formData).length === 0
+  ) {
+    setFormData({ ...studentDetails, ...studentDetails?.extras });
+  }
+
+  // Initialize schema + Fetch details
   useEffect(() => {
     _studentSchema = updatedStudentSchema(mode);
-    if (mode !== 2) return;
 
-    getStudentApi(selectedStudent).then((resp) => {
-      const { extras = {}, ...rest } = resp.data;
-      const payload = { ...extras, ...rest };
-      setFormData(payload);
-    });
+    if (mode === MODE.EDIT) {
+      fetchStudentDetails(selectedStudent);
+    }
   }, []);
 
+  // -----------------------
+  // Submit Handlers
+  // -----------------------
   function handleUpdateStudent() {
     const payload = createPayload(formData);
-
-    updateStudentApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    updateStudent(payload);
   }
 
   function handleCreateStudent() {
-    const payload = createPayload(formData);
-
-    createStudentApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const payload = { ...createPayload(formData), campus_id };
+    createStudent(payload);
   }
 
   function onSubmit() {
     const { errors, isError } = validateForm(_studentSchema, formData);
 
     if (isError) {
-      console.log("form Invalid");
       setErrors(errors);
       return;
     }
 
-    switch (mode) {
-      case 1:
-        return handleCreateStudent();
+    if (mode === MODE.CREATE) handleCreateStudent();
+    if (mode === MODE.EDIT) handleUpdateStudent();
 
-      case 2:
-        return handleUpdateStudent();
-    }
+    handleAddEditModel(MODE.NONE); // add if needed
   }
 
   return (
-    <div className="w-full p-4 space-y-6">
-      <DynamicForm
-        schema={_studentSchema}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={onSubmit}
-        errors={formErrors}
-      />
-    </div>
+    <>
+      {loadingStudentDetails ? (
+        <FormSkeleton />
+      ) : (
+        <div className="w-full p-4 space-y-6">
+          <DynamicForm
+            schema={_studentSchema}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={onSubmit}
+            errors={formErrors}
+          />
+        </div>
+      )}
+    </>
   );
 }

@@ -2,32 +2,36 @@ import React, { useEffect, useState } from "react";
 import AddEditClass from "../components/class/AddEditClass";
 import ClassListing from "../components/class/ClassListing";
 import Dialog from "../ui-components/Dialog";
-import { getAllClassApi } from "../api/class.api";
+
+import { useCampusStore } from "../store/campus.store";
+import { useClassStore } from "../store/class.store";
+import { MODE } from "../utils/constants/globalConstants";
 
 export default function Class() {
-  const [mode, setMode] = useState(0); // 0 -> close , 1 -> create mode , 2 -> edit mode
+  const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create mode , 2 -> edit mode
   const [selectedClass, setSelectedClass] = useState("");
-  const [allClasses, setAllClasses] = useState([]);
+  const {campuses,fetchCampuses} = useCampusStore()
+  const {classes,fetchClasses} = useClassStore()
+  const [selectedCampus,setSelectedCampus] = useState("")
 
   function handleSelectClass(class_id) {
     setSelectedClass(class_id);
-    setMode(2);
+    setMode(MODE.EDIT);
   }
 
   useEffect(() => {
-    getAllClassApi()
-      .then((resp) => {
-        setAllClasses(resp.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    fetchCampuses()
   }, []);
+
+  useEffect(()=>{
+    if(!selectedCampus) return
+    fetchClasses(selectedCampus)
+  },[selectedCampus])
 
   function handleAddEditModel(val) {
     setMode(val);
 
-    if (val === 0 || val === 1) {
+    if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedClass("");
     }
   }
@@ -38,15 +42,18 @@ export default function Class() {
         <Dialog
           open={mode}
           fullScreen={true}
-          onClose={() => handleAddEditModel(0)}
+          onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditClass selectedClass={selectedClass} mode={mode} />
+          <AddEditClass selectedClass={selectedClass} mode={mode} campus_id = {selectedCampus} handleAddEditModel={handleAddEditModel} />
         </Dialog>
       ) : (
         <ClassListing
           handleCreate={() => handleAddEditModel(1)}
-          classes={allClasses}
+          classes={classes}
           handleSelectClass={handleSelectClass}
+          allCampus={campuses}
+          selectedCampus={selectedCampus}
+          setSelectedCampus={setSelectedCampus}
         />
       )}
     </>

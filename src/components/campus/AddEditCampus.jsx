@@ -8,10 +8,19 @@ import {
   getCampusApi,
   updateCampusApi,
 } from "../../api/campus.api";
+import { MODE } from "../../utils/constants/globalConstants";
+import { useCampusStore } from "../../store/campus.store";
+import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 
 function createPayload(form) {
-  const { campus_id, campus_name, campus_type, ...extras } = form;
-  return { campus_id, campus_name, campus_type, extras };
+  const {
+    campus_id,
+    campus_name,
+    campus_type,
+    school_id = "",
+    ...extras
+  } = form;
+  return { campus_id, campus_name, campus_type, school_id, extras };
 }
 
 const getSchemaUpdates = (mode) => {
@@ -26,72 +35,83 @@ function updatedCampusSchema(mode) {
 
 let _campusSchema = campusSchema;
 
-export default function AddEditCampus({ mode, selectedCampus , school_id }) {
+export default function AddEditCampus({
+  mode,
+  handleAddEditModel,
+  selectedCampus,
+  school_id,
+}) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  const {
+    campusDetails,
+    loadingCampusDetails,
+    fetchCampusDetails,
+    createCampus,
+    updateCampus,
+  } = useCampusStore();
+
+  if (
+    mode === MODE.EDIT &&
+    campusDetails &&
+    Object.keys(formData).length === 0
+  ) {
+    setFormData({ ...campusDetails, ...campusDetails?.extras });
+  }
 
   useEffect(() => {
     _campusSchema = updatedCampusSchema(mode);
     if (mode !== 2) return;
 
-    getCampusApi(selectedCampus).then((resp) => {
-      const { extras = {}, ...rest } = resp.data;
-      const payload = { ...extras, ...rest };
-      setFormData(payload);
-    });
+    fetchCampusDetails(selectedCampus);
   }, []);
 
   function handleUpdateCampus() {
-    const payload = { ...createPayload(formData), school_id: school_id };
+    const payload = { ...createPayload(formData) };
 
-    updateCampusApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    updateCampus(payload);
   }
 
   function handleCreateCampus() {
     const payload = { ...createPayload(formData), school_id: school_id };
 
-    createCampusApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    createCampus(payload);
   }
 
   function onSubmit() {
     const { errors, isError } = validateForm(_campusSchema, formData);
 
     if (isError) {
-      console.log("form Invalid");
       setErrors(errors);
       return;
     }
 
-    switch (mode) {
-      case 1:
-        return handleCreateCampus();
-
-      case 2:
-        return handleUpdateCampus();
+    if (mode === MODE.CREATE) {
+      handleCreateCampus();
     }
+
+    if (mode === MODE.EDIT) {
+      handleUpdateCampus();
+    }
+
+    handleAddEditModel(MODE.NONE);
   }
 
   return (
-    <div className="w-full p-4 space-y-6">
-      <DynamicForm
-        schema={_campusSchema}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={onSubmit}
-        errors={formErrors}
-      />
-    </div>
+    <>
+      {loadingCampusDetails ? (
+        <FormSkeleton />
+      ) : (
+        <div className="w-full p-4 space-y-6">
+          <DynamicForm
+            schema={_campusSchema}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={onSubmit}
+            errors={formErrors}
+          />
+        </div>
+      )}
+    </>
   );
 }

@@ -14,10 +14,10 @@ export const useSectionStore = create((set, get) => ({
   sectionDetails: null,
   loadingSectionDetails: false,
 
-  fetchSections: async () => {
+  fetchSections: async (campus_id) => {
     set({ loading: true, error: null });
     try {
-      const resp = await getAllSectionApi();
+      const resp = await getAllSectionApi(campus_id);
       set({ sections: resp.data, loading: false });
     } catch (err) {
       set({ error: err, loading: false });

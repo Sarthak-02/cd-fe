@@ -8,10 +8,13 @@ import {
   getClassApi,
   updateClassApi,
 } from "../../api/class.api";
+import { useClassStore } from "../../store/class.store";
+import { MODE } from "../../utils/constants/globalConstants";
+import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 
 function createPayload(form) {
-  const { class_id, class_name, class_type, ...extras } = form;
-  return { class_id, class_name, class_type, extras };
+  const { class_id, class_name, class_type, campus_id, ...extras } = form;
+  return { class_id, class_name, class_type, campus_id, extras };
 }
 
 const getSchemaUpdates = (mode) => {
@@ -26,72 +29,81 @@ function updatedClassSchema(mode) {
 
 let _classSchema = classSchema;
 
-export default function AddEditClass({ mode, selectedClass }) {
+export default function AddEditClass({
+  mode,
+  selectedClass,
+  campus_id,
+  handleAddEditModel,
+}) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  const {
+    fetchClassDetails,
+    classDetails,
+    createClass,
+    updateClass,
+    loadingClassDetails,
+  } = useClassStore();
+
+  if (
+    mode === MODE.EDIT &&
+    classDetails &&
+    Object.keys(formData).length === 0
+  ) {
+    setFormData({ ...classDetails, ...classDetails?.extras });
+  }
 
   useEffect(() => {
     _classSchema = updatedClassSchema(mode);
-    if (mode !== 2) return;
-
-    getClassApi(selectedClass).then((resp) => {
-      const { extras = {}, ...rest } = resp.data;
-      const payload = { ...extras, ...rest };
-      setFormData(payload);
-    });
+    if (mode === MODE.EDIT) fetchClassDetails(selectedClass);
   }, []);
 
   function handleUpdateClass() {
     const payload = createPayload(formData);
 
-    updateClassApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    updateClass(payload);
   }
 
   function handleCreateClass() {
-    const payload = createPayload(formData);
+    const payload = { ...createPayload(formData), campus_id };
 
-    createClassApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    createClass(payload);
   }
 
   function onSubmit() {
     const { errors, isError } = validateForm(_classSchema, formData);
 
     if (isError) {
-      console.log("form Invalid");
       setErrors(errors);
       return;
     }
 
-    switch (mode) {
-      case 1:
-        return handleCreateClass();
-
-      case 2:
-        return handleUpdateClass();
+    if (mode === MODE.CREATE) {
+      handleCreateClass();
     }
+
+    if (mode === MODE.EDIT) {
+      handleUpdateClass();
+    }
+
+    handleAddEditModel(MODE.NONE);
   }
 
   return (
-    <div className="w-full p-4 space-y-6">
-      <DynamicForm
-        schema={_classSchema}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={onSubmit}
-        errors={formErrors}
-      />
-    </div>
+    <>
+      {loadingClassDetails ? (
+        <FormSkeleton />
+      ) : (
+        <div className="w-full p-4 space-y-6">
+          <DynamicForm
+            schema={_classSchema}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={onSubmit}
+            errors={formErrors}
+          />
+        </div>
+      )}
+    </>
   );
 }

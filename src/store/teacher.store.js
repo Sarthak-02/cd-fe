@@ -14,10 +14,10 @@ export const useTeacherStore = create((set, get) => ({
   teacherDetails: null,
   loadingTeacherDetails: false,
 
-  fetchTeachers: async () => {
+  fetchTeachers: async (campus_id) => {
     set({ loading: true, error: null });
     try {
-      const resp = await getAllTeacherApi();
+      const resp = await getAllTeacherApi(campus_id);
       set({ teachers: resp.data, loading: false });
     } catch (err) {
       set({ error: err, loading: false });

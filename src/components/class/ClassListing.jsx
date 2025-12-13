@@ -1,29 +1,48 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import Button from "../../ui-components/Button";
+import Card from "../../ui-components/Card";
+import Dropdown from "../../ui-components/Dropdown";
 import Listing from "../../ui-components/Listing";
 import CardSkeleton from "../../ui-components/skeletons/CardSkeleton";
-import Card from "../../ui-components/Card";
-import SearchBar from "../../ui-components/SearchBar";
-import Button from "../../ui-components/Button";
 
-export default function ClassListing({ handleCreate, classes, handleSelectClass }) {
+export default function ClassListing({
+  handleCreate,
+  classes,
+  handleSelectClass,
+  allCampus,
+  selectedCampus,
+  setSelectedCampus,
+}) {
   const [isLoaded, setLoaded] = useState(true);
-  const [selected, setSelected] = useState("");
+  const filteredClass = useMemo(() => {
+    if (!selectedCampus) {
+      return [];
+    }
+
+    return classes.filter((_class) => _class?.campus_id === selectedCampus);
+  }, [selectedCampus, classes]);
 
   return (
     <>
       <div className="flex items-center justify-between mb-4 gap-5">
-        <div className="w-4/5 ">
-          <SearchBar />
+        <div className="w-4/5 md:w-3/5 lg:w-2/5">
+          <Dropdown
+            options={allCampus}
+            selected={selectedCampus}
+            onChange={setSelectedCampus}
+          />
         </div>
 
         <div className="w-1/5 md:w-2/5 lg:w-1/5 flex justify-end">
-          <Button onClick={handleCreate}>Create</Button>
+          <Button onClick={handleCreate} disabled={!selectedCampus}>
+            Create
+          </Button>
         </div>
       </div>
 
       <Listing>
         {isLoaded
-          ? classes.map((classItem) => {
+          ? filteredClass.map((classItem) => {
               return (
                 <Card
                   key={classItem.class_id}

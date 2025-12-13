@@ -1,3 +1,5 @@
+import { SCHOOL_CATEGORIES, SCHOOL_TYPE } from "../utils/constants/globalConstants";
+
 export const schoolSchema = [
     {
       "section_title": "Basic School Information",
@@ -24,14 +26,7 @@ export const schoolSchema = [
           "name": "School Type",
           "value": "",
           "type": "dropdown",
-          "options": [
-            { value: "cbse", label: "CBSE" },
-            { value: "icse", label: "ICSE" },
-            { value: "state_board", label: "State Board" },
-            { value: "ib", label: "IB" },
-            { value: "igcse", label: "IGCSE" }
-          ]
-          ,
+          "options": SCHOOL_TYPE,
           "mandatory": true,
           "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
         },
@@ -306,7 +301,7 @@ export const schoolSchema = [
           "name": "School Category",
           "value": "",
           "type": "dropdown",
-          "options": ["Primary", "Secondary", "Senior Secondary"],
+          "options": SCHOOL_CATEGORIES,
           "mandatory": false,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },

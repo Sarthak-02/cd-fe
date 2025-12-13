@@ -27,16 +27,15 @@ export const useAuth = create(
         } catch (err) {
           console.error("Logout API failed (continuing):", err);
         }
-
-        // Clear auth state
-        set({ auth: initialValue });
-        localStorage.removeItem("token")
-
-        // Clear persisted storage from Zustand
-        const storage = get()._storage;     // internal accessor (Zustand persist)
-        if (storage?.removeItem) {
-          storage.removeItem("cd-store");
+        finally {
+          // Clear auth state
+          set({ auth: initialValue });
+          localStorage.clear()
+          // Redirect to login
+          window.location.href = "/login";
         }
+
+
       }
     }),
     {

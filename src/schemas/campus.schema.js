@@ -1,3 +1,6 @@
+import { Country , State , City } from "country-state-city"
+import { DAYS , CAMPUS_TYPES , LANGUAGES } from "../utils/constants/globalConstants"
+
 export const campusSchema = [
     {
       "section_title": "Basic campus Information",
@@ -11,7 +14,7 @@ export const campusSchema = [
           "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
         },
         {
-          "id": "campus_code",
+          "id": "campus_id",
           "name": "campus Code / ID",
           "value": "",
           "type": "text",
@@ -20,10 +23,10 @@ export const campusSchema = [
         },
         {
           "id": "campus_type",
-          "name": "campus Type",
+          "name": "Campus Type",
           "value": "",
           "type": "dropdown",
-          "options": ["CBSE", "ICSE", "State Board", "IB", "IGCSE"],
+          "options": CAMPUS_TYPES,
           "mandatory": true,
           "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
         },
@@ -46,7 +49,13 @@ export const campusSchema = [
           "id": "city",
           "name": "City",
           "value": "",
-          "type": "text",
+          "type": "dropdown",
+          "options":function(form){
+            const {country,state} = form
+            const cities = City.getCitiesOfState(country,state)
+
+            return cities.map(city => ({...city, label : city.name,value:city.name }))
+          },
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
@@ -54,7 +63,12 @@ export const campusSchema = [
           "id": "state",
           "name": "State / Province",
           "value": "",
-          "type": "text",
+          "type": "dropdown",
+          "options": function(form){
+            const {country} =form
+            const states = State.getStatesOfCountry(country)
+            return states.map(state => ({...state, label : `${state.name} (${state.isoCode})`,value:state.isoCode}))
+          },
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
@@ -63,7 +77,10 @@ export const campusSchema = [
           "name": "Country",
           "value": "India",
           "type": "dropdown",
-          "options": ["India"],
+          "options": function(){
+            const countries = Country.getAllCountries()
+            return countries.map(country => ({...country, label:`${country.name} (${country.isoCode})` , value: country.isoCode}) )
+          }(),
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
@@ -110,13 +127,14 @@ export const campusSchema = [
           "name": "Working Days",
           "value": "",
           "type": "dropdown",
-          "options": ["Mon–Fri", "Mon–Sat"],
+          "multiple":true,
+          "options": DAYS,
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
         {
           "id": "campus_timing",
-          "name": "campus Timing",
+          "name": "Campus Timing",
           "value": "",
           "type": "text",
           "placeholder": "8:30 AM – 2:30 PM",
@@ -137,7 +155,13 @@ export const campusSchema = [
           "name": "Time Zone",
           "value": "Asia/Kolkata",
           "type": "dropdown",
-          "options": ["Asia/Kolkata"],
+          "options": function(form){
+            const {country} = form
+            const timezones = Country.getCountryByCode(country)?.timezones || [] 
+
+            return timezones?.map((timezone) => ({...timezone,label: `${timezone.zoneName} (${timezone.abbreviation})` , value:timezone.abbreviation}))
+
+          },
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
@@ -146,7 +170,7 @@ export const campusSchema = [
           "name": "Default Language",
           "value": "",
           "type": "dropdown",
-          "options": ["English", "Hindi", "Kannada", "Telugu", "Tamil"],
+          "options": LANGUAGES,
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },

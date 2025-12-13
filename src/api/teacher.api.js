@@ -1,8 +1,8 @@
 import api from "./axios";
 
-export async function getAllTeacherApi() {
+export async function getAllTeacherApi(campus_id) {
     try {
-        const resp = await api.get("/teacher/all");
+        const resp = await api.get(`/teacher/all?campus_id=${campus_id}`);
         return resp.data;
     } catch (err) {
         console.log(err);

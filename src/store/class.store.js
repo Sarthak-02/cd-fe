@@ -14,10 +14,10 @@ export const useClassStore = create((set, get) => ({
   classDetails: null,
   loadingClassDetails: false,
 
-  fetchClasses: async () => {
+  fetchClasses: async (campus_id) => {
     set({ loading: true, error: null });
     try {
-      const resp = await getAllClassApi();
+      const resp = await getAllClassApi(campus_id);
       set({ classes: resp.data, loading: false });
     } catch (err) {
       set({ error: err, loading: false });

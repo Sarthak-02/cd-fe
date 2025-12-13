@@ -1,33 +1,41 @@
 import React, { useEffect, useState } from "react";
 import AddEditSection from "../components/section/AddEditSection";
 import SectionListing from "../components/section/SectionListing";
+import { useCampusStore } from "../store/campus.store";
+import { useClassStore } from "../store/class.store";
+import { useSectionStore } from "../store/section.store";
 import Dialog from "../ui-components/Dialog";
-import { getAllSectionApi } from "../api/section.api";
+import { MODE } from "../utils/constants/globalConstants";
 
 export default function Section() {
-  const [mode, setMode] = useState(0); // 0 -> close , 1 -> create mode , 2 -> edit mode
+  const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create mode , 2 -> edit mode
   const [selectedSection, setSelectedSection] = useState("");
-  const [allSections, setAllSections] = useState([]);
+  const [selectedCampus, setSelectedCampus] = useState("");
+
+  const { fetchCampuses, campuses } = useCampusStore();
+  const { fetchSections, sections } = useSectionStore();
+  const { fetchClasses, classes } = useClassStore();
 
   function handleSelectSection(section_id) {
     setSelectedSection(section_id);
-    setMode(2);
+    setMode(MODE.EDIT);
   }
 
   useEffect(() => {
-    getAllSectionApi()
-      .then((resp) => {
-        setAllSections(resp.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    fetchCampuses();
   }, []);
+
+  useEffect(() => {
+    if (!selectedCampus) return;
+
+    fetchSections(selectedCampus);
+    fetchClasses(selectedCampus);
+  }, [selectedCampus]);
 
   function handleAddEditModel(val) {
     setMode(val);
 
-    if (val === 0 || val === 1) {
+    if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedSection("");
     }
   }
@@ -38,15 +46,23 @@ export default function Section() {
         <Dialog
           open={mode}
           fullScreen={true}
-          onClose={() => handleAddEditModel(0)}
+          onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditSection selectedSection={selectedSection} mode={mode} />
+          <AddEditSection
+            selectedSection={selectedSection}
+            mode={mode}
+            classes={classes}
+            handleAddEditModel={handleAddEditModel}
+          />
         </Dialog>
       ) : (
         <SectionListing
-          handleCreate={() => handleAddEditModel(1)}
-          sections={allSections}
+          handleCreate={() => handleAddEditModel(MODE.CREATE)}
+          sections={sections}
           handleSelectSection={handleSelectSection}
+          campuses={campuses}
+          selectedCampus={selectedCampus}
+          setSelectedCampus={setSelectedCampus}
         />
       )}
     </>

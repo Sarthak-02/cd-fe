@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
+
 import { schoolSchema } from "../../schemas/school.schema";
 import { useSchoolsStore } from "../../store/school.store";
 
 import DynamicForm from "../../ui-components/DynamicForm";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 
-import { MODE } from "../../utils/constants/basic";
+import { MODE } from "../../utils/constants/globalConstants";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
+
 
 const getSchemaUpdates = (mode) => ({
   school_id: { disabled: mode === MODE.EDIT },
@@ -25,6 +27,7 @@ export default function AddEditSchool({ mode, selectedSchool, handleAddEditModel
     fetchSchoolDetails,
     createSchool,
     updateSchool,
+    
   } = useSchoolsStore();
 
   /** -----------------------------------

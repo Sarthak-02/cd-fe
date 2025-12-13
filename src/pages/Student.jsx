@@ -2,32 +2,49 @@ import React, { useEffect, useState } from "react";
 import AddEditStudent from "../components/student/AddEditStudent";
 import StudentListing from "../components/student/StudentListing";
 import Dialog from "../ui-components/Dialog";
-import { getAllStudentApi } from "../api/student.api";
+import { MODE } from "../utils/constants/globalConstants";
+
+import { useCampusStore } from "../store/campus.store";
+import { useStudentStore } from "../store/student.store";
 
 export default function Student() {
-  const [mode, setMode] = useState(0); // 0 -> close , 1 -> create mode , 2 -> edit mode
+  const [mode, setMode] = useState(MODE.NONE); // 0 -> close, 1 -> create, 2 -> edit
   const [selectedStudent, setSelectedStudent] = useState("");
-  const [allStudents, setAllStudents] = useState([]);
+  const [selectedCampus, setSelectedCampus] = useState("");
 
+  const { fetchCampuses, campuses } = useCampusStore();
+  const { fetchStudents, students } = useStudentStore();
+
+  /** ---------------------------
+   * Select a student from listing
+   ----------------------------*/
   function handleSelectStudent(student_id) {
     setSelectedStudent(student_id);
-    setMode(2);
+    setMode(MODE.EDIT);
   }
 
+  /** ---------------------------
+   * Load campuses on mount
+   ----------------------------*/
   useEffect(() => {
-    getAllStudentApi()
-      .then((resp) => {
-        setAllStudents(resp.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    fetchCampuses();
   }, []);
 
+  /** ------------------------------------------
+   * Load students when campus is selected
+   -------------------------------------------*/
+  useEffect(() => {
+    if (!selectedCampus) return;
+    fetchStudents(selectedCampus);
+  }, [selectedCampus]);
+
+  /** ---------------------------
+   * Handle Add/Edit Modal
+   ----------------------------*/
   function handleAddEditModel(val) {
     setMode(val);
 
-    if (val === 0 || val === 1) {
+    if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedStudent("");
     }
   }
@@ -38,15 +55,23 @@ export default function Student() {
         <Dialog
           open={mode}
           fullScreen={true}
-          onClose={() => handleAddEditModel(0)}
+          onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditStudent selectedStudent={selectedStudent} mode={mode} />
+          <AddEditStudent
+            selectedStudent={selectedStudent}
+            mode={mode}
+            campus_id={selectedCampus}
+            handleAddEditModel={handleAddEditModel}
+          />
         </Dialog>
       ) : (
         <StudentListing
-          handleCreate={() => handleAddEditModel(1)}
-          students={allStudents}
+          handleCreate={() => handleAddEditModel(MODE.CREATE)}
+          students={students}
           handleSelectStudent={handleSelectStudent}
+          campuses={campuses}
+          selectedCampus={selectedCampus}
+          setSelectedCampus={setSelectedCampus}
         />
       )}
     </>

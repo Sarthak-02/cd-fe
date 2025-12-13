@@ -1,17 +1,41 @@
 import React, { useEffect, useState } from "react";
-import DynamicForm from "../../ui-components/DynamicForm";
 import { teacherSchema } from "../../schemas/teacher.schema";
-import { validateForm } from "../../utils/validators/form_validation";
+import { useTeacherStore } from "../../store/teacher.store";
+import DynamicForm from "../../ui-components/DynamicForm";
+import { MODE } from "../../utils/constants/globalConstants";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
-import {
-  createTeacherApi,
-  getTeacherApi,
-  updateTeacherApi,
-} from "../../api/teacher.api";
+import { validateForm } from "../../utils/validators/form_validation";
+import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 
 function createPayload(form) {
-  const { teacher_id, teacher_name, teacher_type, ...extras } = form;
-  return { teacher_id, teacher_name, teacher_type, extras };
+  const {
+    teacher_id,
+    teacher_first_name,
+    teacher_middle_name,
+    teacher_last_name,
+    teacher_gender,
+    teacher_dob,
+    teacher_email,
+    teacher_phone,
+    teacher_status,
+    campus_id = "",
+    teacher_employee_code,
+    ...extras
+  } = form;
+  return {
+    teacher_id,
+    teacher_first_name,
+    teacher_middle_name,
+    teacher_last_name,
+    teacher_gender,
+    teacher_dob: teacher_dob ? new Date(teacher_dob).toISOString() : null,
+    teacher_email,
+    teacher_phone,
+    teacher_status,
+    campus_id,
+    teacher_employee_code,
+    extras,
+  };
 }
 
 const getSchemaUpdates = (mode) => {
@@ -26,72 +50,78 @@ function updatedTeacherSchema(mode) {
 
 let _teacherSchema = teacherSchema;
 
-export default function AddEditTeacher({ mode, selectedTeacher }) {
+export default function AddEditTeacher({
+  mode,
+  selectedTeacher,
+  campus_id,
+  handleAddEditModel,
+}) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  const {
+    fetchTeacherDetails,
+    teacherDetails,
+    createTeacher,
+    updateTeacher,
+    loadingTeacherDetails,
+  } = useTeacherStore();
+
+  if (
+    mode === MODE.EDIT &&
+    teacherDetails &&
+    Object.keys(formData).length === 0
+  ) {
+    setFormData({ ...teacherDetails, ...teacherDetails?.extras });
+  }
 
   useEffect(() => {
     _teacherSchema = updatedTeacherSchema(mode);
-    if (mode !== 2) return;
-
-    getTeacherApi(selectedTeacher).then((resp) => {
-      const { extras = {}, ...rest } = resp.data;
-      const payload = { ...extras, ...rest };
-      setFormData(payload);
-    });
+    if (mode !== MODE.EDIT) return;
+    fetchTeacherDetails(selectedTeacher);
   }, []);
 
   function handleUpdateTeacher() {
     const payload = createPayload(formData);
-
-    updateTeacherApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    updateTeacher(payload);
   }
 
   function handleCreateTeacher() {
-    const payload = createPayload(formData);
-
-    createTeacherApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const payload = { ...createPayload(formData), campus_id };
+    createTeacher(payload);
   }
 
   function onSubmit() {
     const { errors, isError } = validateForm(_teacherSchema, formData);
 
     if (isError) {
-      console.log("form Invalid");
       setErrors(errors);
       return;
     }
 
-    switch (mode) {
-      case 1:
-        return handleCreateTeacher();
-
-      case 2:
-        return handleUpdateTeacher();
+    if (mode === MODE.CREATE) {
+      handleCreateTeacher();
     }
+    if (mode === MODE.EDIT) {
+      handleUpdateTeacher();
+    }
+    handleAddEditModel(MODE.NONE);
   }
 
   return (
-    <div className="w-full p-4 space-y-6">
-      <DynamicForm
-        schema={_teacherSchema}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={onSubmit}
-        errors={formErrors}
-      />
-    </div>
+    <>
+      {loadingTeacherDetails ? (
+        <FormSkeleton />
+      ) : (
+        <div className="w-full p-4 space-y-6">
+          <DynamicForm
+            schema={_teacherSchema}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={onSubmit}
+            errors={formErrors}
+          />
+        </div>
+      )}
+    </>
   );
 }

@@ -3,13 +3,14 @@ import AddEditCampus from "../components/campus/AddEditCampus";
 import CampusListing from "../components/campus/CampusListing";
 import Dialog from "../ui-components/Dialog";
 
-import { MODE } from "../utils/constants/basic";
+import { MODE } from "../utils/constants/globalConstants";
 import { useCampusStore } from "../store/campus.store";
 import { useAuth } from "../store/auth.store";
 
 export default function Campus() {
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedCampus, setSelectedCampus] = useState("");
+  const [selectedSchool,setSelectedSchool] = useState("")
 
   const { campuses, loading, fetchCampuses, clearCampusDetails } =
     useCampusStore();
@@ -54,6 +55,7 @@ export default function Campus() {
             mode={mode}
             selectedCampus={selectedCampus}
             handleAddEditModel={handleAddEditModel}
+            school_id={selectedSchool}
           />
         </Dialog>
       ) : (
@@ -63,6 +65,8 @@ export default function Campus() {
           loading={loading}
           handleSelectCampus={handleSelectCampus}
           allSchools={site_permissions}
+          selectedSchool={selectedSchool}
+          setSelectedSchool={setSelectedSchool}
         />
       )}
     </>

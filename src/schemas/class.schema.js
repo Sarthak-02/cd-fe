@@ -1,3 +1,5 @@
+import { CLASS_TYPE,COURSE,CLASS_SHIFT } from "../utils/constants/globalConstants"
+
 export const classSchema = [
     {
       "section_title": "Class Information",
@@ -76,7 +78,7 @@ export const classSchema = [
           "name": "Class Type",
           "value": "",
           "type": "dropdown",
-          "options": ["Primary", "Secondary", "Higher"],
+          "options": CLASS_TYPE,
           "mandatory": false,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
@@ -85,7 +87,7 @@ export const classSchema = [
           "name": "Stream",
           "value": "",
           "type": "dropdown",
-          "options": ["Science", "Commerce", "Arts"],
+          "options": COURSE,
           "mandatory": false,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
@@ -94,7 +96,7 @@ export const classSchema = [
           "name": "Shift",
           "value": "",
           "type": "dropdown",
-          "options": ["Morning", "Evening"],
+          "options":CLASS_SHIFT ,
           "mandatory": false,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         }

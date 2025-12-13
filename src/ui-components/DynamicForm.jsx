@@ -37,6 +37,7 @@ export default function DynamicForm({
       case "text":
       case "number":
       case "date":
+      case "datetime-local":
       case "password":
         return (
           <TextField
@@ -56,7 +57,7 @@ export default function DynamicForm({
         return (
           <Dropdown
             label={field.label}
-            options={field.options}
+            options={typeof(field.options) === "function" ? field.options(formData): field.options}
             multi={field.multiple}
             placeholder={field.label}
             onChange={(opt) => handleChange(field,opt)}

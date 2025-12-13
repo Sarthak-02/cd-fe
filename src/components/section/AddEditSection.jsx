@@ -1,97 +1,115 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DynamicForm from "../../ui-components/DynamicForm";
 import { sectionSchema } from "../../schemas/section.schema";
 import { validateForm } from "../../utils/validators/form_validation";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
-import {
-  createSectionApi,
-  getSectionApi,
-  updateSectionApi,
-} from "../../api/section.api";
+import { useSectionStore } from "../../store/section.store";
+import { MODE } from "../../utils/constants/globalConstants";
+import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 
 function createPayload(form) {
-  const { section_id, section_name, section_type, ...extras } = form;
-  return { section_id, section_name, section_type, extras };
+  const {
+    section_id,
+    section_name,
+    section_type,
+    class_id = "",
+    ...extras
+  } = form;
+  return { section_id, section_name, section_type, class_id, extras };
 }
 
-const getSchemaUpdates = (mode) => {
+const getSchemaUpdates = (mode, classes) => {
   return {
     section_id: { disabled: mode == 2 ? true : false },
+    class_id: { options: classes },
   };
 };
 
-function updatedSectionSchema(mode) {
-  return updateSchema(sectionSchema, getSchemaUpdates(mode));
+function updatedSectionSchema(mode, classes) {
+  return updateSchema(sectionSchema, getSchemaUpdates(mode, classes));
 }
 
-let _sectionSchema = sectionSchema;
-
-export default function AddEditSection({ mode, selectedSection }) {
+export default function AddEditSection({
+  mode,
+  selectedSection,
+  classes = [],
+  handleAddEditModel,
+}) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
 
-  useEffect(() => {
-    _sectionSchema = updatedSectionSchema(mode);
-    if (mode !== 2) return;
+  const {
+    fetchSectionDetails,
+    createSection,
+    updateSection,
+    sectionDetails,
+    loadingSectionDetails,
+  } = useSectionStore();
 
-    getSectionApi(selectedSection).then((resp) => {
-      const { extras = {}, ...rest } = resp.data;
-      const payload = { ...extras, ...rest };
-      setFormData(payload);
-    });
+  useEffect(() => {
+    if (mode === MODE.EDIT) fetchSectionDetails(selectedSection);
   }, []);
+
+  let _sectionSchema = useMemo(() => {
+    if (classes.length === 0) {
+      return sectionSchema;
+    }
+
+    return updatedSectionSchema(mode, classes);
+  }, [classes, sectionSchema, mode]);
+
+  if (
+    mode === MODE.EDIT &&
+    sectionDetails &&
+    Object.keys(formData).length === 0
+  ) {
+    setFormData({ ...sectionDetails, ...sectionDetails?.extras });
+  }
 
   function handleUpdateSection() {
     const payload = createPayload(formData);
-
-    updateSectionApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    updateSection(payload);
   }
 
   function handleCreateSection() {
     const payload = createPayload(formData);
-
-    createSectionApi(payload)
-      .then((resp) => {
-        console.log(resp?.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    createSection(payload);
   }
 
   function onSubmit() {
     const { errors, isError } = validateForm(_sectionSchema, formData);
 
     if (isError) {
-      console.log("form Invalid");
       setErrors(errors);
       return;
     }
 
-    switch (mode) {
-      case 1:
-        return handleCreateSection();
-
-      case 2:
-        return handleUpdateSection();
+    if (mode === MODE.CREATE) {
+      handleCreateSection();
     }
+
+    if (mode === MODE.EDIT) {
+      handleUpdateSection();
+    }
+
+    handleAddEditModel(MODE.NONE);
   }
 
   return (
-    <div className="w-full p-4 space-y-6">
-      <DynamicForm
-        schema={_sectionSchema}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={onSubmit}
-        errors={formErrors}
-      />
-    </div>
+    <>
+      {loadingSectionDetails ? (
+        <FormSkeleton />
+      ) : (
+        <div className="w-full p-4 space-y-6">
+          <DynamicForm
+            schema={_sectionSchema}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={onSubmit}
+            errors={formErrors}
+          />
+        </div>
+      )}
+    </>
   );
 }

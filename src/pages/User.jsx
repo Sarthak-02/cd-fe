@@ -3,7 +3,7 @@ import AddEditUser from "../components/user/AddEditUser";
 import UserListing from "../components/user/UserListing";
 import Dialog from "../ui-components/Dialog";
 
-import { MODE } from "../utils/constants/basic";
+import { MODE } from "../utils/constants/globalConstants";
 import { useUsersStore } from "../store/user.store";
 import { useSchoolsStore } from "../store/school.store";
 //get all pages

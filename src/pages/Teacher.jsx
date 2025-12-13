@@ -1,33 +1,37 @@
 import React, { useEffect, useState } from "react";
 import AddEditTeacher from "../components/teacher/AddEditTeacher";
 import TeacherListing from "../components/teacher/TeacherListing";
+import { useCampusStore } from "../store/campus.store";
+import { useTeacherStore } from "../store/teacher.store";
 import Dialog from "../ui-components/Dialog";
-import { getAllTeacherApi } from "../api/teacher.api";
+import { MODE } from "../utils/constants/globalConstants";
 
 export default function Teacher() {
-  const [mode, setMode] = useState(0); // 0 -> close , 1 -> create mode , 2 -> edit mode
+  const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create mode , 2 -> edit mode
   const [selectedTeacher, setSelectedTeacher] = useState("");
-  const [allTeachers, setAllTeachers] = useState([]);
+  const [selectedCampus, setSelectedCampus] = useState("");
+  const { fetchCampuses, campuses } = useCampusStore();
+  const { fetchTeachers, teachers } = useTeacherStore();
 
   function handleSelectTeacher(teacher_id) {
     setSelectedTeacher(teacher_id);
-    setMode(2);
+    setMode(MODE.EDIT);
   }
 
   useEffect(() => {
-    getAllTeacherApi()
-      .then((resp) => {
-        setAllTeachers(resp.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    fetchCampuses();
   }, []);
+
+  useEffect(() => {
+    if (!selectedCampus) return;
+
+    fetchTeachers(selectedCampus);
+  }, [selectedCampus]);
 
   function handleAddEditModel(val) {
     setMode(val);
 
-    if (val === 0 || val === 1) {
+    if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedTeacher("");
     }
   }
@@ -38,15 +42,19 @@ export default function Teacher() {
         <Dialog
           open={mode}
           fullScreen={true}
-          onClose={() => handleAddEditModel(0)}
+          onClose={() => handleAddEditModel(MODE.NONE)}
+          
         >
-          <AddEditTeacher selectedTeacher={selectedTeacher} mode={mode} />
+          <AddEditTeacher selectedTeacher={selectedTeacher} mode={mode} campus_id={selectedCampus}  handleAddEditModel={handleAddEditModel}/>
         </Dialog>
       ) : (
         <TeacherListing
           handleCreate={() => handleAddEditModel(1)}
-          teachers={allTeachers}
+          teachers={teachers}
           handleSelectTeacher={handleSelectTeacher}
+          campuses={campuses}
+          selectedCampus={selectedCampus}
+          setSelectedCampus={setSelectedCampus}
         />
       )}
     </>
