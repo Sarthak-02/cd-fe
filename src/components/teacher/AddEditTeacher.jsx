@@ -20,6 +20,7 @@ function createPayload(form) {
     teacher_status,
     campus_id = "",
     teacher_employee_code,
+    teacher_photo_url="",
     ...extras
   } = form;
   return {
@@ -34,6 +35,7 @@ function createPayload(form) {
     teacher_status,
     campus_id,
     teacher_employee_code,
+    teacher_photo_url,
     extras,
   };
 }

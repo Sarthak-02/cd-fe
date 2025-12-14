@@ -3,34 +3,32 @@ import TextField from "./TextField";
 import Dropdown from "./Dropdown";
 import Button from "./Button";
 import CheckBox from "./CheckBox";
+import DocumentUploader from "./DocumentUploader";
 
-
-function getResponsiveClasses(width = {}){
+function getResponsiveClasses(width = {}) {
   const mobile = width.mobile || 12;
   const tablet = width.tablet || mobile;
   const desktop = width.desktop || tablet;
-  
-  return `col-span-12 sm:col-span-${mobile} md:col-span-${tablet} lg:col-span-${desktop}`;
-};
 
+  return `col-span-12 sm:col-span-${mobile} md:col-span-${tablet} lg:col-span-${desktop}`;
+}
 
 export default function DynamicForm({
   schema = [],
   formData = {},
   setFormData,
-  customFunctions = {},
   handleSubmit,
-  errors = {}
+  errors = {},
 }) {
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field.id]: value }));
-
-    if (field.fn && customFunctions[field.fn]) {
-      customFunctions[field.fn](value);
+  const handleChange = (field, value, ...extras) => {
+    if (field.fn) {
+      field.fn(value, ...extras);
+    } else {
+      setFormData((prev) => ({ ...prev, [field.id]: value }));
     }
   };
 
-  const renderField = (field,error) => {
+  const renderField = (field, error) => {
     const value = formData[field.id] ?? field.value;
 
     switch (field.type) {
@@ -47,7 +45,7 @@ export default function DynamicForm({
             onChange={(e) => handleChange(field, e.target.value)}
             // className="w-full p-2 border rounded-md text-sm"
             placeholder={field.label}
-            variant = {error ? "error": field?.disabled ? "disabled":"default"}
+            variant={error ? "error" : field?.disabled ? "disabled" : "default"}
             // disabled={field.disabled}
             // width={field?.width || "w-full"}
           />
@@ -57,10 +55,14 @@ export default function DynamicForm({
         return (
           <Dropdown
             label={field.label}
-            options={typeof(field.options) === "function" ? field.options(formData): field.options}
+            options={
+              typeof field.options === "function"
+                ? field.options(formData)
+                : field.options
+            }
             multi={field.multiple}
             placeholder={field.label}
-            onChange={(opt) => handleChange(field,opt)}
+            onChange={(opt) => handleChange(field, opt)}
             selected={value}
             error={!!error}
           />
@@ -75,6 +77,20 @@ export default function DynamicForm({
             description={field.description}
             disabled={field.disabled}
             error={!!error}
+          />
+        );
+      case "image":
+        return (
+          <DocumentUploader
+            label={field?.label}
+            accept={field?.accept}
+            maxFiles={field?.maxFiles}
+            maxSizeMB={field?.maxSize}
+            imageConfig={field?.config}
+            onChange={(file) =>
+              handleChange(field, file, formData, setFormData)
+            }
+            url={value}
           />
         );
 
@@ -95,7 +111,9 @@ export default function DynamicForm({
             {section.fields.map((field) => (
               <div
                 key={field.id}
-                className={`${getResponsiveClasses(field.width)} flex flex-col gap-1`}
+                className={`${getResponsiveClasses(
+                  field.width
+                )} flex flex-col gap-1`}
                 // className={`col-span-12 md:col-span-6 lg:col-span-4 flex flex-col gap-1`}
               >
                 <label className="text-sm font-medium">
@@ -103,7 +121,7 @@ export default function DynamicForm({
                   {field.mandatory && <span className="text-red-500">*</span>}
                 </label>
 
-                {renderField(field,errors?.[field.id] || "")}
+                {renderField(field, errors?.[field.id] || "")}
               </div>
             ))}
           </div>

@@ -1,3 +1,4 @@
+import { generateImageSignedUrl } from "../api/upload.api";
 import { EMPLOYMNENT_TYPE, GENDER, BLOOD_GROUP, MARITAL_STATUS, ROLES, STATUS, TEACHER_DESIGNATION } from "../utils/constants/globalConstants";
 import { Country, State, City } from "country-state-city"
 export const teacherSchema = [
@@ -14,7 +15,34 @@ export const teacherSchema = [
             { "id": "teacher_nationality", "name": "Nationality", "value": "Indian", "type": "text", "mandatory": false, "width": { "tablet": 4, "desktop": 4, "mobile": 12 } },
             { "id": "teacher_religion", "name": "Religion", "value": "", "type": "text", "mandatory": false, "width": { "tablet": 4, "desktop": 4, "mobile": 12 } },
             { "id": "teacher_marital_status", "name": "Marital Status", "value": "", "type": "dropdown", "options": MARITAL_STATUS, "mandatory": false, "width": { "tablet": 4, "desktop": 4, "mobile": 12 } },
-            { "id": "teacher_photo_url", "name": "Teacher Photo", "value": "", "type": "file", "mandatory": false, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } }
+            {
+                "id": "teacher_photo_url", "name": "Teacher Photo", "value": "", "type": "image", "accept": ["image/jpeg", "image/png", "image/webp"], maxSize: 2, config: {
+                    minWidth: 300,
+                    minHeight: 300,
+                    maxWidth: 2000,
+                    maxHeight: 2000,
+                }, 
+                maxFiles:1,
+                fn:async (file,state,setState)=>{
+                    if(!file){
+                        setState((prev) => ({...prev,teacher_photo_url:""}))
+                        return
+                    }
+                    const payload = {
+                        file,
+                        entity:"teacher",
+                        mimeType:file.type,
+                        fileSize : file.size,
+                        entityId:state?.teacher_employee_code
+                    }
+                    
+
+                    const {original} = await generateImageSignedUrl(payload)
+                    setState((prev) => ({...prev,teacher_photo_url:original}))
+
+                },
+                "mandatory": false, "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+            }
         ]
     },
 
