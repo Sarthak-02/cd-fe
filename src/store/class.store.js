@@ -34,21 +34,21 @@ export const useClassStore = create((set, get) => ({
     }
   },
 
-  createClass: async (payload) => {
+  createClass: async (payload,campus_id) => {
     try {
       await createClassApi(payload);
-      await get().fetchClasses();
+      await get().fetchClasses(campus_id);
     } catch (err) {
       set({ error: err });
     }
   },
 
-  updateClass: async (id, payload) => {
+  updateClass: async (payload,campus_id) => {
     try {
-      await updateClassApi(id, payload);
+      await updateClassApi(payload);
       await Promise.all([
-        get().fetchClasses(),
-        get().fetchClassDetails(id)
+        get().fetchClasses(campus_id),
+        // get().fetchClassDetails(id)
       ]);
     } catch (err) {
       set({ error: err });

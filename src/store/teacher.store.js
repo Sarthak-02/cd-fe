@@ -5,6 +5,7 @@ import {
   createTeacherApi,
   updateTeacherApi
 } from "../api/teacher.api";
+import { createFullName } from "../utils/utility_functions/updateSchema";
 
 export const useTeacherStore = create((set, get) => ({
   teachers: [],
@@ -17,8 +18,11 @@ export const useTeacherStore = create((set, get) => ({
   fetchTeachers: async (campus_id) => {
     set({ loading: true, error: null });
     try {
-      const resp = await getAllTeacherApi(campus_id);
-      set({ teachers: resp.data, loading: false });
+      let resp = await getAllTeacherApi(campus_id);
+      resp = resp.data
+      const teachers = resp.map((teacher) => ({ ...teacher, fullname: createFullName(teacher.teacher_first_name,teacher.teacher_middle_name,teacher.teacher_last_name)}))
+
+      set({ teachers, loading: false });
     } catch (err) {
       set({ error: err, loading: false });
     }
@@ -34,21 +38,20 @@ export const useTeacherStore = create((set, get) => ({
     }
   },
 
-  createTeacher: async (payload) => {
+  createTeacher: async (payload,campus_id) => {
     try {
       await createTeacherApi(payload);
-      await get().fetchTeachers();
+      await get().fetchTeachers(campus_id);
     } catch (err) {
       set({ error: err });
     }
   },
 
-  updateTeacher: async (id, payload) => {
+  updateTeacher: async ( payload,campus_id) => {
     try {
-      await updateTeacherApi(id, payload);
+      await updateTeacherApi( payload);
       await Promise.all([
-        get().fetchTeachers(),
-        get().fetchTeacherDetails(id)
+        get().fetchTeachers(campus_id),
       ]);
     } catch (err) {
       set({ error: err });

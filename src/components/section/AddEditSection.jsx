@@ -34,6 +34,7 @@ export default function AddEditSection({
   selectedSection,
   classes = [],
   handleAddEditModel,
+  campus_id
 }) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
@@ -68,12 +69,12 @@ export default function AddEditSection({
 
   function handleUpdateSection() {
     const payload = createPayload(formData);
-    updateSection(payload);
+    updateSection(payload,campus_id);
   }
 
   function handleCreateSection() {
     const payload = createPayload(formData);
-    createSection(payload);
+    createSection(payload,campus_id);
   }
 
   function onSubmit() {

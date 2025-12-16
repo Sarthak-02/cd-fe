@@ -1,5 +1,5 @@
 import { Country , State , City } from "country-state-city"
-import { DAYS , CAMPUS_TYPES , LANGUAGES } from "../utils/constants/globalConstants"
+import { DAYS , CAMPUS_TYPES , LANGUAGES, EMAIL_REGEX, PHONE_REGEX } from "../utils/constants/globalConstants"
 
 export const campusSchema = [
     {
@@ -97,12 +97,14 @@ export const campusSchema = [
           "name": "Email",
           "value": "",
           "type": "text",
+          "regex": EMAIL_REGEX,
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }
         },
         {
           "id": "phone_landline",
           "name": "Phone (Landline)",
+          "regex":PHONE_REGEX,
           "value": "",
           "type": "text",
           "mandatory": false,
@@ -112,6 +114,7 @@ export const campusSchema = [
           "id": "mobile_admin",
           "name": "Mobile (Principal / Admin)",
           "value": "",
+          "regex":PHONE_REGEX,
           "type": "text",
           "mandatory": true,
           "width": { "tablet": 4, "desktop": 4, "mobile": 12 }

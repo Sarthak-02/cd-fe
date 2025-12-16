@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
-import DynamicForm from "../../ui-components/DynamicForm";
 import { classSchema } from "../../schemas/class.schema";
-import { validateForm } from "../../utils/validators/form_validation";
-import { updateSchema } from "../../utils/utility_functions/updateSchema";
-import {
-  createClassApi,
-  getClassApi,
-  updateClassApi,
-} from "../../api/class.api";
 import { useClassStore } from "../../store/class.store";
-import { MODE } from "../../utils/constants/globalConstants";
+import DynamicForm from "../../ui-components/DynamicForm";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
+import { MODE } from "../../utils/constants/globalConstants";
+import { updateSchema } from "../../utils/utility_functions/updateSchema";
+import { validateForm } from "../../utils/validators/form_validation";
 
 function createPayload(form) {
   const { class_id, class_name, class_type, campus_id, ...extras } = form;
@@ -61,13 +56,13 @@ export default function AddEditClass({
   function handleUpdateClass() {
     const payload = createPayload(formData);
 
-    updateClass(payload);
+    updateClass(payload,campus_id);
   }
 
   function handleCreateClass() {
     const payload = { ...createPayload(formData), campus_id };
 
-    createClass(payload);
+    createClass(payload,campus_id);
   }
 
   function onSubmit() {

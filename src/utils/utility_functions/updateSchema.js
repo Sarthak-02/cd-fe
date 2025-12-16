@@ -25,3 +25,8 @@ export const updateSchema = (schema, updatesMap) => {
     })
   }));
 };
+
+
+export function createFullName(firstname , middlename,lastname){
+  return [firstname,middlename,lastname].filter(Boolean).join(" ")
+}

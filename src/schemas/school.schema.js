@@ -1,4 +1,4 @@
-import { SCHOOL_CATEGORIES, SCHOOL_TYPE } from "../utils/constants/globalConstants";
+import { EMAIL_OR_PHONE_REGEX, EMAIL_REGEX, SCHOOL_CATEGORIES, SCHOOL_TYPE } from "../utils/constants/globalConstants";
 
 export const schoolSchema = [
     {
@@ -151,6 +151,7 @@ export const schoolSchema = [
         {
           "id": "principal_email",
           "name": "Principal Email",
+          "regex": EMAIL_REGEX,
           "value": "",
           "type": "text",
           "mandatory": true,
@@ -159,6 +160,7 @@ export const schoolSchema = [
         {
           "id": "admin_contact",
           "name": "Admin / IT Contact",
+          "regex":EMAIL_OR_PHONE_REGEX,
           "value": "",
           "type": "text",
           "mandatory": true,

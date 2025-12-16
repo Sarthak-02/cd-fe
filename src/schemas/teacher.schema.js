@@ -1,5 +1,5 @@
 import { generateImageSignedUrl } from "../api/upload.api";
-import { EMPLOYMNENT_TYPE, GENDER, BLOOD_GROUP, MARITAL_STATUS, ROLES, STATUS, TEACHER_DESIGNATION } from "../utils/constants/globalConstants";
+import { EMPLOYMNENT_TYPE, GENDER, BLOOD_GROUP, MARITAL_STATUS, ROLES, STATUS, TEACHER_DESIGNATION, EMAIL_REGEX, PHONE_REGEX } from "../utils/constants/globalConstants";
 import { Country, State, City } from "country-state-city"
 export const teacherSchema = [
     {
@@ -16,7 +16,8 @@ export const teacherSchema = [
             { "id": "teacher_religion", "name": "Religion", "value": "", "type": "text", "mandatory": false, "width": { "tablet": 4, "desktop": 4, "mobile": 12 } },
             { "id": "teacher_marital_status", "name": "Marital Status", "value": "", "type": "dropdown", "options": MARITAL_STATUS, "mandatory": false, "width": { "tablet": 4, "desktop": 4, "mobile": 12 } },
             {
-                "id": "teacher_photo_url", "name": "Teacher Photo", "value": "", "type": "image", "accept": ["image/jpeg", "image/png", "image/webp"], maxSize: 2, config: {
+                "id": "teacher_photo_url", "name": "Teacher Photo", "value": "", "type": "image", 
+                "accept": ["image/jpeg", "image/png", "image/webp"], maxSize: 2, config: {
                     minWidth: 300,
                     minHeight: 300,
                     maxWidth: 2000,
@@ -49,8 +50,8 @@ export const teacherSchema = [
     {
         "section_title": "Contact Information",
         "fields": [
-            { "id": "teacher_email", "name": "Email", "value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } },
-            { "id": "teacher_phone", "name": "Phone Number", "value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } },
+            { "id": "teacher_email", "name": "Email", "regex":EMAIL_REGEX,"value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } },
+            { "id": "teacher_phone", "name": "Phone Number", "regex":PHONE_REGEX, "value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } },
             { "id": "teacher_address_line", "name": "Address Line", "value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 6, "mobile": 12 } },
             {
                 "id": "teacher_city", "name": "City", "value": "", "type": "dropdown", "mandatory": true, options: function (form) {
@@ -105,7 +106,7 @@ export const teacherSchema = [
         "section_title": "Emergency Contact",
         "fields": [
             { "id": "teacher_emergency_contact_name", "name": "Emergency Contact Name", "value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } },
-            { "id": "teacher_emergency_contact_phone", "name": "Emergency Contact Phone", "value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } }
+            { "id": "teacher_emergency_contact_phone", "name": "Emergency Contact Phone", "regex":PHONE_REGEX, "value": "", "type": "text", "mandatory": true, "width": { "tablet": 6, "desktop": 4, "mobile": 12 } }
         ]
     },
 

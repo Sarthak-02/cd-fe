@@ -212,3 +212,8 @@ export const SCHOOL_TYPE = [
   { value: "ib", label: "IB" },
   { value: "igcse", label: "IGCSE" }
 ]
+
+
+export const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+export const PHONE_REGEX = /^(?:\+91|0)?[6-9]\d{9}$/;
+export const EMAIL_OR_PHONE_REGEX = /^(?:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|(?:\+91|0)?[6-9]\d{9})$/;

@@ -24,9 +24,9 @@ export const classSchema = [
           "id": "class_description",
           "name": "Description",
           "value": "",
-          "type": "textarea",
+          "type": "text",
           "mandatory": false,
-          "width": { "tablet": 12, "desktop": 12, "mobile": 12 }
+          "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
         },
         {
             "id": "class_room_no",

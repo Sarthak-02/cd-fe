@@ -99,12 +99,12 @@ export default function AddEditStudent({
   // -----------------------
   function handleUpdateStudent() {
     const payload = createPayload(formData);
-    updateStudent(payload);
+    updateStudent(payload,campus_id);
   }
 
   function handleCreateStudent() {
     const payload = { ...createPayload(formData), campus_id };
-    createStudent(payload);
+    createStudent(payload,campus_id);
   }
 
   function onSubmit() {

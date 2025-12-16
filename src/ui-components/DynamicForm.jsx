@@ -4,6 +4,7 @@ import Dropdown from "./Dropdown";
 import Button from "./Button";
 import CheckBox from "./CheckBox";
 import DocumentUploader from "./DocumentUploader";
+import TextArea from "./TextArea";
 
 function getResponsiveClasses(width = {}) {
   const mobile = width.mobile || 12;
@@ -93,6 +94,15 @@ export default function DynamicForm({
             url={value}
           />
         );
+      case "textarea":
+        return(
+          <TextArea 
+            label={field?.label}
+            value = {value}
+            markdown={field?.markdown ?? false}
+            onChange={(val) => handleChange(field,val)}
+          />
+        )
 
       default:
         return <div>Unsupported field type</div>;

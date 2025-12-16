@@ -34,21 +34,20 @@ export const useSectionStore = create((set, get) => ({
     }
   },
 
-  createSection: async (payload) => {
+  createSection: async (payload,campus_id) => {
     try {
       await createSectionApi(payload);
-      await get().fetchSections();
+      await get().fetchSections(campus_id);
     } catch (err) {
       set({ error: err });
     }
   },
 
-  updateSection: async (id, payload) => {
+  updateSection: async (payload,campus_id) => {
     try {
-      await updateSectionApi(id, payload);
+      await updateSectionApi(payload);
       await Promise.all([
-        get().fetchSections(),
-        get().fetchSectionDetails(id)
+        get().fetchSections(campus_id),
       ]);
     } catch (err) {
       set({ error: err });

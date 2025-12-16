@@ -53,6 +53,7 @@ export default function Section() {
             mode={mode}
             classes={classes}
             handleAddEditModel={handleAddEditModel}
+            campus_id = {selectedCampus}
           />
         </Dialog>
       ) : (

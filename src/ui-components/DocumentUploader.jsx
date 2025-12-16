@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { convertImageToWebp } from "../utils/convertImageToWebp";
 
 export default function DocumentUploader({
-  label = "Upload File",
+  label,
   accept = [],
   maxSizeMB,
   maxFiles = 1,

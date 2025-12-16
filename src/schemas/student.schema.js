@@ -1,4 +1,5 @@
-import { GENDER, BLOOD_GROUP, RESERVATION_CATEGORY, STATUS } from "../utils/constants/globalConstants";
+import { generateImageSignedUrl } from "../api/upload.api";
+import { GENDER, BLOOD_GROUP, RESERVATION_CATEGORY, STATUS, EMAIL_REGEX, PHONE_REGEX } from "../utils/constants/globalConstants";
 import { Country, State, City } from "country-state-city";
 
 export const studentSchema = [
@@ -19,7 +20,36 @@ export const studentSchema = [
             { id: "student_dob", name: "Date of Birth", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
             { id: "student_blood_group", name: "Blood Group", value: "", type: "dropdown", options: BLOOD_GROUP, mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
 
-            { id: "student_photo_url", name: "Student Photo", value: "", type: "file", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } }
+            {
+                id: "student_photo_url", name: "Student Photo", value: "", type: "image", mandatory: false,
+                // label:"Studen Photo",
+                "accept": ["image/jpeg", "image/png", "image/webp"], maxSize: 2, config: {
+                    minWidth: 300,
+                    minHeight: 300,
+                    maxWidth: 2000,
+                    maxHeight: 2000,
+                },
+                maxFiles: 1,
+                fn: async (file, state, setState) => {
+                    if (!file) {
+                        setState((prev) => ({ ...prev, student_photo_url: "" }))
+                        return
+                    }
+                    const payload = {
+                        file,
+                        entity: "student",
+                        mimeType: file.type,
+                        fileSize: file.size,
+                        entityId: state?.teacher_employee_code
+                    }
+
+
+                    const { original } = await generateImageSignedUrl(payload)
+                    setState((prev) => ({ ...prev, teacher_photo_url: original }))
+
+                },
+                width: { tablet: 6, desktop: 4, mobile: 12 }
+            }
         ]
     },
 
@@ -63,8 +93,8 @@ export const studentSchema = [
     {
         section_title: "Student Contact Information",
         fields: [
-            { id: "student_email", name: "Student Email", value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 6, mobile: 12 } },
-            { id: "student_phone", name: "Student Phone", value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 6, mobile: 12 } }
+            { id: "student_email", name: "Student Email", value: "",regex:EMAIL_REGEX, type: "text", mandatory: false, width: { tablet: 6, desktop: 6, mobile: 12 } },
+            { id: "student_phone", name: "Student Phone", value: "",regex:PHONE_REGEX, type: "text", mandatory: false, width: { tablet: 6, desktop: 6, mobile: 12 } }
         ]
     },
 
@@ -80,8 +110,8 @@ export const studentSchema = [
             { id: "student_guardian_name", name: "Guardian Name", value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
             { id: "student_guardian_relation", name: "Guardian Relation", value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
 
-            { id: "student_guardian_email", name: "Guardian Email", value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
-            { id: "student_guardian_phone", name: "Guardian Phone", value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 4, mobile: 12 } }
+            { id: "student_guardian_email", name: "Guardian Email", regex:EMAIL_REGEX,value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
+            { id: "student_guardian_phone", name: "Guardian Phone", regex:PHONE_REGEX,value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 4, mobile: 12 } }
         ]
     },
 
@@ -142,7 +172,7 @@ export const studentSchema = [
         section_title: "Emergency & Medical Information",
         fields: [
             { id: "student_emergency_contact_name", name: "Emergency Contact Name", value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 4, mobile: 12 } },
-            { id: "student_emergency_contact_phone", name: "Emergency Contact Phone", value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 4, mobile: 12 } },
+            { id: "student_emergency_contact_phone", name: "Emergency Contact Phone", regex:PHONE_REGEX, value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 4, mobile: 12 } },
             { id: "student_medical_conditions", name: "Medical Conditions", value: "", type: "textarea", mandatory: false, width: { tablet: 12, desktop: 12, mobile: 12 } }
         ]
     },
@@ -153,7 +183,7 @@ export const studentSchema = [
     {
         section_title: "Remarks & Additional Info",
         fields: [
-            { id: "student_remarks", name: "Remarks", value: "", type: "textarea", mandatory: false, width: { tablet: 12, desktop: 12, mobile: 12 } }
+            { id: "student_remarks", name: "Remarks", value: "", type: "textarea", mandatory: false, markdown: true, width: { tablet: 12, desktop: 12, mobile: 12 } }
         ]
     }
 ];

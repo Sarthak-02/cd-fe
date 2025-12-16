@@ -14,10 +14,10 @@ export const useStudentStore = create((set, get) => ({
   studentDetails: null,
   loadingStudentDetails: false,
 
-  fetchStudents: async () => {
+  fetchStudents: async (campus_id) => {
     set({ loading: true, error: null });
     try {
-      const resp = await getAllStudentApi();
+      const resp = await getAllStudentApi(campus_id);
       set({ students: resp.data, loading: false });
     } catch (err) {
       set({ error: err, loading: false });
@@ -34,21 +34,20 @@ export const useStudentStore = create((set, get) => ({
     }
   },
 
-  createStudent: async (payload) => {
+  createStudent: async (payload,campus_id) => {
     try {
       await createStudentApi(payload);
-      await get().fetchStudents();
+      await get().fetchStudents(campus_id);
     } catch (err) {
       set({ error: err });
     }
   },
 
-  updateStudent: async (id, payload) => {
+  updateStudent: async (payload,campus_id) => {
     try {
-      await updateStudentApi(id, payload);
+      await updateStudentApi(payload);
       await Promise.all([
-        get().fetchStudents(),
-        get().fetchStudentDetails(id)
+        get().fetchStudents(campus_id),
       ]);
     } catch (err) {
       set({ error: err });

@@ -40,8 +40,8 @@ export default function TeacherListing({
               return (
                 <Card
                   key={teacher.teacher_id}
-                  title={teacher.teacher_name}
-                  subtitle={teacher.teacher_id}
+                  title={teacher.fullname}
+                  subtitle={teacher.teacher_employee_code}
                   onClick={() => handleSelectTeacher(teacher.teacher_id)}
                 />
               );
