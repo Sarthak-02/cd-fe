@@ -28,7 +28,7 @@ export default function Layout() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // desktop sidebar collapse
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   
 
