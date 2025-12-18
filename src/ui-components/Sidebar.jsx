@@ -1,9 +1,7 @@
 import React from "react";
-import { useAuth } from "../store/auth.store";
 
 export default function Sidebar({ collapsed, toggleCollapse, currentPage, onSelect, paths,handleLogout }) {
 
-  const {logout} = useAuth()
   return (
     <div
       className={`
@@ -27,7 +25,7 @@ export default function Sidebar({ collapsed, toggleCollapse, currentPage, onSele
           onClick={toggleCollapse}
           className="text-gray-300 hover:text-white"
         >
-          {collapsed ? (
+          {!collapsed ? (
             <svg width="20" height="20" fill="none" stroke="currentColor">
               <path strokeWidth="2" d="M15 6l-6 6 6 6" />
             </svg>
@@ -62,7 +60,7 @@ export default function Sidebar({ collapsed, toggleCollapse, currentPage, onSele
       {/* Logout Button (Bottom) */}
       <div className="p-4 border-t border-gray-700">
         <button
-          onClick={() => onSelect("Logout", "/logout")}
+          onClick={handleLogout}
           className="flex items-center w-full px-4 py-2 rounded-md hover:bg-gray-700 transition"
         >
           <span className="text-gray-200">

@@ -7,7 +7,9 @@ const initialValue = {
   username: "",
   isadmin: false,
   site_permissions: [],
-  page_permissions: []
+  page_permissions: [],
+  active_school: {},
+  active_campus: {}
 };
 
 export const useAuth = create(
@@ -18,6 +20,18 @@ export const useAuth = create(
       // Set logged-in user
       setAuth: (newUser) => set({ auth: newUser }),
 
+      setActiveSchool: (schoolValue) =>
+        set({
+          auth: {
+            ...get().auth,
+            active_school: get().auth.site_permissions.find(
+              (site) => site.value === schoolValue
+            ) || {}
+          }
+        }),
+
+      setActiveCampus: (campus) =>
+        set({ auth: { ...get().auth, active_campus: campus } }),
       // ------------------------
       // LOGOUT USER
       // ------------------------

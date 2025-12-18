@@ -15,7 +15,12 @@ export default function LoginPage() {
 
   function handleLogin() {
     loginApi({ userid, password }).then((resp) => {
-      setAuth(resp?.data);
+     
+      let userDetails = resp?.data || {}
+      const {site_permissions = []} = userDetails
+      userDetails['active_school'] = site_permissions.length === 1 ? site_permissions[0] : {}
+      
+      setAuth(userDetails);
       localStorage.setItem("token", true);
       navigate("/");
     });

@@ -25,7 +25,7 @@ export const routes = [
       </ProtectedRoute>
     ),
     children: [
-      
+      { index: true, element: <Home /> },
       { path: "school", element: <School /> },
       {path:"campus", element: <Campus />},
       {path:"class", element: <Class />},
