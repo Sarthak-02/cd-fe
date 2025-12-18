@@ -6,14 +6,14 @@ import WelcomeGuide from "../components/WelcomeGuide";
 
 export default function Home() {
   const {
-    auth: { site_permissions, active_school },
+    auth: { site_permissions, active_school = {} },
     setActiveSchool,
   } = useAuth();
 
 
   return (
     <>
-      {Object.keys(active_school).length > 0 ? (
+      {active_school && Object.keys(active_school)?.length > 0 ? (
         <div>
           <WelcomeGuide />
         </div>
