@@ -5,7 +5,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Import your translation files
 import enTranslation from './locales/en/translation.json';
-import frTranslation from './locales/fr/translation.json';
+import hiTransalation from './locales/hi/translation.json';
 
 i18n
   .use(LanguageDetector) // Detect user language
@@ -15,9 +15,10 @@ i18n
       en: {
         translation: enTranslation,
       },
-      fr: {
-        translation: frTranslation,
+      hi: {
+        translation: hiTransalation,
       },
+      
     },
     fallbackLng: 'en', // Fallback language if detection fails
     debug: true, // Enable debug mode for development

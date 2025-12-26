@@ -5,6 +5,7 @@ import Button from "./Button";
 import CheckBox from "./CheckBox";
 import DocumentUploader from "./DocumentUploader";
 import TextArea from "./TextArea";
+import { useTranslation } from "react-i18next";
 
 function getResponsiveClasses(width = {}) {
   const mobile = width.mobile || 12;
@@ -22,6 +23,7 @@ export default function DynamicForm({
   errors = {},
 }) {
 
+  const { t } = useTranslation();
   const handleChange = (field, value, ...extras) => {
     if (field.fn) {
       field.fn(value, ...extras);
@@ -41,7 +43,7 @@ export default function DynamicForm({
       case "password":
         return (
           <TextField
-            label={field.label}
+            label={t(field.label)}
             type={field.type}
             value={value}
             onChange={(e) => handleChange(field, e.target.value)}
@@ -56,7 +58,7 @@ export default function DynamicForm({
       case "dropdown":
         return (
           <Dropdown
-            label={field.label}
+            label={t(field.label)}
             options={
               typeof field.options === "function"
                 ? field.options(formData)
@@ -75,8 +77,8 @@ export default function DynamicForm({
           <CheckBox
             checked={value}
             onChange={(val) => handleChange(field, val)}
-            title={field.name}
-            description={field.description}
+            title={t(field.name)}
+            description={t(field.description)}
             disabled={field.disabled}
             error={!!error}
           />
@@ -84,7 +86,7 @@ export default function DynamicForm({
       case "image":
         return (
           <DocumentUploader
-            label={field?.label}
+            label={t(field?.label)}
             accept={field?.accept}
             maxFiles={field?.maxFiles}
             maxSizeMB={field?.maxSize}
@@ -98,7 +100,7 @@ export default function DynamicForm({
       case "textarea":
         return(
           <TextArea 
-            label={field?.label}
+            label={t(field?.label)}
             value = {value}
             markdown={field?.markdown ?? false}
             onChange={(val) => handleChange(field,val)}
@@ -107,7 +109,7 @@ export default function DynamicForm({
       case "button":
         return(
           <Button onClick={(value) => handleChange(field,value,formData,setFormData)}>
-            {field?.label}
+            {t(field?.label)}
           </Button>  
         )
 
@@ -121,7 +123,7 @@ export default function DynamicForm({
       {schema.map((section, i) => (
         <div key={i} className="space-y-4">
           {section.section_title && (
-            <h3 className="text-lg font-semibold">{section.section_title}</h3>
+            <h3 className="text-lg font-semibold">{t(section.section_title)}</h3>
           )}
 
           <div className="grid grid-cols-12 gap-4">
@@ -134,7 +136,7 @@ export default function DynamicForm({
                 // className={`col-span-12 md:col-span-6 lg:col-span-4 flex flex-col gap-1`}
               >
                 <label className="text-sm font-medium">
-                  {field.name}
+                  {t(field.name)}
                   {field.mandatory && <span className="text-red-500">*</span>}
                 </label>
 

@@ -1,0 +1,224 @@
+{
+    "campus": {
+      "sections": {
+        "basicInformation": "मूल परिसर जानकारी",
+        "contactAddress": "संपर्क और पता विवरण",
+        "geoLocation": "भौगोलिक स्थान",
+        "configuration": "कॉन्फ़िगरेशन विवरण"
+      },
+      "fields": {
+        "campusName": "परिसर का नाम",
+        "campusId": "परिसर कोड / आईडी",
+        "campusType": "परिसर प्रकार",
+  
+        "address": "पता",
+        "city": "शहर",
+        "state": "राज्य / प्रांत",
+        "country": "देश",
+        "pincode": "पिनकोड / ज़िप कोड",
+  
+        "email": "ईमेल",
+        "phoneLandline": "फ़ोन (लैंडलाइन)",
+        "mobileAdmin": "मोबाइल (प्रधानाचार्य / प्रशासन)",
+  
+        "latitude": "अक्षांश",
+        "longitude": "देशांतर",
+        "radius": "त्रिज्या",
+  
+        "showMap": "मानचित्र पर स्थान चुनें",
+  
+        "workingDays": "कार्य दिवस",
+        "campusTiming": "परिसर समय",
+        "timezone": "समय क्षेत्र",
+        "defaultLanguage": "डिफ़ॉल्ट भाषा"
+      },
+      "placeholders": {
+        "campusTiming": "सुबह 8:30 – दोपहर 2:30"
+      }
+    },
+  
+    "class": {
+      "sections": {
+        "classInformation": "कक्षा जानकारी",
+        "classSettings": "कक्षा सेटिंग्स",
+        "classCategorization": "कक्षा वर्गीकरण"
+      },
+      "fields": {
+        "className": "कक्षा का नाम",
+        "shortName": "संक्षिप्त नाम",
+        "description": "विवरण",
+        "roomNumber": "कक्ष संख्या",
+        "classTeacher": "कक्षा शिक्षक",
+        "hasSections": "क्या अनुभाग हैं",
+        "maxStudents": "अधिकतम छात्र संख्या",
+        "classType": "कक्षा प्रकार",
+        "stream": "धारा",
+        "shift": "शिफ्ट"
+      }
+    },
+  
+    "school": {
+      "sections": {
+        "basicInformation": "मूल विद्यालय जानकारी",
+        "administrationContacts": "विद्यालय प्रशासन / संपर्क",
+        "multiCampus": "बहु-परिसर कॉन्फ़िगरेशन",
+        "administrativeInformation": "प्रशासनिक जानकारी"
+      },
+      "fields": {
+        "schoolName": "विद्यालय का नाम",
+        "schoolId": "विद्यालय कोड / आईडी",
+        "schoolType": "विद्यालय प्रकार",
+        "motto": "उद्देश्य वाक्य / टैगलाइन",
+        "website": "वेबसाइट यूआरएल",
+  
+        "principalName": "प्रधानाचार्य का नाम",
+        "principalEmail": "प्रधानाचार्य का ईमेल",
+        "adminContact": "प्रशासन / आईटी संपर्क",
+  
+        "hasCampus": "क्या विद्यालय के एक से अधिक परिसर हैं?",
+        "defaultCampus": "डिफ़ॉल्ट परिसर का नाम",
+  
+        "affiliationNumber": "मान्यता संख्या",
+        "registrationNumber": "पंजीकरण संख्या",
+        "foundedYear": "स्थापना वर्ष",
+        "schoolCategory": "विद्यालय श्रेणी"
+      }
+    },
+  
+    "section": {
+      "sections": {
+        "sectionInformation": "अनुभाग जानकारी",
+        "capacityAllocation": "क्षमता और आवंटन"
+      },
+      "fields": {
+        "sectionName": "अनुभाग का नाम",
+        "shortName": "संक्षिप्त नाम",
+        "class": "कक्षा",
+        "classTeacher": "कक्षा शिक्षक",
+        "maxStudents": "अधिकतम छात्र संख्या",
+        "roomNumber": "कक्ष संख्या"
+      }
+    },
+  
+    "student": {
+      "sections": {
+        "personalDetails": "व्यक्तिगत विवरण",
+        "academicInformation": "शैक्षणिक जानकारी",
+        "studentContact": "छात्र संपर्क जानकारी",
+        "guardianDetails": "अभिभावक विवरण",
+        "guardianAddress": "अभिभावक का पता",
+        "emergencyMedical": "आपातकालीन एवं चिकित्सा जानकारी",
+        "remarks": "टिप्पणियाँ एवं अतिरिक्त जानकारी"
+      },
+      "fields": {
+        "admissionNumber": "प्रवेश संख्या",
+        "rollNumber": "रोल नंबर",
+        "firstName": "पहला नाम",
+        "middleName": "मध्य नाम",
+        "lastName": "अंतिम नाम",
+        "gender": "लिंग",
+        "dateOfBirth": "जन्म तिथि",
+        "bloodGroup": "रक्त समूह",
+        "studentPhoto": "छात्र फोटो",
+  
+        "admissionDate": "प्रवेश तिथि",
+        "class": "कक्षा",
+        "section": "अनुभाग",
+        "houseName": "हाउस का नाम",
+        "category": "श्रेणी",
+        "status": "स्थिति",
+  
+        "studentEmail": "छात्र ईमेल",
+        "studentPhone": "छात्र फ़ोन",
+  
+        "fatherName": "पिता का नाम",
+        "motherName": "माता का नाम",
+        "guardianName": "अभिभावक का नाम",
+        "guardianRelation": "अभिभावक संबंध",
+        "guardianEmail": "अभिभावक ईमेल",
+        "guardianPhone": "अभिभावक फ़ोन",
+  
+        "address": "पता",
+        "city": "शहर",
+        "state": "राज्य",
+        "country": "देश",
+        "pincode": "पिनकोड",
+  
+        "emergencyContactName": "आपातकालीन संपर्क नाम",
+        "emergencyContactPhone": "आपातकालीन संपर्क फ़ोन",
+        "medicalConditions": "चिकित्सा स्थिति",
+  
+        "remarks": "टिप्पणियाँ"
+      }
+    },
+  
+    "teacher": {
+      "sections": {
+        "personalDetails": "व्यक्तिगत विवरण",
+        "contactInformation": "संपर्क जानकारी",
+        "professionalDetails": "व्यावसायिक विवरण",
+        "systemAccess": "सिस्टम एक्सेस",
+        "emergencyContact": "आपातकालीन संपर्क",
+        "remarks": "टिप्पणियाँ एवं अतिरिक्त जानकारी"
+      },
+      "fields": {
+        "employeeCode": "कर्मचारी कोड",
+        "firstName": "पहला नाम",
+        "middleName": "मध्य नाम",
+        "lastName": "अंतिम नाम",
+        "gender": "लिंग",
+        "dateOfBirth": "जन्म तिथि",
+        "bloodGroup": "रक्त समूह",
+        "nationality": "राष्ट्रीयता",
+        "religion": "धर्म",
+        "maritalStatus": "वैवाहिक स्थिति",
+        "teacherPhoto": "शिक्षक फोटो",
+  
+        "email": "ईमेल",
+        "phone": "फ़ोन नंबर",
+        "address": "पता",
+        "city": "शहर",
+        "state": "राज्य",
+        "country": "देश",
+        "pincode": "पिनकोड",
+  
+        "qualification": "योग्यता",
+        "experienceYears": "अनुभव (वर्ष)",
+        "subjects": "विषय",
+        "designation": "पद",
+        "department": "विभाग",
+        "employmentType": "नियोजन प्रकार",
+        "dateOfJoining": "जॉइन करने की तिथि",
+        "dateOfLeaving": "छोड़ने की तिथि",
+  
+        "linkedUser": "लिंक किया गया उपयोगकर्ता",
+        "role": "भूमिका",
+        "status": "स्थिति",
+  
+        "emergencyContactName": "आपातकालीन संपर्क नाम",
+        "emergencyContactPhone": "आपातकालीन संपर्क फ़ोन",
+  
+        "remarks": "टिप्पणियाँ"
+      }
+    },
+  
+    "user": {
+      "sections": {
+        "accountInformation": "उपयोगकर्ता खाता जानकारी",
+        "permissions": "अनुमतियाँ"
+      },
+      "fields": {
+        "username": "उपयोगकर्ता नाम",
+        "userId": "उपयोगकर्ता आईडी",
+        "password": "पासवर्ड",
+        "isAdmin": "क्या एडमिन है",
+        "sitePermissions": "साइट अनुमतियाँ",
+        "pagePermissions": "पेज अनुमतियाँ"
+      },
+      "site": {
+        "kv": "केंद्रीय विद्यालय",
+        "dav": "डीएवी"
+      }
+    }
+  }
+  
