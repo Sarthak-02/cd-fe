@@ -121,7 +121,47 @@ export const campusSchema = [
         }
       ]
     },
-  
+    {
+      section_title:"Geo Location",
+      fields:[
+        {
+          "id": "campus_latitude",
+          "name": "Latitude",
+          "value": "",
+          "type": "number",
+          "mandatory": true,
+          "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "campus_longitude",
+          "name": "Longitude",
+          "value": "",
+          "type": "number",
+          "mandatory": true,
+          "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "campus_radius",
+          "name": "Radius",
+          "value": "",
+          "type": "number",
+          "mandatory": true,
+          "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id":"campus_show_map",
+          "name":"",
+          "label":"Select Location on Map",
+          "value":false,
+          "type":"button",
+          "fn":(value,formData,setFormData)=>{
+            setFormData((prev) => ({...prev,campus_show_map:!prev.campus_show_map}))
+          },
+          "width": { "tablet": 6, "desktop":4, "mobile": 12 }
+        }
+        
+      ]
+    },
     {
       "section_title": "Configuration Details",
       "fields": [

@@ -12,6 +12,7 @@
   "dependencies": {
     "@countrystatecity/countries": "^1.0.4",
     "@countrystatecity/timezones": "^1.0.0",
+    "@react-google-maps/api": "^2.20.8",
     "@tailwindcss/vite": "^4.1.17",
     "@tanstack/react-query": "^5.90.9",
     "axios": "^1.13.2",

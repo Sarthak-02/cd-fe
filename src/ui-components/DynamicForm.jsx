@@ -21,6 +21,7 @@ export default function DynamicForm({
   handleSubmit,
   errors = {},
 }) {
+
   const handleChange = (field, value, ...extras) => {
     if (field.fn) {
       field.fn(value, ...extras);
@@ -102,6 +103,12 @@ export default function DynamicForm({
             markdown={field?.markdown ?? false}
             onChange={(val) => handleChange(field,val)}
           />
+        )
+      case "button":
+        return(
+          <Button onClick={(value) => handleChange(field,value,formData,setFormData)}>
+            {field?.label}
+          </Button>  
         )
 
       default:

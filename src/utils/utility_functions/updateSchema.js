@@ -30,3 +30,12 @@ export const updateSchema = (schema, updatesMap) => {
 export function createFullName(firstname , middlename,lastname){
   return [firstname,middlename,lastname].filter(Boolean).join(" ")
 }
+
+export const getFieldValuesMap = (schema) => {
+  return schema.reduce((acc, section) => {
+    section.fields.forEach(field => {
+      acc[field.id] = field.value;
+    });
+    return acc;
+  }, {});
+};
