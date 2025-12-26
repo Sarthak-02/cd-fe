@@ -10,12 +10,20 @@ import { useAuth } from "../store/auth.store";
 export default function Campus() {
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedCampus, setSelectedCampus] = useState("");
-  const [selectedSchool,setSelectedSchool] = useState("")
+
+  // const [selectedSchool,setSelectedSchool] = useState("")
 
   const { campuses, loading, fetchCampuses, clearCampusDetails } =
     useCampusStore();
 
-   const {auth:{site_permissions}} = useAuth()
+  const {
+    auth: {
+      site_permissions,
+      active_school: { value: selectedSchool },
+    },
+    setActiveSchool: setSelectedSchool,
+  } = useAuth();
+  
   // -----------------------------
   // Load all campuses on mount
   // -----------------------------

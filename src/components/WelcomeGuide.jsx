@@ -48,7 +48,7 @@ export default function WelcomeGuide() {
 
   const {auth} = useAuth()
   // Example placeholders (replace with real store)
-  const activeSchool =  auth.activeSchool;
+  const activeSchool =  auth.active_school;
   const isAdmin = auth.isadmin; // auth?.isadmin
 
   const visibleSteps = checklist.filter(

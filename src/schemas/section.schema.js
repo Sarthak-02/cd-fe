@@ -43,7 +43,7 @@ export const sectionSchema = [
           "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
         },
         {
-          "id": "max_students",
+          "id": "section_max_students",
           "name": "Max Students Allowed",
           "value": "",
           "type": "number",

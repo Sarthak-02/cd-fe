@@ -60,7 +60,7 @@ export const classSchema = [
           "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
         },
         {
-          "id": "max_students",
+          "id": "class_max_students",
           "name": "Maximum Students Allowed",
           "value": "",
           "type": "number",

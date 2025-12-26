@@ -177,28 +177,28 @@ export const schoolSchema = [
       ]
     },
   
-    // {
-    //   "section_title": "Multi-Campus Configuration",
-    //   "fields": [
-    //     {
-    //       "id": "has_campus",
-    //       "name": "Does the school have multiple campuses?",
-    //       "value": false,
-    //       "type": "checkbox",
-    //       "mandatory": true,
-    //       "width": { "tablet": 6, "desktop": 6, "mobile": 12 }
-    //     },
-    //     // {
-    //     //   "id": "default_campus",
-    //     //   "name": "Default Campus Name",
-    //     //   "value": "Main Campus",
-    //     //   "type": "text",
-    //     //   "mandatory": true,
-    //     //   "show_if": { "has_campus": false },
-    //     //   "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
-    //     // }
-    //   ]
-    // },
+    {
+      "section_title": "Multi-Campus Configuration",
+      "fields": [
+        {
+          "id": "has_campus",
+          "name": "Does the school have multiple campuses?",
+          "value": false,
+          "type": "checkbox",
+          "mandatory": true,
+          "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+        },
+        {
+          "id": "default_campus",
+          "name": "Default Campus Name",
+          "value": "Main Campus",
+          "type": "text",
+          "mandatory": true,
+          "show_if": { "has_campus": false },
+          "width": { "tablet": 6, "desktop": 4, "mobile": 12 }
+        }
+      ]
+    },
   
     // {
     //   "section_title": "Configuration Details",

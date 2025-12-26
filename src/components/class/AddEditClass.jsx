@@ -8,8 +8,34 @@ import { updateSchema } from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
 
 function createPayload(form) {
-  const { class_id, class_name, class_type, campus_id, ...extras } = form;
-  return { class_id, class_name, class_type, campus_id, extras };
+  const {
+    class_id,
+    class_name,
+    class_type,
+    campus_id,
+    class_short_name,
+    class_description,
+    class_room_no,
+    class_teacher_id,
+    class_has_sections,
+    class_stream,
+    class_shift,
+    ...extras
+  } = form;
+  return {
+    class_id,
+    class_name,
+    class_type,
+    campus_id,
+    class_short_name,
+    class_description,
+    class_room_no,
+    class_teacher_id,
+    class_has_sections,
+    class_stream,
+    class_shift,
+    extras,
+  };
 }
 
 const getSchemaUpdates = (mode) => {
@@ -56,13 +82,13 @@ export default function AddEditClass({
   function handleUpdateClass() {
     const payload = createPayload(formData);
 
-    updateClass(payload,campus_id);
+    updateClass(payload, campus_id);
   }
 
   function handleCreateClass() {
     const payload = { ...createPayload(formData), campus_id };
 
-    createClass(payload,campus_id);
+    createClass(payload, campus_id);
   }
 
   function onSubmit() {

@@ -16,13 +16,13 @@ export default function SectionListing({
 }) {
   const [isLoaded, setLoaded] = useState(true);
 
-  const filteredSections = useMemo(() => {
-    if (!selectedCampus) {
-      return [];
-    }
+  // const filteredSections = useMemo(() => {
+  //   if (!selectedCampus) {
+  //     return [];
+  //   }
 
-    return sections.filter((section) => section.campus_id === selectedCampus);
-  }, [selectedCampus, sections]);
+  //   return sections.filter((section) => section.campus_id === selectedCampus);
+  // }, [selectedCampus, sections]);
 
   return (
     <>
@@ -42,7 +42,7 @@ export default function SectionListing({
 
       <Listing>
         {isLoaded
-          ? filteredSections.map((section) => {
+          ? sections.map((section) => {
               return (
                 <Card
                   key={section.section_id}
