@@ -7,6 +7,8 @@ import { MODE } from "../../utils/constants/globalConstants";
 
 import { useStudentStore } from "../../store/student.store";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
+import { useSectionStore } from "../../store/section.store";
+import { useClassStore } from "../../store/class.store";
 
 // ----------------------------
 // Payload Formatter
@@ -44,14 +46,26 @@ function createPayload(form) {
 // ----------------------------
 // Update schema rules
 // ----------------------------
-const getSchemaUpdates = (mode) => {
+const getSchemaUpdates = (mode, classes, sections) => {
   return {
     student_id: { disabled: mode === MODE.EDIT },
+    student_class_id: {
+      options: classes.map(({ class_name, class_id }) => ({
+        label: class_name,
+        value: class_id,
+      })),
+    },
+    student_section_id: {
+      options: sections.map(({ section_name, section_id }) => ({
+        label: section_name,
+        value: section_id,
+      })),
+    },
   };
 };
 
-function updatedStudentSchema(mode) {
-  return updateSchema(studentSchema, getSchemaUpdates(mode));
+function updatedStudentSchema(mode, classes, sections) {
+  return updateSchema(studentSchema, getSchemaUpdates(mode, classes, sections));
 }
 
 let _studentSchema = studentSchema;
@@ -76,6 +90,9 @@ export default function AddEditStudent({
     loadingStudentDetails,
   } = useStudentStore();
 
+  const { sections = [] } = useSectionStore();
+  const { classes = [] } = useClassStore();
+
   // Load student details into form when editing
   if (
     mode === MODE.EDIT &&
@@ -87,24 +104,24 @@ export default function AddEditStudent({
 
   // Initialize schema + Fetch details
   useEffect(() => {
-    _studentSchema = updatedStudentSchema(mode);
+    _studentSchema = updatedStudentSchema(mode, classes, sections);
 
     if (mode === MODE.EDIT) {
       fetchStudentDetails(selectedStudent);
     }
-  }, []);
+  }, [sections]);
 
   // -----------------------
   // Submit Handlers
   // -----------------------
   function handleUpdateStudent() {
     const payload = createPayload(formData);
-    updateStudent(payload,campus_id);
+    updateStudent(payload, campus_id);
   }
 
   function handleCreateStudent() {
     const payload = { ...createPayload(formData), campus_id };
-    createStudent(payload,campus_id);
+    createStudent(payload, campus_id);
   }
 
   function onSubmit() {

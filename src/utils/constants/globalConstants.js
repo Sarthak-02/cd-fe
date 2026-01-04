@@ -102,42 +102,42 @@ export const LANGUAGES = [
 
 export const CLASS_TYPE = [
   {
-    label:"Primary",
-    value:"primary"
+    label: "Primary",
+    value: "primary"
   },
   {
-    label:"Secondary",
-    value:"secondary"
+    label: "Secondary",
+    value: "secondary"
   },
   {
-    label:"Higher",
-    value:"higher"
+    label: "Higher",
+    value: "higher"
   }
 ]
 
 export const COURSE = [
   {
-    label:"Science",
-    value:"science"
+    label: "Science",
+    value: "science"
   },
   {
-    label:"Commerce",
-    value:"commerce"
+    label: "Commerce",
+    value: "commerce"
   },
   {
-    label:"Arts",
-    value:"arts"
+    label: "Arts",
+    value: "arts"
   }
 ]
 
 export const CLASS_SHIFT = [
   {
-    label:"Morning",
-    value:"morning"
+    label: "Morning",
+    value: "morning"
   },
   {
-    label:"Evening",
-    value:"evening"
+    label: "Evening",
+    value: "evening"
   }
 ]
 
@@ -191,7 +191,7 @@ export const STATUS = [
   { "label": "Inactive", "value": "inactive" }
 ]
 
-export const RESERVATION_CATEGORY =[
+export const RESERVATION_CATEGORY = [
   { "label": "General", "value": "gen" },
   { "label": "SC", "value": "sc" },
   { "label": "ST", "value": "st" },
@@ -213,6 +213,11 @@ export const SCHOOL_TYPE = [
   { value: "igcse", label: "IGCSE" }
 ]
 
+export const PRIMARY_CONTACT = [
+  { value: "father", label: "Father" },
+  { value: "mother", label: "Mother" },
+  { value: "guardian", label: "Guardian" }
+]
 
 export const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 export const PHONE_REGEX = /^(?:\+91|0)?[6-9]\d{9}$/;

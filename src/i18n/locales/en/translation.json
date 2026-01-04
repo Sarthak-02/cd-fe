@@ -1,0 +1,223 @@
+{
+    "campus": {
+      "sections": {
+        "basicInformation": "Basic Campus Information",
+        "contactAddress": "Contact & Address Details",
+        "geoLocation": "Geo Location",
+        "configuration": "Configuration Details"
+      },
+  
+      "fields": {
+        "campusName": "Campus Name",
+        "campusId": "Campus Code / ID",
+        "campusType": "Campus Type",
+  
+        "address": "Address",
+        "city": "City",
+        "state": "State / Province",
+        "country": "Country",
+        "pincode": "Pincode / ZIP Code",
+  
+        "email": "Email",
+        "phoneLandline": "Phone (Landline)",
+        "mobileAdmin": "Mobile (Principal / Admin)",
+  
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "radius": "Radius",
+  
+        "showMap": "Select Location on Map",
+  
+        "workingDays": "Working Days",
+        "campusTiming": "Campus Timing",
+        "timezone": "Time Zone",
+        "defaultLanguage": "Default Language"
+      },
+  
+      "placeholders": {
+        "campusTiming": "8:30 AM – 2:30 PM"
+      }
+    },
+  
+    "class": {
+      "sections": {
+        "classInformation": "Class Information",
+        "classSettings": "Class Settings",
+        "classCategorization": "Class Categorization"
+      },
+      "fields": {
+        "className": "Class Name",
+        "shortName": "Short Name",
+        "description": "Description",
+        "roomNumber": "Room Number",
+        "classTeacher": "Class Teacher",
+        "hasSections": "Has Sections",
+        "maxStudents": "Maximum Students Allowed",
+        "classType": "Class Type",
+        "stream": "Stream",
+        "shift": "Shift"
+      }
+    },
+  
+    "school": {
+      "sections": {
+        "basicInformation": "Basic School Information",
+        "administrationContacts": "School Administration / Contacts",
+        "multiCampus": "Multi-Campus Configuration",
+        "administrativeInformation": "Administrative Information"
+      },
+      "fields": {
+        "schoolName": "School Name",
+        "schoolId": "School Code / ID",
+        "schoolType": "School Type",
+        "motto": "Motto / Tagline",
+        "website": "Website URL",
+  
+        "principalName": "Principal Name",
+        "principalEmail": "Principal Email",
+        "adminContact": "Admin / IT Contact",
+  
+        "hasCampus": "Does the school have multiple campuses?",
+        "defaultCampus": "Default Campus Name",
+  
+        "affiliationNumber": "Affiliation Number",
+        "registrationNumber": "Registration Number",
+        "foundedYear": "Founded Year",
+        "schoolCategory": "School Category"
+      }
+    },
+    "section": {
+      "sections": {
+        "sectionInformation": "Section Information",
+        "capacityAllocation": "Capacity & Allocation"
+      },
+      "fields": {
+        "sectionName": "Section Name",
+        "shortName": "Short Name",
+        "class": "Class",
+        "classTeacher": "Class Teacher",
+        "maxStudents": "Max Students Allowed",
+        "roomNumber": "Room Number"
+      }
+    },
+    "student": {
+      "sections": {
+        "personalDetails": "Personal Details",
+        "academicInformation": "Academic Information",
+        "studentContact": "Student Contact Information",
+        "guardianDetails": "Parent / Guardian Details",
+        "guardianAddress": "Guardian Address",
+        "emergencyMedical": "Emergency & Medical Information",
+        "remarks": "Remarks & Additional Info"
+      },
+      "fields": {
+        "admissionNumber": "Admission Number",
+        "rollNumber": "Roll Number",
+        "firstName": "First Name",
+        "middleName": "Middle Name",
+        "lastName": "Last Name",
+        "gender": "Gender",
+        "dateOfBirth": "Date of Birth",
+        "bloodGroup": "Blood Group",
+        "studentPhoto": "Student Photo",
+  
+        "admissionDate": "Admission Date",
+        "class": "Class",
+        "section": "Section",
+        "houseName": "House Name",
+        "category": "Category",
+        "status": "Status",
+  
+        "studentEmail": "Student Email",
+        "studentPhone": "Student Phone",
+  
+        "fatherName": "Father's Name",
+        "motherName": "Mother's Name",
+        "guardianName": "Guardian Name",
+        "guardianRelation": "Guardian Relation",
+        "guardianEmail": "Email",
+        "guardianPhone": "Phone",
+        
+  
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "country": "Country",
+        "pincode": "Pincode",
+        "primaryContact":"Primary Contact", 
+        "emergencyContactName": "Emergency Contact Name",
+        "emergencyContactPhone": "Emergency Contact Phone",
+        "medicalConditions": "Medical Conditions",
+  
+        "remarks": "Remarks"
+      }
+    },
+    "teacher": {
+      "sections": {
+        "personalDetails": "Personal Details",
+        "contactInformation": "Contact Information",
+        "professionalDetails": "Professional Details",
+        "systemAccess": "System Access",
+        "emergencyContact": "Emergency Contact",
+        "remarks": "Remarks & Additional Information"
+      },
+      "fields": {
+        "employeeCode": "Employee Code",
+        "firstName": "First Name",
+        "middleName": "Middle Name",
+        "lastName": "Last Name",
+        "gender": "Gender",
+        "dateOfBirth": "Date of Birth",
+        "bloodGroup": "Blood Group",
+        "nationality": "Nationality",
+        "religion": "Religion",
+        "maritalStatus": "Marital Status",
+        "teacherPhoto": "Teacher Photo",
+  
+        "email": "Email",
+        "phone": "Phone Number",
+        "address": "Address Line",
+        "city": "City",
+        "state": "State",
+        "country": "Country",
+        "pincode": "Pincode",
+  
+        "qualification": "Qualification",
+        "experienceYears": "Experience (Years)",
+        "subjects": "Subjects",
+        "designation": "Designation",
+        "department": "Department",
+        "employmentType": "Employment Type",
+        "dateOfJoining": "Date of Joining",
+        "dateOfLeaving": "Date of Leaving",
+  
+        "linkedUser": "Linked User",
+        "role": "Role",
+        "status": "Status",
+  
+        "emergencyContactName": "Emergency Contact Name",
+        "emergencyContactPhone": "Emergency Contact Phone",
+  
+        "remarks": "Remarks"
+      }
+    },
+    "user": {
+      "sections": {
+        "accountInformation": "User Account Information",
+        "permissions": "Permissions"
+      },
+      "fields": {
+        "username": "Username",
+        "userId": "User ID",
+        "password": "Password",
+        "isAdmin": "Is Admin",
+        "sitePermissions": "Site Permissions",
+        "pagePermissions": "Page Permissions"
+      },
+      "site": {
+        "kv": "Kendriya Vidyalaya",
+        "dav": "DAV"
+      }
+    }
+  }
+  
