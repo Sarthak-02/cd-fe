@@ -6,6 +6,8 @@ import { MODE } from "../utils/constants/globalConstants";
 
 import { useCampusStore } from "../store/campus.store";
 import { useStudentStore } from "../store/student.store";
+import { useSectionStore } from "../store/section.store";
+import { useClassStore } from "../store/class.store";
 
 export default function Student() {
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close, 1 -> create, 2 -> edit
@@ -14,7 +16,8 @@ export default function Student() {
 
   const { fetchCampuses, campuses } = useCampusStore();
   const { fetchStudents, students } = useStudentStore();
-
+  const { fetchSections } = useSectionStore();
+  const { fetchClasses } = useClassStore();
   /** ---------------------------
    * Select a student from listing
    ----------------------------*/
@@ -36,6 +39,8 @@ export default function Student() {
   useEffect(() => {
     if (!selectedCampus) return;
     fetchStudents(selectedCampus);
+    fetchSections(selectedCampus);
+    fetchClasses(selectedCampus);
   }, [selectedCampus]);
 
   /** ---------------------------

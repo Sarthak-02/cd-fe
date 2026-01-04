@@ -5,7 +5,8 @@ import {
   RESERVATION_CATEGORY,
   STATUS,
   EMAIL_REGEX,
-  PHONE_REGEX
+  PHONE_REGEX,
+  PRIMARY_CONTACT
 } from "../utils/constants/globalConstants";
 import { Country, State, City } from "country-state-city";
 
@@ -72,8 +73,8 @@ export const studentSchema = [
     fields: [
       { id: "student_admission_date", name: "student.fields.admissionDate", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
 
-      { id: "class_id", name: "student.fields.class", value: "", type: "dropdown", mandatory: true, options: [], width: { tablet: 4, desktop: 4, mobile: 12 } },
-      { id: "section_id", name: "student.fields.section", value: "", type: "dropdown", mandatory: true, options: [], width: { tablet: 4, desktop: 4, mobile: 12 } },
+      // { id: "student_class_id", name: "student.fields.class", value: "", type: "dropdown", mandatory: true, options: [], width: { tablet: 4, desktop: 4, mobile: 12 } },
+      { id: "student_section_id", name: "student.fields.section", value: "", type: "dropdown", mandatory: true, options: [], width: { tablet: 4, desktop: 4, mobile: 12 } },
 
       { id: "student_house_name", name: "student.fields.houseName", value: "", type: "dropdown", options: [], mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "student_category", name: "student.fields.category", value: "", type: "dropdown", options: RESERVATION_CATEGORY, mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
@@ -106,17 +107,8 @@ export const studentSchema = [
       { id: "student_guardian_relation", name: "student.fields.guardianRelation", value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
 
       { id: "student_guardian_email", name: "student.fields.guardianEmail", regex: EMAIL_REGEX, value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
-      { id: "student_guardian_phone", name: "student.fields.guardianPhone", regex: PHONE_REGEX, value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 4, mobile: 12 } }
-    ]
-  },
-
-  // ---------------------
-  // GUARDIAN ADDRESS
-  // ---------------------
-  {
-    section_title: "student.sections.guardianAddress",
-    fields: [
-      { id: "student_guardian_address", name: "student.fields.address", value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 6, mobile: 12 } },
+      { id: "student_guardian_phone", name: "student.fields.guardianPhone", regex: PHONE_REGEX, value: "", type: "text", mandatory: true, width: { tablet: 6, desktop: 4, mobile: 12 } },
+      { id: "student_guardian_address", name: "student.fields.address", value: "", type: "text", mandatory: true, width: { tablet: 12, desktop: 12, mobile: 12 } },
 
       {
         id: "student_guardian_city",
@@ -155,9 +147,19 @@ export const studentSchema = [
         width: { tablet: 4, desktop: 4, mobile: 12 }
       },
 
-      { id: "student_guardian_pincode", name: "student.fields.pincode", value: "", type: "text", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } }
+      { id: "student_guardian_pincode", name: "student.fields.pincode", value: "", type: "text", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      { id: "student_primary_contact", name: "student.fields.primaryContact", value: "", type: "dropdown", options: PRIMARY_CONTACT, mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } }
     ]
   },
+
+  // ---------------------
+  // GUARDIAN ADDRESS
+  // ---------------------
+  // {
+  //   section_title: "student.sections.guardianAddress",
+  //   fields: [
+  //      ]
+  // },
 
   // ---------------------
   // EMERGENCY + MEDICAL

@@ -135,15 +135,16 @@
         "motherName": "Mother's Name",
         "guardianName": "Guardian Name",
         "guardianRelation": "Guardian Relation",
-        "guardianEmail": "Guardian Email",
-        "guardianPhone": "Guardian Phone",
+        "guardianEmail": "Email",
+        "guardianPhone": "Phone",
+        
   
         "address": "Address",
         "city": "City",
         "state": "State",
         "country": "Country",
         "pincode": "Pincode",
-  
+        "primaryContact":"Primary Contact", 
         "emergencyContactName": "Emergency Contact Name",
         "emergencyContactPhone": "Emergency Contact Phone",
         "medicalConditions": "Medical Conditions",
