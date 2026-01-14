@@ -25,6 +25,7 @@ function createPayload(form) {
     student_dob,
     student_current_status,
     campus_id,
+    student_section_id,
     ...extras
   } = form;
 
@@ -39,6 +40,7 @@ function createPayload(form) {
     student_dob: student_dob ? new Date(student_dob).toISOString() : null,
     student_current_status,
     campus_id,
+    student_section_id,
     extras,
   };
 }
