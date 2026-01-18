@@ -120,7 +120,6 @@ export default function AddEditCampus({
     handleAddEditModel(MODE.NONE);
   }
 
-  console.log("form",formData)
   return (
     <div className="w-full p-4 space-y-6">
       {/* Loading */}

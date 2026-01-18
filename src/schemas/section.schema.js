@@ -42,14 +42,14 @@ export const sectionSchema = [
         mandatory: false,
         width: { tablet: 6, desktop: 4, mobile: 12 }
       },
-      {
-        id: "section_max_students",
-        name: "section.fields.maxStudents",
-        value: "",
-        type: "number",
-        mandatory: false,
-        width: { tablet: 6, desktop: 4, mobile: 12 }
-      },
+      // {
+      //   id: "section_max_students",
+      //   name: "section.fields.maxStudents",
+      //   value: "",
+      //   type: "number",
+      //   mandatory: false,
+      //   width: { tablet: 6, desktop: 4, mobile: 12 }
+      // },
       {
         id: "section_room_no",
         name: "section.fields.roomNumber",
@@ -57,7 +57,38 @@ export const sectionSchema = [
         type: "text",
         mandatory: false,
         width: { tablet: 6, desktop: 4, mobile: 12 }
-      }
+      },
+      {
+        id: "section_subjects",
+        name: "Subjects",
+        placeholder: "Add Subjects",
+        value: [],
+        type: "dropdown",
+        fn: (value, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            section_subjects: value
+          }));
+        },
+        onAdd: (opt, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            section_subjects: [...prev.section_subjects, opt]
+          }));
+        },
+        multiple: true,
+        allowAdd: true,
+        options: (formData) =>{
+
+          const terms = formData?.section_subjects ?? [];
+          return terms.map(term => ({
+            value: term,
+            label: term
+          }));
+        },
+        mandatory: true,
+        width: { tablet: 4, desktop: 4, mobile: 12 }
+      },
     ]
   }
 ];

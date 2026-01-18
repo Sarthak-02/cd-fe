@@ -6,6 +6,7 @@ import {
   EMAIL_REGEX,
   PHONE_REGEX
 } from "../utils/constants/globalConstants";
+import { gradingSystemRowFields } from "./dynamicFieldRows.schema";
 
 export const campusSchema = [
   {
@@ -51,19 +52,15 @@ export const campusSchema = [
         width: { tablet: 12, desktop: 12, mobile: 12 }
       },
       {
-        id: "city",
-        name: "campus.fields.city",
-        value: "",
+        id: "country",
+        name: "campus.fields.country",
+        value: "IN",
         type: "dropdown",
-        options: function (form) {
-          const { country, state } = form;
-          const cities = City.getCitiesOfState(country, state);
-          return cities.map(city => ({
-            ...city,
-            label: city.name,
-            value: city.name
-          }));
-        },
+        options: Country.getAllCountries().map(country => ({
+          ...country,
+          label: `${country.name} (${country.isoCode})`,
+          value: country.isoCode
+        })),
         mandatory: true,
         width: { tablet: 4, desktop: 4, mobile: 12 }
       },
@@ -85,15 +82,19 @@ export const campusSchema = [
         width: { tablet: 4, desktop: 4, mobile: 12 }
       },
       {
-        id: "country",
-        name: "campus.fields.country",
-        value: "IN",
+        id: "city",
+        name: "campus.fields.city",
+        value: "",
         type: "dropdown",
-        options: Country.getAllCountries().map(country => ({
-          ...country,
-          label: `${country.name} (${country.isoCode})`,
-          value: country.isoCode
-        })),
+        options: function (form) {
+          const { country, state } = form;
+          const cities = City.getCitiesOfState(country, state);
+          return cities.map(city => ({
+            ...city,
+            label: city.name,
+            value: city.name
+          }));
+        },
         mandatory: true,
         width: { tablet: 4, desktop: 4, mobile: 12 }
       },
@@ -226,6 +227,116 @@ export const campusSchema = [
         options: LANGUAGES,
         mandatory: true,
         width: { tablet: 4, desktop: 4, mobile: 12 }
+      },
+      
+      {
+        id: "house_names",
+        name: "House Names",
+        placeholder: "Select House Names",
+        value: [],
+        type: "dropdown",
+        fn: (value, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            house_names: value
+          }));
+        },
+        onAdd: (opt, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            house_names: [...prev.house_names, opt]
+          }));
+        },
+        multiple: true,
+        allowAdd: true,
+        options: (formData) =>{
+
+          const terms = formData?.house_names ?? [];
+          return terms.map(term => ({
+            value: term,
+            label: term
+          }));
+        },
+        mandatory: true,
+        width: { tablet: 4, desktop: 4, mobile: 12 }
+      },
+      {
+        id: "staff_roles",
+        name: "Staff Roles",
+        placeholder: "Select Staff Roles",
+        value: [],
+        type: "dropdown",
+        fn: (value, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            staff_roles: value
+          }));
+        },
+        onAdd: (opt, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            staff_roles: [...prev.staff_roles, opt]
+          }));
+        },
+        multiple: true,
+        allowAdd: true,
+        options: (formData) =>{
+
+          const terms = formData?.staff_roles ?? [];
+          return terms.map(term => ({
+            value: term,
+            label: term
+          }));
+        },
+        mandatory: true,
+        width: { tablet: 4, desktop: 4, mobile: 12 }
+      },
+      {
+        id: "staff_designations",
+        name: "Staff Designations",
+        placeholder: "Select Staff Designations",
+        value: [],
+        type: "dropdown",
+        fn: (value, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            staff_designations: value
+          }));
+        },
+        onAdd: (opt, formData, setFormData) => {
+          setFormData(prev => ({
+            ...prev,
+            staff_designations: [...prev.staff_designations, opt]
+          }));
+        },
+        multiple: true,
+        allowAdd: true,
+        options: (formData) =>{
+
+          const terms = formData?.staff_designations ?? [];
+          return terms.map(term => ({
+            value: term,
+            label: term
+          }));
+        },
+        mandatory: true,
+        width: { tablet: 4, desktop: 4, mobile: 12 }
+      },
+      { id: "term_start_date", name: "Academic Term Start Date", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      { id: "term_end_date", name: "Academic Term End Date", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      {
+        id: "grading_systems",
+        name: "Grading Systems",
+        value: [],
+        type: "dynamic-rows",
+        dynamicRowsConfig: {
+          fields: gradingSystemRowFields,
+          addButtonText: "Add Grading System",
+          emptyMessage: "No grading systems configured",
+          maxRows: 5
+        },
+        mandatory: false,
+        width: { tablet: 12, desktop: 12, mobile: 12 }
       }
     ]
   }

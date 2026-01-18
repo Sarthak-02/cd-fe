@@ -6,6 +6,8 @@ import CheckBox from "./CheckBox";
 import DocumentUploader from "./DocumentUploader";
 import TextArea from "./TextArea";
 import { useTranslation } from "react-i18next";
+import SearchableDropdown from "./SearchableDropdown";
+import DynamicFieldRows from "./DynamicFieldRows";
 
 function getResponsiveClasses(width = {}) {
   const mobile = width.mobile || 12;
@@ -57,18 +59,25 @@ export default function DynamicForm({
 
       case "dropdown":
         return (
-          <Dropdown
+          <SearchableDropdown
             label={t(field.label)}
             options={
               typeof field.options === "function"
                 ? field.options(formData)
                 : field.options
             }
-            multi={field.multiple}
+            multi={field.multiple ?? false}
             placeholder={field.label}
-            onChange={(opt) => handleChange(field, opt)}
+            onChange={(opt) => handleChange(field, opt,formData, setFormData)}
             selected={value}
             error={!!error}
+            allowAdd={field.allowAdd ?? false}
+            onAdd={(opt) => field?.onAdd ? field.onAdd(opt, formData, setFormData) : null}
+            addLabel={field?.addLabel ?? "Add"}
+            noResultsText={field?.noResultsText ?? "No results found"}
+            renderOption={(opt) => <div>{opt?.label}</div>}
+            maxHeight={field.maxHeight ?? "max-h-72"}
+            showSelectAll={field.showSelectAll ?? true}
           />
         );
 
@@ -112,6 +121,22 @@ export default function DynamicForm({
             {t(field?.label)}
           </Button>  
         )
+
+      case "dynamic-rows":
+        return (
+          <DynamicFieldRows
+            fields={field.dynamicRowsConfig?.fields || []}
+            value={value || []}
+            onChange={(newValue) => handleChange(field, newValue)}
+            addButtonText={field.dynamicRowsConfig?.addButtonText || "Add"}
+            showRemove={field.dynamicRowsConfig?.showRemove ?? true}
+            minRows={field.dynamicRowsConfig?.minRows || 0}
+            maxRows={field.dynamicRowsConfig?.maxRows || Infinity}
+            emptyMessage={field.dynamicRowsConfig?.emptyMessage || "No items added yet"}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        );
 
       default:
         return <div>Unsupported field type</div>;

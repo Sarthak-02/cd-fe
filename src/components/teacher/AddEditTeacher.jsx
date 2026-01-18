@@ -40,26 +40,28 @@ function createPayload(form) {
   };
 }
 
-const getSchemaUpdates = (mode) => {
+const getSchemaUpdates = (mode,campusDetails) => {
   return {
     teacher_id: { disabled: mode == 2 ? true : false },
+    teacher_designation: { options: campusDetails?.extras?.staff_designations?.map((designation) => ({value:designation,label:designation})) },
+    teacher_role: { options: campusDetails?.extras?.staff_roles?.map((role) => ({value:role,label:role})) },
   };
 };
 
-function updatedTeacherSchema(mode) {
-  return updateSchema(teacherSchema, getSchemaUpdates(mode));
+function updatedTeacherSchema(mode,campusDetails) {
+  return updateSchema(teacherSchema, getSchemaUpdates(mode,campusDetails));
 }
-
-let _teacherSchema = teacherSchema;
 
 export default function AddEditTeacher({
   mode,
   selectedTeacher,
   campus_id,
   handleAddEditModel,
+  campusDetails,
 }) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  const [_teacherSchema, setTeacherSchema] = useState({});
   const {
     fetchTeacherDetails,
     teacherDetails,
@@ -76,8 +78,12 @@ export default function AddEditTeacher({
     setFormData({ ...teacherDetails, ...teacherDetails?.extras });
   }
 
+
+  if(Object.keys(_teacherSchema).length === 0){
+    setTeacherSchema(updatedTeacherSchema(mode, campusDetails));
+  }
+  
   useEffect(() => {
-    _teacherSchema = updatedTeacherSchema(mode);
     if (mode !== MODE.EDIT) return;
     fetchTeacherDetails(selectedTeacher);
   }, []);

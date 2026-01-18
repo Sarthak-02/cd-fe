@@ -10,7 +10,7 @@ export default function Teacher() {
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create mode , 2 -> edit mode
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
-  const { fetchCampuses, campuses } = useCampusStore();
+  const { fetchCampuses, campuses,fetchCampusDetails,campusDetails } = useCampusStore();
   const { fetchTeachers, teachers } = useTeacherStore();
 
   function handleSelectTeacher(teacher_id) {
@@ -24,7 +24,8 @@ export default function Teacher() {
 
   useEffect(() => {
     if (!selectedCampus) return;
-
+    //fetch campus detaila for a selected campus
+    fetchCampusDetails(selectedCampus);
     fetchTeachers(selectedCampus);
   }, [selectedCampus]);
 
@@ -45,7 +46,7 @@ export default function Teacher() {
           onClose={() => handleAddEditModel(MODE.NONE)}
           
         >
-          <AddEditTeacher selectedTeacher={selectedTeacher} mode={mode} campus_id={selectedCampus}  handleAddEditModel={handleAddEditModel}/>
+          <AddEditTeacher selectedTeacher={selectedTeacher} mode={mode} campus_id={selectedCampus}  handleAddEditModel={handleAddEditModel} campusDetails={campusDetails} />
         </Dialog>
       ) : (
         <TeacherListing

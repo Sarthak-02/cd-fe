@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import DynamicForm from "../../ui-components/DynamicForm";
 import { sectionSchema } from "../../schemas/section.schema";
 import { validateForm } from "../../utils/validators/form_validation";
-import { updateSchema } from "../../utils/utility_functions/updateSchema";
+import { getFieldValuesMap, updateSchema } from "../../utils/utility_functions/updateSchema";
 import { useSectionStore } from "../../store/section.store";
 import { MODE } from "../../utils/constants/globalConstants";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
@@ -38,7 +38,7 @@ export default function AddEditSection({
 }) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
-
+  
   const {
     fetchSectionDetails,
     createSection,
@@ -48,6 +48,13 @@ export default function AddEditSection({
   } = useSectionStore();
 
   useEffect(() => {
+    function getSectionSchema() {
+      const _sectionSchema = updatedSectionSchema(mode, classes);
+      if (mode === MODE.CREATE) {
+        setFormData(getFieldValuesMap(_sectionSchema))
+      }
+    }
+    getSectionSchema()
     if (mode === MODE.EDIT) fetchSectionDetails(selectedSection);
   }, []);
 
@@ -69,12 +76,12 @@ export default function AddEditSection({
 
   function handleUpdateSection() {
     const payload = createPayload(formData);
-    updateSection(payload,campus_id);
+    updateSection(payload, campus_id);
   }
 
   function handleCreateSection() {
     const payload = createPayload(formData);
-    createSection(payload,campus_id);
+    createSection(payload, campus_id);
   }
 
   function onSubmit() {

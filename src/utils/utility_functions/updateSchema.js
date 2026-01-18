@@ -34,7 +34,22 @@ export function createFullName(firstname , middlename,lastname){
 export const getFieldValuesMap = (schema) => {
   return schema.reduce((acc, section) => {
     section.fields.forEach(field => {
-      acc[field.id] = field.value;
+      if (field.type === 'dynamic-rows' && field.dynamicRowsConfig?.fields) {
+        // For dynamic-rows, include both the rows array and individual field values from config
+        acc[field.id] = field.value;
+        
+        // Optionally, you can also extract nested field values from dynamicRowsConfig
+        // This creates entries like: grading_systems_campus_gradingSystem, etc.
+        field.dynamicRowsConfig.fields.forEach(rowField => {
+          const nestedKey = `${field.id}_${rowField.id || rowField.name}`;
+          // Extract values from the rows array if they exist
+          if (Array.isArray(field.value)) {
+            acc[nestedKey] = field.value.map(row => row[rowField.id || rowField.name]);
+          }
+        });
+      } else {
+        acc[field.id] = field.value;
+      }
     });
     return acc;
   }, {});

@@ -4,7 +4,7 @@ import { useClassStore } from "../../store/class.store";
 import DynamicForm from "../../ui-components/DynamicForm";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 import { MODE } from "../../utils/constants/globalConstants";
-import { updateSchema } from "../../utils/utility_functions/updateSchema";
+import { getFieldValuesMap, updateSchema } from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
 
 function createPayload(form) {
@@ -56,8 +56,10 @@ export default function AddEditClass({
   campus_id,
   handleAddEditModel,
 }) {
+
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  console.log("formData", formData)
   const {
     fetchClassDetails,
     classDetails,
@@ -75,8 +77,16 @@ export default function AddEditClass({
   }
 
   useEffect(() => {
-    _classSchema = updatedClassSchema(mode);
-    if (mode === MODE.EDIT) fetchClassDetails(selectedClass);
+    function getClassSchema() {
+      _classSchema = updatedClassSchema(mode);
+      if (mode === MODE.CREATE) {
+        setFormData(getFieldValuesMap(_classSchema))
+      }
+      return _classSchema
+    }
+    _classSchema = getClassSchema()
+    if (mode !== MODE.EDIT) return;
+    fetchClassDetails(selectedClass);
   }, []);
 
   function handleUpdateClass() {

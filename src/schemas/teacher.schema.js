@@ -116,8 +116,7 @@ export const teacherSchema = [
       { id: "teacher_qualification", name: "teacher.fields.qualification", value: "", type: "text", mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
       { id: "teacher_experience_years", name: "teacher.fields.experienceYears", value: "", type: "number", mandatory: false, width: { tablet: 3, desktop: 3, mobile: 12 } },
       { id: "teacher_subjects", name: "teacher.fields.subjects", value: [], type: "multiselect", options: [], mandatory: false, width: { tablet: 6, desktop: 6, mobile: 12 } },
-      { id: "teacher_designation", name: "teacher.fields.designation", value: "", type: "dropdown", options: TEACHER_DESIGNATION, mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
-      { id: "teacher_department", name: "teacher.fields.department", value: "", type: "text", mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      { id: "teacher_designation", name: "teacher.fields.designation", value: "", type: "dropdown", options: [], mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "teacher_employment_type", name: "teacher.fields.employmentType", value: "", type: "dropdown", options: EMPLOYMNENT_TYPE, mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "teacher_doj", name: "teacher.fields.dateOfJoining", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "teacher_dol", name: "teacher.fields.dateOfLeaving", value: "", type: "date", mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } }
@@ -127,8 +126,7 @@ export const teacherSchema = [
   {
     section_title: "teacher.sections.systemAccess",
     fields: [
-      { id: "teacher_user_id", name: "teacher.fields.linkedUser", value: "", type: "dropdown", options: [], mandatory: false, width: { tablet: 6, desktop: 4, mobile: 12 } },
-      { id: "teacher_role", name: "teacher.fields.role", value: "", type: "dropdown", options: ROLES, mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      { id: "teacher_role", name: "teacher.fields.role", value: "", type: "dropdown", options: [], mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "teacher_status", name: "teacher.fields.status", value: "", type: "dropdown", options: STATUS, mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } }
     ]
   },
