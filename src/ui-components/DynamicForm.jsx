@@ -7,7 +7,8 @@ import DocumentUploader from "./DocumentUploader";
 import TextArea from "./TextArea";
 import { useTranslation } from "react-i18next";
 import SearchableDropdown from "./SearchableDropdown";
-import DynamicFieldRows from "./DynamicFieldRows";
+import JsonView from "./JsonView";
+
 
 function getResponsiveClasses(width = {}) {
   const mobile = width.mobile || 12;
@@ -27,6 +28,9 @@ export default function DynamicForm({
 
   const { t } = useTranslation();
   const handleChange = (field, value, ...extras) => {
+    console.log("field", field);
+    console.log("value", value);
+    console.log("extras", extras);
     if (field.fn) {
       field.fn(value, ...extras);
     } else {
@@ -122,6 +126,15 @@ export default function DynamicForm({
           </Button>  
         )
 
+      case "json":
+        return (
+          <JsonView
+            value={value}
+            onChange={(val) => handleChange(field, val)}
+            height={field?.height ?? "h-96"}
+          />
+        );
+
       case "dynamic-rows":
         return (
           <DynamicFieldRows
@@ -145,7 +158,7 @@ export default function DynamicForm({
 
   return (
     <div className="space-y-6">
-      {schema.map((section, i) => (
+      {schema?.length > 0 && schema?.map((section, i) => (
         <div key={i} className="space-y-4">
           {section.section_title && (
             <h3 className="text-lg font-semibold">{t(section.section_title)}</h3>

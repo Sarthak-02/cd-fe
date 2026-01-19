@@ -48,7 +48,7 @@ function createPayload(form) {
 // ----------------------------
 // Update schema rules
 // ----------------------------
-const getSchemaUpdates = (mode, classes, sections) => {
+const getSchemaUpdates = (mode, classes, sections,campusDetails) => {
   return {
     student_id: { disabled: mode === MODE.EDIT },
     student_class_id: {
@@ -63,14 +63,21 @@ const getSchemaUpdates = (mode, classes, sections) => {
         value: section_id,
       })),
     },
+    student_house_name: {
+      options: campusDetails?.extras?.house_names?.map((house) => ({
+        label: house,
+        value: house,
+      })),
+    },
+
   };
 };
 
-function updatedStudentSchema(mode, classes, sections) {
-  return updateSchema(studentSchema, getSchemaUpdates(mode, classes, sections));
+function updatedStudentSchema(mode, classes, sections,campusDetails) {
+  return updateSchema(studentSchema, getSchemaUpdates(mode, classes, sections,campusDetails));
 }
 
-let _studentSchema = studentSchema;
+// let _studentSchema = studentSchema;
 
 // ----------------------------
 // Component
@@ -80,9 +87,12 @@ export default function AddEditStudent({
   selectedStudent,
   campus_id,
   handleAddEditModel,
+  campusDetails,
 }) {
+  console.log("campusDetails", campusDetails)
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  const [_studentSchema, setStudentSchema] = useState({});
 
   const {
     fetchStudentDetails,
@@ -104,10 +114,12 @@ export default function AddEditStudent({
     setFormData({ ...studentDetails, ...studentDetails?.extras });
   }
 
+  if(Object.keys(_studentSchema).length === 0){
+    setStudentSchema(updatedStudentSchema(mode, classes, sections,campusDetails));
+  }
   // Initialize schema + Fetch details
   useEffect(() => {
-    _studentSchema = updatedStudentSchema(mode, classes, sections);
-
+  
     if (mode === MODE.EDIT) {
       fetchStudentDetails(selectedStudent);
     }

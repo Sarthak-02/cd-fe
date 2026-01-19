@@ -163,5 +163,21 @@ export const classSchema = [
       //   width: { tablet: 4, desktop: 4, mobile: 12 }
       // }
     ]
+  },
+
+  {
+    section_title: "Grading Configuration",
+    fields: [
+      {
+        id: "class_grading_config",
+        name: "Grading Configuration",
+        value: {},
+        type: "json",
+        placeholder: "Enter grading configuration as JSON...",
+        height: "h-80",
+        mandatory: false,
+        width: { tablet: 12, desktop: 12, mobile: 12 }
+      }
+    ]
   }
 ];

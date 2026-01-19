@@ -219,6 +219,13 @@ export const PRIMARY_CONTACT = [
   { value: "guardian", label: "Guardian" }
 ]
 
+export const NOTIFICATION_CHANNELS = [
+  { value: "email", label: "Email" },
+  { value: "sms", label: "SMS" },
+  { value: "whatsapp", label: "Whatsapp" },
+  { value: "app", label: "APP" }
+]
+
 export const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 export const PHONE_REGEX = /^(?:\+91|0)?[6-9]\d{9}$/;
 export const EMAIL_OR_PHONE_REGEX = /^(?:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|(?:\+91|0)?[6-9]\d{9})$/;

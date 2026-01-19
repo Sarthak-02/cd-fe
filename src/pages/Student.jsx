@@ -14,7 +14,7 @@ export default function Student() {
   const [selectedStudent, setSelectedStudent] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
 
-  const { fetchCampuses, campuses } = useCampusStore();
+  const { fetchCampuses, campuses,fetchCampusDetails,campusDetails } = useCampusStore();
   const { fetchStudents, students } = useStudentStore();
   const { fetchSections } = useSectionStore();
   const { fetchClasses } = useClassStore();
@@ -38,6 +38,7 @@ export default function Student() {
    -------------------------------------------*/
   useEffect(() => {
     if (!selectedCampus) return;
+    fetchCampusDetails(selectedCampus);
     fetchStudents(selectedCampus);
     fetchSections(selectedCampus);
     fetchClasses(selectedCampus);
@@ -67,6 +68,7 @@ export default function Student() {
             mode={mode}
             campus_id={selectedCampus}
             handleAddEditModel={handleAddEditModel}
+            campusDetails={campusDetails}
           />
         </Dialog>
       ) : (

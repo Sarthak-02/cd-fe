@@ -4,9 +4,10 @@ import {
   CAMPUS_TYPES,
   LANGUAGES,
   EMAIL_REGEX,
-  PHONE_REGEX
+  PHONE_REGEX,
+  NOTIFICATION_CHANNELS
 } from "../utils/constants/globalConstants";
-import { gradingSystemRowFields } from "./dynamicFieldRows.schema";
+
 
 export const campusSchema = [
   {
@@ -324,20 +325,52 @@ export const campusSchema = [
       },
       { id: "term_start_date", name: "Academic Term Start Date", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "term_end_date", name: "Academic Term End Date", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+    ]
+  },
+  {
+    section_title: "campus.sections.notificationConfiguration",
+    fields: [
       {
-        id: "grading_systems",
-        name: "Grading Systems",
+        id: "campus_attendance_notification",
+        name: "campus.fields.attendanceNotification",
         value: [],
-        type: "dynamic-rows",
-        dynamicRowsConfig: {
-          fields: gradingSystemRowFields,
-          addButtonText: "Add Grading System",
-          emptyMessage: "No grading systems configured",
-          maxRows: 5
-        },
+        type: "dropdown",
+        options: NOTIFICATION_CHANNELS,
+        multiple: true,
         mandatory: false,
         width: { tablet: 12, desktop: 12, mobile: 12 }
-      }
+      },
+       {
+        id: "campus_announcement_notification",
+        name: "campus.fields.announcementNotification",
+        value: [],
+        type: "dropdown",
+        options: NOTIFICATION_CHANNELS,
+        multiple: true,
+        mandatory: false,
+        width: { tablet: 12, desktop: 12, mobile: 12 }
+       },
+       {
+        id: "campus_grades_notification",
+        name: "campus.fields.gradesNotification",
+        value: [],
+        type: "dropdown",
+        options: NOTIFICATION_CHANNELS,
+        multiple: true,
+        mandatory: false,
+        width: { tablet: 12, desktop: 12, mobile: 12 }
+       },
+       {
+        id: "campus_homework_notification",
+        name: "campus.fields.homeworkNotification",
+        value: [],
+        type: "dropdown",
+        options: NOTIFICATION_CHANNELS,
+        multiple: true,
+        mandatory: false,
+        width: { tablet: 12, desktop: 12, mobile: 12 }
+       }
+
     ]
   }
 ];
