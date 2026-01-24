@@ -372,5 +372,100 @@ export const campusSchema = [
        }
 
     ]
+  },
+  {
+    section_title:"Exam and subject Configuration",
+    fields: [
+          {
+            id: "campus_subjects",
+            name: "Subjects",
+            placeholder: "Add Subjects",
+            value: [],
+            type: "dropdown",
+            fn: (value, formData, setFormData) => {
+              setFormData(prev => ({
+                ...prev,
+                campus_subjects: value
+              }));
+            },
+            onAdd: (opt, formData, setFormData) => {
+              setFormData(prev => ({
+                ...prev,
+                campus_subjects: [...prev.campus_subjects, opt]
+              }));
+            },
+            multiple: true,
+            allowAdd: true,
+            options: (formData) =>{
+    
+              const terms = formData?.campus_subjects ?? [];
+              return terms.map(term => ({
+                value: term,
+                label: term
+              }));
+            },
+            mandatory: true,
+            width: { tablet: 4, desktop: 4, mobile: 12 }
+          },
+          {
+            id: "campus_exam_types",
+            name: "Exam Types",
+            placeholder: "Exam Types",
+            value: [],
+            type: "dropdown",
+            fn: (value, formData, setFormData) => {
+              setFormData(prev => ({
+                ...prev,
+                campus_exam_types: value
+              }));
+            },
+            onAdd: (opt, formData, setFormData) => {
+              setFormData(prev => ({
+                ...prev,
+                campus_exam_types: [...prev.campus_exam_types, opt]
+              }));
+            },
+            multiple: true,
+            allowAdd: true,
+            options: (formData) =>{
+    
+              const terms = formData?.campus_exam_types ?? [];
+              return terms.map(term => ({
+                value: term,
+                label: term
+              }));
+            },
+            mandatory: true,
+            width: { tablet: 4, desktop: 4, mobile: 12 }
+          },
+          {
+            id: "class_grading_config",
+            name: "Grading Configuration",
+            value: {},
+            type: "json",
+            placeholder: "Enter grading configuration as JSON...",
+            height: "h-80",
+            mandatory: false,
+            width: { tablet: 12, desktop: 12, mobile: 12 }
+          }
+          // {
+          //   id: "class_stream",
+          //   name: "class.fields.stream",
+          //   value: "",
+          //   type: "dropdown",
+          //   options: COURSE,
+          //   mandatory: false,
+          //   width: { tablet: 4, desktop: 4, mobile: 12 }
+          // },
+          // {
+          //   id: "shift",
+          //   name: "class.fields.shift",
+          //   value: "",
+          //   type: "dropdown",
+          //   options: CLASS_SHIFT,
+          //   mandatory: false,
+          //   width: { tablet: 4, desktop: 4, mobile: 12 }
+          // }
+        ]
   }
 ];

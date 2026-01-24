@@ -82,68 +82,18 @@ export const classSchema = [
         mandatory: false,
         width: { tablet: 4, desktop: 4, mobile: 12 }
       },
-      {
-        id: "class_subjects",
-        name: "Subjects",
-        placeholder: "Add Subjects",
-        value: [],
-        type: "dropdown",
-        fn: (value, formData, setFormData) => {
-          setFormData(prev => ({
-            ...prev,
-            class_subjects: value
-          }));
-        },
-        onAdd: (opt, formData, setFormData) => {
-          setFormData(prev => ({
-            ...prev,
-            class_subjects: [...prev.class_subjects, opt]
-          }));
-        },
-        multiple: true,
-        allowAdd: true,
-        options: (formData) =>{
-
-          const terms = formData?.class_subjects ?? [];
-          return terms.map(term => ({
-            value: term,
-            label: term
-          }));
-        },
-        mandatory: true,
-        width: { tablet: 4, desktop: 4, mobile: 12 }
-      },
-      {
-        id: "class_exam_types",
-        name: "Exam Types",
-        placeholder: "Exam Types",
-        value: [],
-        type: "dropdown",
-        fn: (value, formData, setFormData) => {
-          setFormData(prev => ({
-            ...prev,
-            class_exam_types: value
-          }));
-        },
-        onAdd: (opt, formData, setFormData) => {
-          setFormData(prev => ({
-            ...prev,
-            class_exam_types: [...prev.class_exam_types, opt]
-          }));
-        },
-        multiple: true,
-        allowAdd: true,
-        options: (formData) =>{
-
-          const terms = formData?.class_exam_types ?? [];
-          return terms.map(term => ({
-            value: term,
-            label: term
-          }));
-        },
-        mandatory: true,
-        width: { tablet: 4, desktop: 4, mobile: 12 }
-      }
+      // {
+      //   id: "class_subjects",
+      //   name: "Subjects",
+      //   placeholder: "Add Subjects",
+      //   value: [],
+      //   type: "dropdown",
+      //   multiple: true,
+      //   options: [],
+      //   mandatory: true,
+      //   width: { tablet: 4, desktop: 4, mobile: 12 }
+      // },
+      
       // {
       //   id: "class_stream",
       //   name: "class.fields.stream",
@@ -165,19 +115,4 @@ export const classSchema = [
     ]
   },
 
-  {
-    section_title: "Grading Configuration",
-    fields: [
-      {
-        id: "class_grading_config",
-        name: "Grading Configuration",
-        value: {},
-        type: "json",
-        placeholder: "Enter grading configuration as JSON...",
-        height: "h-80",
-        mandatory: false,
-        width: { tablet: 12, desktop: 12, mobile: 12 }
-      }
-    ]
-  }
 ];

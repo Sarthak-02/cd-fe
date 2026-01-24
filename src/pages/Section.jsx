@@ -12,7 +12,7 @@ export default function Section() {
   const [selectedSection, setSelectedSection] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
 
-  const { fetchCampuses, campuses } = useCampusStore();
+  const { fetchCampuses, campuses ,fetchCampusDetails} = useCampusStore();
   const { fetchSections, sections } = useSectionStore();
   const { fetchClasses, classes } = useClassStore();
 
@@ -27,7 +27,7 @@ export default function Section() {
 
   useEffect(() => {
     if (!selectedCampus) return;
-
+    fetchCampusDetails(selectedCampus)
     fetchSections(selectedCampus);
     fetchClasses(selectedCampus);
   }, [selectedCampus]);

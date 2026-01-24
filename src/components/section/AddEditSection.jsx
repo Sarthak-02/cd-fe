@@ -2,10 +2,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import DynamicForm from "../../ui-components/DynamicForm";
 import { sectionSchema } from "../../schemas/section.schema";
 import { validateForm } from "../../utils/validators/form_validation";
-import { getFieldValuesMap, updateSchema } from "../../utils/utility_functions/updateSchema";
+import {
+  getFieldValuesMap,
+  updateSchema,
+} from "../../utils/utility_functions/updateSchema";
 import { useSectionStore } from "../../store/section.store";
 import { MODE } from "../../utils/constants/globalConstants";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
+import { useCampusStore } from "../../store/campus.store";
 
 function createPayload(form) {
   const {
@@ -18,15 +22,18 @@ function createPayload(form) {
   return { section_id, section_name, section_type, class_id, extras };
 }
 
-const getSchemaUpdates = (mode, classes) => {
+const getSchemaUpdates = (mode, classes, subjects = []) => {
   return {
     section_id: { disabled: mode == 2 ? true : false },
     class_id: { options: classes },
+    section_subjects: {
+      options: subjects.map((subject) => ({ value: subject, label: subject })),
+    },
   };
 };
 
-function updatedSectionSchema(mode, classes) {
-  return updateSchema(sectionSchema, getSchemaUpdates(mode, classes));
+function updatedSectionSchema(mode, classes, subjects) {
+  return updateSchema(sectionSchema, getSchemaUpdates(mode, classes, subjects));
 }
 
 export default function AddEditSection({
@@ -34,11 +41,11 @@ export default function AddEditSection({
   selectedSection,
   classes = [],
   handleAddEditModel,
-  campus_id
+  campus_id,
 }) {
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
-  
+
   const {
     fetchSectionDetails,
     createSection,
@@ -47,14 +54,20 @@ export default function AddEditSection({
     loadingSectionDetails,
   } = useSectionStore();
 
+  const { campusDetails } = useCampusStore();
+
   useEffect(() => {
     function getSectionSchema() {
-      const _sectionSchema = updatedSectionSchema(mode, classes);
+      const _sectionSchema = updatedSectionSchema(
+        mode,
+        classes,
+        campusDetails?.extras?.campus_subjects
+      );
       if (mode === MODE.CREATE) {
-        setFormData(getFieldValuesMap(_sectionSchema))
+        setFormData(getFieldValuesMap(_sectionSchema));
       }
     }
-    getSectionSchema()
+    getSectionSchema();
     if (mode === MODE.EDIT) fetchSectionDetails(selectedSection);
   }, []);
 
@@ -63,7 +76,7 @@ export default function AddEditSection({
       return sectionSchema;
     }
 
-    return updatedSectionSchema(mode, classes);
+    return updatedSectionSchema(mode, classes,campusDetails?.extras?.campus_subjects);
   }, [classes, sectionSchema, mode]);
 
   if (

@@ -5,6 +5,7 @@ import { useCampusStore } from "../store/campus.store";
 import { useTeacherStore } from "../store/teacher.store";
 import Dialog from "../ui-components/Dialog";
 import { MODE } from "../utils/constants/globalConstants";
+import { useSectionStore } from "../store/section.store";
 
 export default function Teacher() {
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create mode , 2 -> edit mode
@@ -12,6 +13,7 @@ export default function Teacher() {
   const [selectedCampus, setSelectedCampus] = useState("");
   const { fetchCampuses, campuses,fetchCampusDetails,campusDetails } = useCampusStore();
   const { fetchTeachers, teachers } = useTeacherStore();
+  const {fetchSections} = useSectionStore()
 
   function handleSelectTeacher(teacher_id) {
     setSelectedTeacher(teacher_id);
@@ -27,6 +29,7 @@ export default function Teacher() {
     //fetch campus detaila for a selected campus
     fetchCampusDetails(selectedCampus);
     fetchTeachers(selectedCampus);
+    fetchSections(selectedCampus)
   }, [selectedCampus]);
 
   function handleAddEditModel(val) {

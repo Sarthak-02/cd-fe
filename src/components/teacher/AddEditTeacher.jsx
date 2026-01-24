@@ -6,6 +6,7 @@ import { MODE } from "../../utils/constants/globalConstants";
 import { updateSchema } from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
+import { useSectionStore } from "../../store/section.store";
 
 function createPayload(form) {
   const {
@@ -40,16 +41,18 @@ function createPayload(form) {
   };
 }
 
-const getSchemaUpdates = (mode,campusDetails) => {
+const getSchemaUpdates = (mode,campusDetails,sections) => {
   return {
     teacher_id: { disabled: mode == 2 ? true : false },
     teacher_designation: { options: campusDetails?.extras?.staff_designations?.map((designation) => ({value:designation,label:designation})) },
     teacher_role: { options: campusDetails?.extras?.staff_roles?.map((role) => ({value:role,label:role})) },
+    teacher_subjects : {options: campusDetails?.extras?.campus_subjects?.map((subject) => ({label:subject,value:subject}))},
+    teacher_sections : {options : sections.map(({section_id="",section_name=""}) => ({label:section_name,value:section_id}))}
   };
 };
 
-function updatedTeacherSchema(mode,campusDetails) {
-  return updateSchema(teacherSchema, getSchemaUpdates(mode,campusDetails));
+function updatedTeacherSchema(mode,campusDetails,sections) {
+  return updateSchema(teacherSchema, getSchemaUpdates(mode,campusDetails,sections));
 }
 
 export default function AddEditTeacher({
@@ -70,6 +73,8 @@ export default function AddEditTeacher({
     loadingTeacherDetails,
   } = useTeacherStore();
 
+  const {sections} = useSectionStore()
+
   if (
     mode === MODE.EDIT &&
     teacherDetails &&
@@ -80,7 +85,7 @@ export default function AddEditTeacher({
 
 
   if(Object.keys(_teacherSchema).length === 0){
-    setTeacherSchema(updatedTeacherSchema(mode, campusDetails));
+    setTeacherSchema(updatedTeacherSchema(mode, campusDetails,sections));
   }
   
   useEffect(() => {

@@ -8,7 +8,7 @@ import { useAuth } from "../store/auth.store";
 
 
 function getPermittedPaths(user){
-  let page_permissions = user?.page_permissions;
+  let page_permissions = user?.page_permissions || [];
 
   const isAdmin = user?.isadmin ?? false;
 
@@ -16,8 +16,8 @@ function getPermittedPaths(user){
     page_permissions.push("user_management");
   }
 
-  const permittedPaths = paths.filter(({ permission }) =>
-    page_permissions.includes(permission)
+  const permittedPaths = paths?.filter(({ permission }) =>
+    page_permissions?.includes(permission)
   );
 
   return permittedPaths
