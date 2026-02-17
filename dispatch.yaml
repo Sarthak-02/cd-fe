@@ -1,0 +1,11 @@
+# App Engine dispatch configuration
+# This file routes incoming requests to different services based on URL patterns
+
+dispatch:
+  # Route all requests starting with /control-desk-web/ to control-desk-web service
+  - url: "*/control-desk-web/*"
+    service: control-desk-web
+  
+  # Alternative: If you also want the exact path without trailing slash
+  - url: "*/control-desk-web"
+    service: control-desk-web

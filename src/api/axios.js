@@ -2,7 +2,7 @@ import axios from "axios";
 import {useAuth} from "../store/auth.store"
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "",   // Empty for proxy, or full URL for production
+  baseURL: '/onboarding',   // Use proxy path for dev, or full URL for production via env var
   withCredentials: true,              // ⬅️ enables cookies globally
 });
 

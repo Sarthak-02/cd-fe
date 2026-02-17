@@ -8,7 +8,7 @@ import { GoogleMapsProvider } from './utils/map/GoogleMapsProvider.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/control-desk-web">
     <GoogleMapsProvider>
       <App />
     </GoogleMapsProvider>

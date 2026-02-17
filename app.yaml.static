@@ -1,0 +1,41 @@
+# Alternative app.yaml for static file serving only
+# Rename this to app.yaml if you prefer built-in static serving over Express
+
+runtime: nodejs20
+
+service: control-desk-web
+
+env: standard
+
+instance_class: F1
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.65
+
+env_variables:
+  NODE_ENV: 'production'
+
+# Build the app during deployment
+build:
+  build_script: npm run build
+
+handlers:
+  # Serve static files from dist directory
+  - url: /(.*\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map))$
+    static_files: dist/\1
+    upload: dist/.*\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map)$
+    secure: always
+    
+  # Serve index.html for root
+  - url: /
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+    
+  # Handle client-side routing - serve index.html for all other routes
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
