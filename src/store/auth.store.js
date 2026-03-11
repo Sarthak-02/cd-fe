@@ -46,7 +46,7 @@ export const useAuth = create(
           set({ auth: initialValue });
           localStorage.clear()
           // Redirect to login
-          window.location.href = "/login";
+          window.location.href = "/control-desk-web/login";
         }
 
 
