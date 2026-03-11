@@ -4,7 +4,9 @@
         "basicInformation": "Basic Campus Information",
         "contactAddress": "Contact & Address Details",
         "geoLocation": "Geo Location",
-        "configuration": "Configuration Details"
+        "configuration": "Configuration Details",
+        "notificationConfiguration": "Notification Configuration",
+        "examSubjectConfiguration": "Exam and Subject Configuration"
       },
   
       "fields": {
@@ -31,11 +33,33 @@
         "workingDays": "Working Days",
         "campusTiming": "Campus Timing",
         "timezone": "Time Zone",
-        "defaultLanguage": "Default Language"
+        "defaultLanguage": "Default Language",
+        
+        "houseNames": "House Names",
+        "staffRoles": "Staff Roles",
+        "staffDesignations": "Staff Designations",
+        "termStartDate": "Academic Term Start Date",
+        "termEndDate": "Academic Term End Date",
+        
+        "attendanceNotification": "Attendance Notification",
+        "announcementNotification": "Announcement Notification",
+        "gradesNotification": "Grades Notification",
+        "homeworkNotification": "Homework Notification",
+        
+        "subjects": "Subjects",
+        "examTypes": "Exam Types",
+        "gradingConfiguration": "Grading Configuration",
+        "AttendanceSlots": "Attendance Slots"
       },
   
       "placeholders": {
-        "campusTiming": "8:30 AM – 2:30 PM"
+        "campusTiming": "8:30 AM – 2:30 PM",
+        "houseNames": "Select House Names",
+        "staffRoles": "Select Staff Roles",
+        "staffDesignations": "Select Staff Designations",
+        "subjects": "Add Subjects",
+        "examTypes": "Exam Types",
+        "gradingConfiguration": "Enter grading configuration as JSON..."
       }
     },
   

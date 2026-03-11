@@ -36,6 +36,20 @@ export const DAYS = [
 
 ]
 
+export const ATTENDANCE_SLOTS = [
+  {
+    value: 'daily',
+    label: 'Daily'
+  },
+  {
+    value: 'half_day',
+    label: 'Half Day'
+  },
+  {
+    value: 'period',
+    label: 'Period'
+  },
+]
 export const CAMPUS_TYPES = [
   { "label": "Central Board of Secondary Education", "value": "cbse" },
   { "label": "Council for the Indian School Certificate Examinations", "value": "cisce" },

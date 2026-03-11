@@ -5,7 +5,8 @@ import {
   LANGUAGES,
   EMAIL_REGEX,
   PHONE_REGEX,
-  NOTIFICATION_CHANNELS
+  NOTIFICATION_CHANNELS,
+  ATTENDANCE_SLOTS
 } from "../utils/constants/globalConstants";
 
 
@@ -232,8 +233,8 @@ export const campusSchema = [
       
       {
         id: "house_names",
-        name: "House Names",
-        placeholder: "Select House Names",
+        name: "campus.fields.houseNames",
+        placeholder_key: "campus.placeholders.houseNames",
         value: [],
         type: "dropdown",
         fn: (value, formData, setFormData) => {
@@ -263,8 +264,8 @@ export const campusSchema = [
       },
       {
         id: "staff_roles",
-        name: "Staff Roles",
-        placeholder: "Select Staff Roles",
+        name: "campus.fields.staffRoles",
+        placeholder_key: "campus.placeholders.staffRoles",
         value: [],
         type: "dropdown",
         fn: (value, formData, setFormData) => {
@@ -294,8 +295,8 @@ export const campusSchema = [
       },
       {
         id: "staff_designations",
-        name: "Staff Designations",
-        placeholder: "Select Staff Designations",
+        name: "campus.fields.staffDesignations",
+        placeholder_key: "campus.placeholders.staffDesignations",
         value: [],
         type: "dropdown",
         fn: (value, formData, setFormData) => {
@@ -323,8 +324,18 @@ export const campusSchema = [
         mandatory: true,
         width: { tablet: 4, desktop: 4, mobile: 12 }
       },
-      { id: "term_start_date", name: "Academic Term Start Date", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
-      { id: "term_end_date", name: "Academic Term End Date", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      { id: "term_start_date", name: "campus.fields.termStartDate", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      { id: "term_end_date", name: "campus.fields.termEndDate", value: "", type: "date", mandatory: true, width: { tablet: 4, desktop: 4, mobile: 12 } },
+      {
+        id: "attendance_slots",
+        name: "campus.fields.AttendanceSlots",
+        value: "",
+        type: "dropdown",
+        multiple: false,
+        options: ATTENDANCE_SLOTS,
+        mandatory: true,
+        width: { tablet: 4, desktop: 4, mobile: 12 }
+      },
     ]
   },
   {
@@ -340,7 +351,7 @@ export const campusSchema = [
         mandatory: false,
         width: { tablet: 12, desktop: 12, mobile: 12 }
       },
-       {
+      {
         id: "campus_announcement_notification",
         name: "campus.fields.announcementNotification",
         value: [],
@@ -349,8 +360,8 @@ export const campusSchema = [
         multiple: true,
         mandatory: false,
         width: { tablet: 12, desktop: 12, mobile: 12 }
-       },
-       {
+      },
+      {
         id: "campus_grades_notification",
         name: "campus.fields.gradesNotification",
         value: [],
@@ -359,8 +370,8 @@ export const campusSchema = [
         multiple: true,
         mandatory: false,
         width: { tablet: 12, desktop: 12, mobile: 12 }
-       },
-       {
+      },
+      {
         id: "campus_homework_notification",
         name: "campus.fields.homeworkNotification",
         value: [],
@@ -369,17 +380,17 @@ export const campusSchema = [
         multiple: true,
         mandatory: false,
         width: { tablet: 12, desktop: 12, mobile: 12 }
-       }
+      }
 
     ]
   },
   {
-    section_title:"Exam and subject Configuration",
+    section_title: "campus.sections.examSubjectConfiguration",
     fields: [
           {
             id: "campus_subjects",
-            name: "Subjects",
-            placeholder: "Add Subjects",
+            name: "campus.fields.subjects",
+            placeholder_key: "campus.placeholders.subjects",
             value: [],
             type: "dropdown",
             fn: (value, formData, setFormData) => {
@@ -409,8 +420,8 @@ export const campusSchema = [
           },
           {
             id: "campus_exam_types",
-            name: "Exam Types",
-            placeholder: "Exam Types",
+            name: "campus.fields.examTypes",
+            placeholder_key: "campus.placeholders.examTypes",
             value: [],
             type: "dropdown",
             fn: (value, formData, setFormData) => {
@@ -440,10 +451,10 @@ export const campusSchema = [
           },
           {
             id: "class_grading_config",
-            name: "Grading Configuration",
+            name: "campus.fields.gradingConfiguration",
             value: {},
             type: "json",
-            placeholder: "Enter grading configuration as JSON...",
+            placeholder_key: "campus.placeholders.gradingConfiguration",
             height: "h-80",
             mandatory: false,
             width: { tablet: 12, desktop: 12, mobile: 12 }
