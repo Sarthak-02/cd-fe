@@ -98,6 +98,9 @@
         "classTeacher": "Class Teacher",
         "maxStudents": "Max Students Allowed",
         "roomNumber": "Room Number"
+      },
+      "buttons": {
+        "manageTimetable": "Manage Timetable"
       }
     },
     "student": {
@@ -217,6 +220,53 @@
       "site": {
         "kv": "Kendriya Vidyalaya",
         "dav": "DAV"
+      }
+    },
+    "timetable": {
+      "title": "Class Timetable",
+      "subtitle": "Manage working days, slots, and class schedule",
+      "sections": {
+        "timeSlots": "Time Slots",
+        "toolbar": "Class & Section Selection"
+      },
+      "fields": {
+        "class": "Class",
+        "section": "Section",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "slotType": "Slot Type",
+        "subject": "Subject",
+        "teacher": "Teacher",
+        "room": "Room",
+        "daySlot": "Day / Slot"
+      },
+      "slotTypes": {
+        "class": "Class",
+        "break": "Break",
+        "lunch": "Lunch",
+        "assembly": "Assembly"
+      },
+      "classes": {
+        "grade1": "Grade 1",
+        "grade2": "Grade 2",
+        "grade3": "Grade 3"
+      },
+      "buttons": {
+        "addSlot": "Add Slot",
+        "delete": "Delete",
+        "clear": "Clear",
+        "cancel": "Cancel",
+        "save": "Save",
+        "add": "Add"
+      },
+      "placeholders": {
+        "subject": "Enter subject",
+        "teacher": "Enter teacher name",
+        "room": "Enter room number",
+        "untitledSlot": "Untitled Slot"
+      },
+      "dialog": {
+        "editCell": "Edit Timetable Cell"
       }
     }
   }
