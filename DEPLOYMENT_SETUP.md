@@ -221,6 +221,6 @@ Your application is fully configured for GCP App Engine deployment. All scripts 
 **Status**: ✅ Ready for deployment  
 **Service**: control-desk-web  
 **Platform**: Google Cloud Platform App Engine  
-**Runtime**: Node.js 20
+**Runtime**: Node.js 22
 
 **Quick Deploy**: `./deploy.sh` or `./deploy-env.sh --env production`

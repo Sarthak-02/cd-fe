@@ -273,7 +273,7 @@ gcloud app logs read -s control-desk-web --level=error
 │  ┌─────────────────────────────────────┐   │
 │  │  Service: control-desk-web          │   │
 │  │  ┌───────────────────────────────┐  │   │
-│  │  │  Node.js 20 + Express         │  │   │
+│  │  │  Node.js 22 + Express         │  │   │
 │  │  │  Serving React SPA            │  │   │
 │  │  └───────────────────────────────┘  │   │
 │  └─────────────────────────────────────┘   │

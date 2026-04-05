@@ -1,5 +1,5 @@
 # Development environment configuration
-runtime: nodejs20
+runtime: nodejs22
 
 service: control-desk-web-dev
 

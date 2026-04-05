@@ -1,7 +1,7 @@
 # Alternative app.yaml for static file serving only
 # Rename this to app.yaml if you prefer built-in static serving over Express
 
-runtime: nodejs20
+runtime: nodejs22
 
 service: control-desk-web
 
