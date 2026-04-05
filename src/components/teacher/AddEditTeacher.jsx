@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { teacherSchema } from "../../schemas/teacher.schema";
 import { useTeacherStore } from "../../store/teacher.store";
 import DynamicForm from "../../ui-components/DynamicForm";
 import { MODE } from "../../utils/constants/globalConstants";
-import { updateSchema } from "../../utils/utility_functions/updateSchema";
+import {
+  getFieldValuesMap,
+  updateSchema,
+} from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 import { useSectionStore } from "../../store/section.store";
+import { useCampusStore } from "../../store/campus.store";
 
 function createPayload(form) {
   const {
@@ -21,7 +25,7 @@ function createPayload(form) {
     teacher_status,
     campus_id = "",
     teacher_employee_code,
-    teacher_photo_url="",
+    teacher_photo_url = "",
     ...extras
   } = form;
   return {
@@ -41,18 +45,47 @@ function createPayload(form) {
   };
 }
 
-const getSchemaUpdates = (mode,campusDetails,sections) => {
-  return {
-    teacher_id: { disabled: mode == 2 ? true : false },
-    teacher_designation: { options: campusDetails?.extras?.staff_designations?.map((designation) => ({value:designation,label:designation})) },
-    teacher_role: { options: campusDetails?.extras?.staff_roles?.map((role) => ({value:role,label:role})) },
-    teacher_subjects : {options: campusDetails?.extras?.campus_subjects?.map((subject) => ({label:subject,value:subject}))},
-    teacher_sections : {options : sections.map(({section_id="",section_name=""}) => ({label:section_name,value:section_id}))}
-  };
-};
+const getSchemaUpdates = (mode, campusDetails, sections = []) => ({
+  teacher_id: { disabled: mode === MODE.EDIT },
+  teacher_designation: {
+    options:
+      campusDetails?.extras?.staff_designations?.map((designation) => ({
+        value: designation,
+        label: designation,
+      })) ?? [],
+  },
+  teacher_role: {
+    options:
+      campusDetails?.extras?.staff_roles?.map((role) => ({
+        value: role,
+        label: role,
+      })) ?? [],
+  },
+  teacher_subjects: {
+    options:
+      campusDetails?.extras?.campus_subjects?.map((subject) => ({
+        label: subject,
+        value: subject,
+      })) ?? [],
+  },
+  teacher_sections: {
+    options: sections.map(({ section_id = "", section_name = "" }) => ({
+      label: section_name,
+      value: section_id,
+    })),
+  },
+});
 
-function updatedTeacherSchema(mode,campusDetails,sections) {
-  return updateSchema(teacherSchema, getSchemaUpdates(mode,campusDetails,sections));
+function buildTeacherSchema(mode, campusDetails, sections) {
+  return updateSchema(teacherSchema, getSchemaUpdates(mode, campusDetails, sections));
+}
+
+function apiErrorMessage(err) {
+  const d = err?.response?.data;
+  if (typeof d === "string") return d;
+  if (d?.message) return d.message;
+  if (d?.error) return d.error;
+  return err?.message || "Something went wrong. Please try again.";
 }
 
 export default function AddEditTeacher({
@@ -60,81 +93,143 @@ export default function AddEditTeacher({
   selectedTeacher,
   campus_id,
   handleAddEditModel,
-  campusDetails,
 }) {
+  const [schema, setSchema] = useState(() =>
+    buildTeacherSchema(MODE.CREATE, null, [])
+  );
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
-  const [_teacherSchema, setTeacherSchema] = useState({});
-  const {
-    fetchTeacherDetails,
-    teacherDetails,
-    createTeacher,
-    updateTeacher,
-    loadingTeacherDetails,
-  } = useTeacherStore();
+  const [submitError, setSubmitError] = useState("");
+  const [detailsLoadError, setDetailsLoadError] = useState("");
+  const [bootstrapping, setBootstrapping] = useState(true);
 
-  const {sections} = useSectionStore()
+  const lastBootstrapKeyRef = useRef("");
+  const teacherFetchGenRef = useRef(0);
 
-  if (
-    mode === MODE.EDIT &&
-    teacherDetails &&
-    Object.keys(formData).length === 0
-  ) {
-    setFormData({ ...teacherDetails, ...teacherDetails?.extras });
-  }
+  const { campusDetails } = useCampusStore();
+  const { sections } = useSectionStore();
+  const { createTeacher, updateTeacher } = useTeacherStore();
 
-
-  if(Object.keys(_teacherSchema).length === 0){
-    setTeacherSchema(updatedTeacherSchema(mode, campusDetails,sections));
-  }
-  
   useEffect(() => {
-    if (mode !== MODE.EDIT) return;
-    fetchTeacherDetails(selectedTeacher);
-  }, []);
+    const sectionList = sections ?? [];
+    const nextSchema = buildTeacherSchema(mode, campusDetails, sectionList);
+    setSchema(nextSchema);
 
-  function handleUpdateTeacher() {
-    const payload = createPayload(formData);
-    updateTeacher(payload);
-  }
+    const bootstrapKey = `${mode}:${selectedTeacher}:${campus_id}`;
 
-  function handleCreateTeacher() {
-    const payload = { ...createPayload(formData), campus_id };
-    createTeacher(payload);
-  }
+    if (mode === MODE.CREATE) {
+      if (lastBootstrapKeyRef.current !== bootstrapKey) {
+        lastBootstrapKeyRef.current = bootstrapKey;
+        setDetailsLoadError("");
+        setSubmitError("");
+        useTeacherStore.getState().clearTeacherError();
+        setErrors({});
+        setFormData({
+          ...getFieldValuesMap(nextSchema),
+          ...(campus_id ? { campus_id } : {}),
+        });
+      }
+      setBootstrapping(false);
+      return;
+    }
 
-  function onSubmit() {
-    const { errors, isError } = validateForm(_teacherSchema, formData);
+    if (mode === MODE.EDIT) {
+      if (lastBootstrapKeyRef.current !== bootstrapKey) {
+        lastBootstrapKeyRef.current = bootstrapKey;
+        setDetailsLoadError("");
+        setSubmitError("");
+        useTeacherStore.getState().clearTeacherError();
+        setErrors({});
+        setBootstrapping(true);
+        setFormData({});
+        const gen = ++teacherFetchGenRef.current;
+        const teacherIdRequested = selectedTeacher;
+        (async () => {
+          await useTeacherStore
+            .getState()
+            .fetchTeacherDetails(teacherIdRequested);
+          if (teacherFetchGenRef.current !== gen) return;
+          const { teacherDetails: details, error: fetchErr } =
+            useTeacherStore.getState();
+          if (fetchErr) {
+            setDetailsLoadError(apiErrorMessage(fetchErr));
+          } else if (!details || details.teacher_id !== teacherIdRequested) {
+            setDetailsLoadError("Could not load teacher.");
+          } else {
+            setFormData({ ...details, ...(details.extras ?? {}) });
+          }
+          setBootstrapping(false);
+        })();
+      }
+    }
+  }, [mode, selectedTeacher, campus_id, campusDetails, sections]);
+
+  async function onSubmit() {
+    const { errors, isError } = validateForm(schema, formData);
 
     if (isError) {
       setErrors(errors);
       return;
     }
 
-    if (mode === MODE.CREATE) {
-      handleCreateTeacher();
+    setSubmitError("");
+    useTeacherStore.getState().clearTeacherError();
+
+    const base = createPayload(formData);
+    const payload =
+      mode === MODE.CREATE ? { ...base, campus_id } : base;
+
+    if (!payload.campus_id) {
+      setSubmitError("Campus is required.");
+      return;
     }
-    if (mode === MODE.EDIT) {
-      handleUpdateTeacher();
+
+    try {
+      if (mode === MODE.CREATE) {
+        await createTeacher(payload);
+      } else {
+        await updateTeacher(payload);
+      }
+      handleAddEditModel(MODE.NONE);
+    } catch (err) {
+      setSubmitError(apiErrorMessage(err));
     }
-    handleAddEditModel(MODE.NONE);
   }
 
+  const showFormSkeleton = bootstrapping && !detailsLoadError;
+  const showForm = !bootstrapping && !detailsLoadError;
+
   return (
-    <>
-      {loadingTeacherDetails ? (
-        <FormSkeleton />
-      ) : (
-        <div className="w-full p-4 space-y-6">
-          <DynamicForm
-            schema={_teacherSchema}
-            formData={formData}
-            setFormData={setFormData}
-            handleSubmit={onSubmit}
-            errors={formErrors}
-          />
+    <div className="w-full p-4 space-y-6">
+      {submitError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          role="alert"
+        >
+          {submitError}
         </div>
       )}
-    </>
+
+      {detailsLoadError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          role="alert"
+        >
+          {detailsLoadError}
+        </div>
+      )}
+
+      {showFormSkeleton && <FormSkeleton />}
+
+      {showForm && (
+        <DynamicForm
+          schema={schema}
+          formData={formData}
+          setFormData={setFormData}
+          handleSubmit={onSubmit}
+          errors={formErrors}
+        />
+      )}
+    </div>
   );
 }

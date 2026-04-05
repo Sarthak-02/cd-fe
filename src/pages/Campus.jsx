@@ -13,8 +13,14 @@ export default function Campus() {
 
   // const [selectedSchool,setSelectedSchool] = useState("")
 
-  const { campuses, loading, fetchCampuses, clearCampusDetails } =
-    useCampusStore();
+  const {
+    campuses,
+    loading,
+    error,
+    fetchCampuses,
+    clearCampusDetails,
+    clearCampusError,
+  } = useCampusStore();
 
   const {
     auth: {
@@ -29,12 +35,15 @@ export default function Campus() {
   // -----------------------------
   useEffect(() => {
     fetchCampuses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store action
   }, []);
 
   // -----------------------------
   // When user selects a campus row
   // -----------------------------
   function handleSelectCampus(campus_id) {
+    clearCampusDetails();
+    clearCampusError();
     setSelectedCampus(campus_id);
     setMode(MODE.EDIT);
   }
@@ -44,6 +53,7 @@ export default function Campus() {
   // -----------------------------
   function handleAddEditModel(val) {
     setMode(val);
+    clearCampusError();
 
     if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedCampus("");
@@ -71,6 +81,9 @@ export default function Campus() {
           handleCreate={() => handleAddEditModel(MODE.CREATE)}
           campuses={campuses}
           loading={loading}
+          error={error}
+          onRetry={() => fetchCampuses()}
+          onDismissError={clearCampusError}
           handleSelectCampus={handleSelectCampus}
           allSchools={site_permissions}
           selectedSchool={selectedSchool}

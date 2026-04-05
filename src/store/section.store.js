@@ -14,6 +14,8 @@ export const useSectionStore = create((set, get) => ({
   sectionDetails: null,
   loadingSectionDetails: false,
 
+  clearSectionError: () => set({ error: null }),
+
   fetchSections: async (campus_id) => {
     set({ loading: true, error: null });
     try {
@@ -34,25 +36,28 @@ export const useSectionStore = create((set, get) => ({
     }
   },
 
-  createSection: async (payload,campus_id) => {
+  createSection: async (payload) => {
     try {
       await createSectionApi(payload);
-      await get().fetchSections(campus_id);
+      await get().fetchSections(payload.campus_id);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  updateSection: async (payload,campus_id) => {
+  updateSection: async (payload) => {
     try {
       await updateSectionApi(payload);
       await Promise.all([
-        get().fetchSections(campus_id),
+        get().fetchSections(payload.campus_id),
+        get().fetchSectionDetails(payload.section_id),
       ]);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  clearSectionDetails: () => set({ sectionDetails: null })
+  clearSectionDetails: () => set({ sectionDetails: null }),
 }));

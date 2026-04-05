@@ -6,36 +6,43 @@ import Dialog from "../ui-components/Dialog";
 import { MODE } from "../utils/constants/globalConstants";
 import { useUsersStore } from "../store/user.store";
 import { useSchoolsStore } from "../store/school.store";
-//get all pages
-//get all sites
 
-export default function School() {
-  const [mode, setMode] = useState(MODE.NONE); // 0 -> close ,  1 -> create mode , 2--> edit mode
+export default function User() {
+  const [mode, setMode] = useState(MODE.NONE);
   const [selectedUser, setSelectedUser] = useState("");
 
-  const { users, loading, fetchUsers , clearUserDetails} = useUsersStore();
-  const {fetchSchools,schools} = useSchoolsStore()
+  const {
+    users,
+    loading,
+    error,
+    fetchUsers,
+    clearUserDetails,
+    clearUserError,
+  } = useUsersStore();
+  const { fetchSchools } = useSchoolsStore();
 
   useEffect(() => {
     fetchUsers();
-    fetchSchools()
+    fetchSchools();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store actions
   }, []);
 
   function handleSelectUser(userid) {
+    clearUserDetails();
+    clearUserError();
     setSelectedUser(userid);
     setMode(MODE.EDIT);
   }
 
   function handleAddEditModel(val) {
     setMode(val);
+    clearUserError();
 
     if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedUser("");
-      clearUserDetails()
+      clearUserDetails();
     }
-
   }
-
 
   return (
     <>
@@ -45,7 +52,11 @@ export default function School() {
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditUser mode={mode} selectedUser={selectedUser} handleAddEditModel={handleAddEditModel} all_sites={schools} />
+          <AddEditUser
+            mode={mode}
+            selectedUser={selectedUser}
+            handleAddEditModel={handleAddEditModel}
+          />
         </Dialog>
       ) : (
         <UserListing
@@ -53,7 +64,9 @@ export default function School() {
           users={users}
           handleSelectUser={handleSelectUser}
           loading={loading}
-          // error={error}
+          error={error}
+          onRetry={() => fetchUsers()}
+          onDismissError={clearUserError}
         />
       )}
     </>

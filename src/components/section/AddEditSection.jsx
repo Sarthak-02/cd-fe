@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DynamicForm from "../../ui-components/DynamicForm";
 import { sectionSchema } from "../../schemas/section.schema";
 import { validateForm } from "../../utils/validators/form_validation";
@@ -26,30 +26,36 @@ function createPayload(form, timetableData) {
     class_id = "",
     ...extras
   } = form;
-  return { 
-    section_id, 
-    section_name, 
-    section_type, 
-    class_id, 
+  return {
+    section_id,
+    section_name,
+    section_type,
+    class_id,
     extras: {
       ...extras,
-      timetable: timetableData
-    }
+      timetable: timetableData,
+    },
   };
 }
 
-const getSchemaUpdates = (mode, classes, subjects = []) => {
-  return {
-    section_id: { disabled: mode == 2 ? true : false },
-    class_id: { options: classes },
-    section_subjects: {
-      options: subjects.map((subject) => ({ value: subject, label: subject })),
-    },
-  };
-};
+const getSchemaUpdates = (mode, classes, subjects = []) => ({
+  section_id: { disabled: mode === MODE.EDIT },
+  class_id: { options: classes },
+  section_subjects: {
+    options: subjects.map((subject) => ({ value: subject, label: subject })),
+  },
+});
 
 function updatedSectionSchema(mode, classes, subjects) {
   return updateSchema(sectionSchema, getSchemaUpdates(mode, classes, subjects));
+}
+
+function apiErrorMessage(err) {
+  const d = err?.response?.data;
+  if (typeof d === "string") return d;
+  if (d?.message) return d.message;
+  if (d?.error) return d.error;
+  return err?.message || "Something went wrong. Please try again.";
 }
 
 export default function AddEditSection({
@@ -60,108 +66,145 @@ export default function AddEditSection({
   campus_id,
 }) {
   const { t } = useTranslation();
+  const [schema, setSchema] = useState(() =>
+    updatedSectionSchema(MODE.CREATE, [], [])
+  );
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
+  const [detailsLoadError, setDetailsLoadError] = useState("");
+  const [bootstrapping, setBootstrapping] = useState(true);
   const [isTimetableOpen, setIsTimetableOpen] = useState(false);
 
-  const {
-    fetchSectionDetails,
-    createSection,
-    updateSection,
-    sectionDetails,
-    loadingSectionDetails,
-  } = useSectionStore();
+  const lastBootstrapKeyRef = useRef("");
+  const sectionFetchGenRef = useRef(0);
 
+  const { createSection, updateSection } = useSectionStore();
   const { campusDetails } = useCampusStore();
-  
   const { days, slots, entries } = useTimetableStore();
 
   useEffect(() => {
-    function getSectionSchema() {
-      const _sectionSchema = updatedSectionSchema(
-        mode,
-        classes,
-        campusDetails?.extras?.campus_subjects
-      );
-      if (mode === MODE.CREATE) {
-        setFormData(getFieldValuesMap(_sectionSchema));
+    const subjects = campusDetails?.extras?.campus_subjects ?? [];
+    const nextSchema = updatedSectionSchema(mode, classes, subjects);
+    setSchema(nextSchema);
+
+    const bootstrapKey = `${mode}:${selectedSection}:${campus_id}`;
+
+    if (mode === MODE.CREATE) {
+      if (lastBootstrapKeyRef.current !== bootstrapKey) {
+        lastBootstrapKeyRef.current = bootstrapKey;
+        setDetailsLoadError("");
+        setSubmitError("");
+        useSectionStore.getState().clearSectionError();
+        setErrors({});
+        setFormData(getFieldValuesMap(nextSchema));
+      }
+      setBootstrapping(false);
+      return;
+    }
+
+    if (mode === MODE.EDIT) {
+      if (lastBootstrapKeyRef.current !== bootstrapKey) {
+        lastBootstrapKeyRef.current = bootstrapKey;
+        setDetailsLoadError("");
+        setSubmitError("");
+        useSectionStore.getState().clearSectionError();
+        setErrors({});
+        setBootstrapping(true);
+        setFormData({});
+        const gen = ++sectionFetchGenRef.current;
+        const sectionIdRequested = selectedSection;
+        (async () => {
+          await useSectionStore.getState().fetchSectionDetails(sectionIdRequested);
+          if (sectionFetchGenRef.current !== gen) return;
+          const { sectionDetails: details, error: fetchErr } =
+            useSectionStore.getState();
+          if (fetchErr) {
+            setDetailsLoadError(apiErrorMessage(fetchErr));
+          } else if (!details || details.section_id !== sectionIdRequested) {
+            setDetailsLoadError("Could not load section.");
+          } else {
+            setFormData({ ...details, ...(details.extras ?? {}) });
+          }
+          setBootstrapping(false);
+        })();
       }
     }
-    getSectionSchema();
-    if (mode === MODE.EDIT) fetchSectionDetails(selectedSection);
-  }, []);
+  }, [mode, selectedSection, campus_id, classes, campusDetails]);
 
-  let _sectionSchema = useMemo(() => {
-    if (classes.length === 0) {
-      return sectionSchema;
-    }
-
-    return updatedSectionSchema(mode, classes,campusDetails?.extras?.campus_subjects);
-  }, [classes, sectionSchema, mode]);
-
-  if (
-    mode === MODE.EDIT &&
-    sectionDetails &&
-    Object.keys(formData).length === 0
-  ) {
-    setFormData({ ...sectionDetails, ...sectionDetails?.extras });
-  }
-
-  function handleUpdateSection() {
+  async function onSubmit() {
     const timetableData = { days, slots, entries };
-    const payload = createPayload(formData, timetableData);
-    updateSection(payload, campus_id);
-  }
-
-  function handleCreateSection() {
-    const timetableData = { days, slots, entries };
-    const payload = createPayload(formData, timetableData);
-    createSection(payload, campus_id);
-  }
-
-  function onSubmit() {
-    const { errors, isError } = validateForm(_sectionSchema, formData);
+    const { errors, isError } = validateForm(schema, formData);
 
     if (isError) {
       setErrors(errors);
       return;
     }
 
-    if (mode === MODE.CREATE) {
-      handleCreateSection();
+    setSubmitError("");
+    useSectionStore.getState().clearSectionError();
+
+    const base = createPayload(formData, timetableData);
+    const payload = { ...base, campus_id };
+
+    if (!payload.campus_id) {
+      setSubmitError("Campus is required.");
+      return;
     }
 
-    if (mode === MODE.EDIT) {
-      handleUpdateSection();
+    try {
+      if (mode === MODE.CREATE) {
+        await createSection(payload);
+      } else {
+        await updateSection(payload);
+      }
+      handleAddEditModel(MODE.NONE);
+    } catch (err) {
+      setSubmitError(apiErrorMessage(err));
     }
-
-    handleAddEditModel(MODE.NONE);
   }
 
-  function handleOpenTimetable() {
-    setIsTimetableOpen(true);
-  }
-
-  function handleCloseTimetable() {
-    setIsTimetableOpen(false);
-  }
+  const showFormSkeleton = bootstrapping && !detailsLoadError;
+  const showForm = !bootstrapping && !detailsLoadError;
 
   return (
     <>
-      {loadingSectionDetails ? (
-        <FormSkeleton />
-      ) : (
+      {submitError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm mx-4 mt-4"
+          role="alert"
+        >
+          {submitError}
+        </div>
+      )}
+
+      {detailsLoadError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm mx-4 mt-4"
+          role="alert"
+        >
+          {detailsLoadError}
+        </div>
+      )}
+
+      {showFormSkeleton && (
+        <div className="p-4">
+          <FormSkeleton />
+        </div>
+      )}
+
+      {showForm && (
         <div className="w-full p-4 space-y-6">
           {mode === MODE.EDIT && (
             <div className="flex justify-end mb-4">
-              <Button onClick={handleOpenTimetable}>
+              <Button onClick={() => setIsTimetableOpen(true)}>
                 {t("section.buttons.manageTimetable")}
               </Button>
             </div>
           )}
-          
+
           <DynamicForm
-            schema={_sectionSchema}
+            schema={schema}
             formData={formData}
             setFormData={setFormData}
             handleSubmit={onSubmit}
@@ -173,7 +216,7 @@ export default function AddEditSection({
       <Dialog
         open={isTimetableOpen}
         fullScreen={true}
-        onClose={handleCloseTimetable}
+        onClose={() => setIsTimetableOpen(false)}
         title={t("timetable.title")}
       >
         <div className="space-y-6">

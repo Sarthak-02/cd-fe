@@ -4,7 +4,10 @@ import { useClassStore } from "../../store/class.store";
 import DynamicForm from "../../ui-components/DynamicForm";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 import { MODE } from "../../utils/constants/globalConstants";
-import { getFieldValuesMap, updateSchema } from "../../utils/utility_functions/updateSchema";
+import {
+  getFieldValuesMap,
+  updateSchema,
+} from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
 
 function createPayload(form) {
@@ -38,17 +41,21 @@ function createPayload(form) {
   };
 }
 
-const getSchemaUpdates = (mode) => {
-  return {
-    class_id: { disabled: mode == 2 ? true : false },
-  };
-};
+const getSchemaUpdates = (mode) => ({
+  class_id: { disabled: mode === MODE.EDIT },
+});
 
-function updatedClassSchema(mode) {
+function buildClassSchema(mode) {
   return updateSchema(classSchema, getSchemaUpdates(mode));
 }
 
-let _classSchema = classSchema;
+function apiErrorMessage(err) {
+  const d = err?.response?.data;
+  if (typeof d === "string") return d;
+  if (d?.message) return d.message;
+  if (d?.error) return d.error;
+  return err?.message || "Something went wrong. Please try again.";
+}
 
 export default function AddEditClass({
   mode,
@@ -56,85 +63,126 @@ export default function AddEditClass({
   campus_id,
   handleAddEditModel,
 }) {
-
+  const [schema, setSchema] = useState(() => buildClassSchema(MODE.CREATE));
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
-  console.log("formData", formData)
-  const {
-    fetchClassDetails,
-    classDetails,
-    createClass,
-    updateClass,
-    loadingClassDetails,
-  } = useClassStore();
+  const [submitError, setSubmitError] = useState("");
+  const [detailsLoadError, setDetailsLoadError] = useState("");
+  const [bootstrapping, setBootstrapping] = useState(true);
 
-  if (
-    mode === MODE.EDIT &&
-    classDetails &&
-    Object.keys(formData).length === 0
-  ) {
-    setFormData({ ...classDetails, ...classDetails?.extras });
-  }
+  const { createClass, updateClass } = useClassStore();
 
   useEffect(() => {
-    function getClassSchema() {
-      _classSchema = updatedClassSchema(mode);
-      if (mode === MODE.CREATE) {
-        setFormData(getFieldValuesMap(_classSchema))
-      }
-      return _classSchema
+    let cancelled = false;
+    setDetailsLoadError("");
+    setSubmitError("");
+    setBootstrapping(true);
+    useClassStore.getState().clearClassError();
+
+    const nextSchema = buildClassSchema(mode);
+    setSchema(nextSchema);
+    setErrors({});
+
+    if (mode === MODE.CREATE) {
+      setFormData({
+        ...getFieldValuesMap(nextSchema),
+        ...(campus_id ? { campus_id } : {}),
+      });
+      setBootstrapping(false);
+      return () => {
+        cancelled = true;
+      };
     }
-    _classSchema = getClassSchema()
-    if (mode !== MODE.EDIT) return;
-    fetchClassDetails(selectedClass);
-  }, []);
 
-  function handleUpdateClass() {
-    const payload = createPayload(formData);
+    if (mode === MODE.EDIT) {
+      setFormData({});
+      (async () => {
+        await useClassStore.getState().fetchClassDetails(selectedClass);
+        if (cancelled) return;
+        const { classDetails: details, error: fetchErr } =
+          useClassStore.getState();
+        if (fetchErr) {
+          setDetailsLoadError(apiErrorMessage(fetchErr));
+        } else if (!details || details.class_id !== selectedClass) {
+          setDetailsLoadError("Could not load class.");
+        } else {
+          setFormData({ ...details, ...(details.extras ?? {}) });
+        }
+        setBootstrapping(false);
+      })();
+    }
 
-    updateClass(payload, campus_id);
-  }
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, selectedClass, campus_id]);
 
-  function handleCreateClass() {
-    const payload = { ...createPayload(formData), campus_id };
-
-    createClass(payload, campus_id);
-  }
-
-  function onSubmit() {
-    const { errors, isError } = validateForm(_classSchema, formData);
+  async function onSubmit() {
+    const { errors, isError } = validateForm(schema, formData);
 
     if (isError) {
       setErrors(errors);
       return;
     }
 
-    if (mode === MODE.CREATE) {
-      handleCreateClass();
+    setSubmitError("");
+    useClassStore.getState().clearClassError();
+
+    const base = createPayload(formData);
+    const payload =
+      mode === MODE.CREATE ? { ...base, campus_id } : base;
+
+    if (mode === MODE.CREATE && !payload.campus_id) {
+      setSubmitError("Campus is required.");
+      return;
     }
 
-    if (mode === MODE.EDIT) {
-      handleUpdateClass();
+    try {
+      if (mode === MODE.CREATE) {
+        await createClass(payload);
+      } else {
+        await updateClass(payload);
+      }
+      handleAddEditModel(MODE.NONE);
+    } catch (err) {
+      setSubmitError(apiErrorMessage(err));
     }
-
-    handleAddEditModel(MODE.NONE);
   }
 
+  const showFormSkeleton = bootstrapping && !detailsLoadError;
+  const showForm = !bootstrapping && !detailsLoadError;
+
   return (
-    <>
-      {loadingClassDetails ? (
-        <FormSkeleton />
-      ) : (
-        <div className="w-full p-4 space-y-6">
-          <DynamicForm
-            schema={_classSchema}
-            formData={formData}
-            setFormData={setFormData}
-            handleSubmit={onSubmit}
-            errors={formErrors}
-          />
+    <div className="w-full p-4 space-y-6">
+      {submitError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          role="alert"
+        >
+          {submitError}
         </div>
       )}
-    </>
+
+      {detailsLoadError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          role="alert"
+        >
+          {detailsLoadError}
+        </div>
+      )}
+
+      {showFormSkeleton && <FormSkeleton />}
+
+      {showForm && (
+        <DynamicForm
+          schema={schema}
+          formData={formData}
+          setFormData={setFormData}
+          handleSubmit={onSubmit}
+          errors={formErrors}
+        />
+      )}
+    </div>
   );
 }

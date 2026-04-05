@@ -5,28 +5,66 @@ import Card from "../../ui-components/Card";
 import SearchBar from "../../ui-components/SearchBar";
 import Button from "../../ui-components/Button";
 
+function apiErrorMessage(err) {
+  const d = err?.response?.data;
+  if (typeof d === "string") return d;
+  if (d?.message) return d.message;
+  if (d?.error) return d.error;
+  return err?.message || "Could not load schools.";
+}
+
 export default function SchoolListing({
   handleCreate,
   schools,
   handleSelectSchool,
   loading,
+  error,
+  onRetry,
+  onDismissError,
 }) {
   const [search, setSearch] = useState("");
 
-  /** ----------------------------------------
-   * Filter schools based on search input
-   ---------------------------------------- */
   const filteredSchools = useMemo(() => {
-    return schools.filter(
+    const list = schools ?? [];
+    const q = search.toLowerCase();
+    return list.filter(
       ({ school_id, school_name }) =>
-        school_id.toLowerCase().includes(search.toLowerCase()) ||
-        school_name.toLowerCase().includes(search.toLowerCase())
+        school_id.toLowerCase().includes(q) ||
+        school_name.toLowerCase().includes(q)
     );
   }, [search, schools]);
 
   return (
     <>
-      {/* Search + Create Button */}
+      {error && (
+        <div
+          className="mb-4 rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm flex flex-wrap items-center justify-between gap-2"
+          role="alert"
+        >
+          <span>{apiErrorMessage(error)}</span>
+          <div className="flex gap-2 shrink-0">
+            {onRetry && (
+              <button
+                type="button"
+                className="text-sm font-medium text-red-900 underline"
+                onClick={onRetry}
+              >
+                Retry
+              </button>
+            )}
+            {onDismissError && (
+              <button
+                type="button"
+                className="text-sm font-medium text-red-900 underline"
+                onClick={onDismissError}
+              >
+                Dismiss
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-4 gap-5">
         <div className="w-4/5">
           <SearchBar onChange={setSearch} value={search} />
@@ -38,16 +76,16 @@ export default function SchoolListing({
       </div>
 
       <Listing>
-        {!loading
-          ? filteredSchools.map((school) => (
+        {loading
+          ? [...Array(12)].map((_, i) => <CardSkeleton key={i} />)
+          : filteredSchools.map((school) => (
               <Card
                 key={school.school_id}
                 title={school.school_name}
                 subtitle={school.school_id}
                 onClick={() => handleSelectSchool(school.school_id)}
               />
-            ))
-          : [...Array(20).fill(0)].map((_, i) => <CardSkeleton key={i} />)}
+            ))}
       </Listing>
     </>
   );

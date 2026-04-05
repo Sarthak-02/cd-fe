@@ -10,27 +10,30 @@ export default function School() {
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedSchool, setSelectedSchool] = useState("");
 
-  const { schools, loading, fetchSchools, clearSchoolDetails } =
-    useSchoolsStore();
+  const {
+    schools,
+    loading,
+    error,
+    fetchSchools,
+    clearSchoolDetails,
+    clearSchoolError,
+  } = useSchoolsStore();
 
-  // Load all schools on mount
   useEffect(() => {
     fetchSchools();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store action
   }, []);
 
-  /** -----------------------------
-   * When user selects a school row
-   * ----------------------------- */
   function handleSelectSchool(school_id) {
+    clearSchoolDetails();
+    clearSchoolError();
     setSelectedSchool(school_id);
     setMode(MODE.EDIT);
   }
 
-  /** -----------------------------
-   * Handles opening & closing modal
-   * ----------------------------- */
   function handleAddEditModel(val) {
     setMode(val);
+    clearSchoolError();
 
     if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedSchool("");
@@ -57,6 +60,9 @@ export default function School() {
           handleCreate={() => handleAddEditModel(MODE.CREATE)}
           schools={schools}
           loading={loading}
+          error={error}
+          onRetry={() => fetchSchools()}
+          onDismissError={clearSchoolError}
           handleSelectSchool={handleSelectSchool}
         />
       )}

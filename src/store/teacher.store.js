@@ -15,6 +15,8 @@ export const useTeacherStore = create((set, get) => ({
   teacherDetails: null,
   loadingTeacherDetails: false,
 
+  clearTeacherError: () => set({ error: null }),
+
   fetchTeachers: async (campus_id) => {
     set({ loading: true, error: null });
     try {
@@ -38,25 +40,28 @@ export const useTeacherStore = create((set, get) => ({
     }
   },
 
-  createTeacher: async (payload,campus_id) => {
+  createTeacher: async (payload) => {
     try {
       await createTeacherApi(payload);
-      await get().fetchTeachers(campus_id);
+      await get().fetchTeachers(payload.campus_id);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  updateTeacher: async ( payload,campus_id) => {
+  updateTeacher: async (payload) => {
     try {
-      await updateTeacherApi( payload);
+      await updateTeacherApi(payload);
       await Promise.all([
-        get().fetchTeachers(campus_id),
+        get().fetchTeachers(payload.campus_id),
+        get().fetchTeacherDetails(payload.teacher_id),
       ]);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  clearTeacherDetails: () => set({ teacherDetails: null })
+  clearTeacherDetails: () => set({ teacherDetails: null }),
 }));

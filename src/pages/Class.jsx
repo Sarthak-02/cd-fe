@@ -8,28 +8,41 @@ import { useClassStore } from "../store/class.store";
 import { MODE } from "../utils/constants/globalConstants";
 
 export default function Class() {
-  const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create mode , 2 -> edit mode
+  const [mode, setMode] = useState(MODE.NONE);
   const [selectedClass, setSelectedClass] = useState("");
-  const {campuses,fetchCampuses} = useCampusStore()
-  const {classes,fetchClasses} = useClassStore()
-  const [selectedCampus,setSelectedCampus] = useState("")
+  const [selectedCampus, setSelectedCampus] = useState("");
+
+  const { campuses, fetchCampuses } = useCampusStore();
+  const {
+    classes,
+    loading,
+    error,
+    fetchClasses,
+    clearClassDetails,
+    clearClassError,
+  } = useClassStore();
+
+  useEffect(() => {
+    fetchCampuses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store action
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCampus) return;
+    fetchClasses(selectedCampus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store action
+  }, [selectedCampus]);
 
   function handleSelectClass(class_id) {
+    clearClassDetails();
+    clearClassError();
     setSelectedClass(class_id);
     setMode(MODE.EDIT);
   }
 
-  useEffect(() => {
-    fetchCampuses()
-  }, []);
-
-  useEffect(()=>{
-    if(!selectedCampus) return
-    fetchClasses(selectedCampus)
-  },[selectedCampus])
-
   function handleAddEditModel(val) {
     setMode(val);
+    clearClassError();
 
     if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedClass("");
@@ -40,16 +53,25 @@ export default function Class() {
     <>
       {mode ? (
         <Dialog
-          open={mode}
+          open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
         >
-          <AddEditClass selectedClass={selectedClass} mode={mode} campus_id = {selectedCampus} handleAddEditModel={handleAddEditModel} />
+          <AddEditClass
+            selectedClass={selectedClass}
+            mode={mode}
+            campus_id={selectedCampus}
+            handleAddEditModel={handleAddEditModel}
+          />
         </Dialog>
       ) : (
         <ClassListing
-          handleCreate={() => handleAddEditModel(1)}
+          handleCreate={() => handleAddEditModel(MODE.CREATE)}
           classes={classes}
+          loading={loading}
+          error={error}
+          onRetry={() => selectedCampus && fetchClasses(selectedCampus)}
+          onDismissError={clearClassError}
           handleSelectClass={handleSelectClass}
           allCampus={campuses}
           selectedCampus={selectedCampus}

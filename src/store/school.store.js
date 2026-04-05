@@ -16,6 +16,8 @@ export const useSchoolsStore = create((set, get) => ({
   schoolDetails: null,
   loadingSchoolDetails: false,
 
+  clearSchoolError: () => set({ error: null }),
+
   // ------------------------
   // FETCH SCHOOLS (LIST)
   // ------------------------
@@ -50,33 +52,31 @@ export const useSchoolsStore = create((set, get) => ({
   createSchool: async (payload) => {
     try {
       await createSchoolApi(payload);
-
-      // auto refresh list
       await get().fetchSchools();
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
   // ------------------------
   // UPDATE SCHOOL
   // ------------------------
-  updateSchool: async (schoolId, payload) => {
+  updateSchool: async (payload) => {
     try {
-      await updateSchoolApi(schoolId, payload);
-
-      // refresh list + refresh details
+      await updateSchoolApi(payload);
       await Promise.all([
         get().fetchSchools(),
-        get().fetchSchoolDetails(schoolId)
+        get().fetchSchoolDetails(payload.school_id),
       ]);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
   // ------------------------
   // CLEAR
   // ------------------------
-  clearSchoolDetails: () => set({ schoolDetails: null })
+  clearSchoolDetails: () => set({ schoolDetails: null }),
 }));

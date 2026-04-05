@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { schoolSchema } from "../../schemas/school.schema";
 import { useSchoolsStore } from "../../store/school.store";
@@ -7,91 +7,151 @@ import DynamicForm from "../../ui-components/DynamicForm";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 
 import { MODE } from "../../utils/constants/globalConstants";
-import { updateSchema } from "../../utils/utility_functions/updateSchema";
+import {
+  getFieldValuesMap,
+  updateSchema,
+} from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
-
 
 const getSchemaUpdates = (mode) => ({
   school_id: { disabled: mode === MODE.EDIT },
 });
+
+function buildSchoolSchema(mode) {
+  return updateSchema(schoolSchema, getSchemaUpdates(mode));
+}
 
 function createPayload(form) {
   const { school_id, school_name, school_type, ...extras } = form;
   return { school_id, school_name, school_type, extras };
 }
 
-export default function AddEditSchool({ mode, selectedSchool, handleAddEditModel }) {
-  const {
-    schoolDetails,
-    loadingSchoolDetails,
-    fetchSchoolDetails,
-    createSchool,
-    updateSchool,
-    
-  } = useSchoolsStore();
+function apiErrorMessage(err) {
+  const d = err?.response?.data;
+  if (typeof d === "string") return d;
+  if (d?.message) return d.message;
+  if (d?.error) return d.error;
+  return err?.message || "Something went wrong. Please try again.";
+}
 
-  /** -----------------------------------
-   * Local form state
-   ------------------------------------ */
-  const [formData, setFormData] = useState(() =>
-    mode === MODE.EDIT ? schoolDetails ?? {} : {}
+export default function AddEditSchool({
+  mode,
+  selectedSchool,
+  handleAddEditModel,
+}) {
+  const [schema, setSchema] = useState(() =>
+    buildSchoolSchema(MODE.CREATE)
   );
+  const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
+  const [detailsLoadError, setDetailsLoadError] = useState("");
+  const [bootstrapping, setBootstrapping] = useState(true);
 
-  /** -----------------------------------
-   * Sync fetched details → formData (EDIT)
-   ------------------------------------ */
-  if (mode === MODE.EDIT && schoolDetails && Object.keys(formData).length === 0) {
-    setFormData({...schoolDetails , ...schoolDetails?.extras});
-  }
+  const { createSchool, updateSchool } = useSchoolsStore();
 
-  /** -----------------------------------
-   * Memoized schema updates
-   ------------------------------------ */
-  const computedSchema = useMemo(() => {
-    return updateSchema(schoolSchema, getSchemaUpdates(mode));
-  }, [mode]);
-
-  /** -----------------------------------
-   * Fetch details on EDIT
-   ------------------------------------ */
   useEffect(() => {
-    if (mode === MODE.EDIT && selectedSchool) {
-      fetchSchoolDetails(selectedSchool);
-    }
-  }, [mode, selectedSchool, fetchSchoolDetails]);
+    let cancelled = false;
+    setDetailsLoadError("");
+    setSubmitError("");
+    setBootstrapping(true);
+    useSchoolsStore.getState().clearSchoolError();
 
-  /** -----------------------------------
-   * Submit Handler
-   ------------------------------------ */
-  function onSubmit() {
-    const { errors, isError } = validateForm(computedSchema, formData);
+    const nextSchema = buildSchoolSchema(mode);
+    setSchema(nextSchema);
+    setErrors({});
+
+    if (mode === MODE.CREATE) {
+      setFormData(getFieldValuesMap(nextSchema));
+      setBootstrapping(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    if (mode === MODE.EDIT) {
+      setFormData({});
+      (async () => {
+        await useSchoolsStore.getState().fetchSchoolDetails(selectedSchool);
+        if (cancelled) return;
+        const { schoolDetails: details, error: fetchErr } =
+          useSchoolsStore.getState();
+        if (fetchErr) {
+          setDetailsLoadError(apiErrorMessage(fetchErr));
+        } else if (!details || details.school_id !== selectedSchool) {
+          setDetailsLoadError("Could not load school.");
+        } else {
+          setFormData({ ...details, ...(details.extras ?? {}) });
+        }
+        setBootstrapping(false);
+      })();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, selectedSchool]);
+
+  async function onSubmit() {
+    const { errors, isError } = validateForm(schema, formData);
 
     if (isError) {
       setErrors(errors);
       return;
     }
 
-    if (mode === MODE.CREATE) createSchool(createPayload(formData));
-    if (mode === MODE.EDIT) updateSchool(createPayload(formData));
+    setSubmitError("");
+    useSchoolsStore.getState().clearSchoolError();
+    const payload = createPayload(formData);
 
-    handleAddEditModel(MODE.NONE);
+    try {
+      if (mode === MODE.CREATE) {
+        await createSchool(payload);
+      } else {
+        await updateSchool(payload);
+      }
+      handleAddEditModel(MODE.NONE);
+    } catch (err) {
+      setSubmitError(apiErrorMessage(err));
+    }
   }
 
-  /** -----------------------------------
-   * UI
-   ------------------------------------ */
-  return loadingSchoolDetails ? (
-    <FormSkeleton />
-  ) : (
+  const showFormSkeleton = bootstrapping && !detailsLoadError;
+
+  const showForm =
+    !bootstrapping && !detailsLoadError;
+
+  return (
     <div className="w-full p-4 space-y-6">
-      <DynamicForm
-        schema={computedSchema}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={onSubmit}
-        errors={formErrors}
-      />
+      {submitError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          role="alert"
+        >
+          {submitError}
+        </div>
+      )}
+
+      {detailsLoadError && (
+        <div
+          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          role="alert"
+        >
+          {detailsLoadError}
+        </div>
+      )}
+
+      {showFormSkeleton && <FormSkeleton />}
+
+      {showForm && (
+        <DynamicForm
+          schema={schema}
+          formData={formData}
+          setFormData={setFormData}
+          handleSubmit={onSubmit}
+          errors={formErrors}
+        />
+      )}
     </div>
   );
 }

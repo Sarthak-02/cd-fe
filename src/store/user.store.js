@@ -16,6 +16,8 @@ export const useUsersStore = create((set, get) => ({
   userDetails: null,
   loadingUserDetails: false,
 
+  clearUserError: () => set({ error: null }),
+
   // ------------------------
   // FETCH USERS (LIST)
   // ------------------------
@@ -50,10 +52,11 @@ export const useUsersStore = create((set, get) => ({
   createUser: async (payload) => {
     try {
       await createUserApi(payload);
-      await get().fetchUsers(); // auto refresh list
-      get().clearUserDetails()
+      await get().fetchUsers();
+      get().clearUserDetails();
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
@@ -63,16 +66,16 @@ export const useUsersStore = create((set, get) => ({
   updateUser: async (payload) => {
     try {
       await updateUserApi(payload);
-      get().clearUserDetails()
-      // refresh both list and details
+      get().clearUserDetails();
       await Promise.all([
-        get().fetchUsers()
+        get().fetchUsers(),
+        get().fetchUserDetails(payload.userid),
       ]);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  // Clear details when dialog closes
-  clearUserDetails: () => set({ userDetails: null })
+  clearUserDetails: () => set({ userDetails: null }),
 }));

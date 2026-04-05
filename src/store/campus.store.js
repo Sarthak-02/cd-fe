@@ -14,6 +14,8 @@ export const useCampusStore = create((set, get) => ({
   campusDetails: null,
   loadingCampusDetails: false,
 
+  clearCampusError: () => set({ error: null }),
+
   fetchCampuses: async () => {
     set({ loading: true, error: null });
     try {
@@ -40,20 +42,22 @@ export const useCampusStore = create((set, get) => ({
       await get().fetchCampuses();
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  updateCampus: async (id, payload) => {
+  updateCampus: async (payload) => {
     try {
-      await updateCampusApi(id, payload);
+      await updateCampusApi(payload);
       await Promise.all([
         get().fetchCampuses(),
-        get().fetchCampusDetails(id)
+        get().fetchCampusDetails(payload.campus_id),
       ]);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  clearCampusDetails: () => set({ campusDetails: null })
+  clearCampusDetails: () => set({ campusDetails: null }),
 }));

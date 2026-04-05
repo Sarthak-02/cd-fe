@@ -8,32 +8,44 @@ import { MODE } from "../utils/constants/globalConstants";
 import { useSectionStore } from "../store/section.store";
 
 export default function Teacher() {
-  const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create mode , 2 -> edit mode
+  const [mode, setMode] = useState(MODE.NONE);
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
-  const { fetchCampuses, campuses,fetchCampusDetails,campusDetails } = useCampusStore();
-  const { fetchTeachers, teachers } = useTeacherStore();
-  const {fetchSections} = useSectionStore()
 
-  function handleSelectTeacher(teacher_id) {
-    setSelectedTeacher(teacher_id);
-    setMode(MODE.EDIT);
-  }
+  const { fetchCampuses, campuses, fetchCampusDetails } = useCampusStore();
+  const {
+    fetchTeachers,
+    teachers,
+    loading,
+    error,
+    clearTeacherDetails,
+    clearTeacherError,
+  } = useTeacherStore();
+  const { fetchSections } = useSectionStore();
 
   useEffect(() => {
     fetchCampuses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store action
   }, []);
 
   useEffect(() => {
     if (!selectedCampus) return;
-    //fetch campus detaila for a selected campus
     fetchCampusDetails(selectedCampus);
     fetchTeachers(selectedCampus);
-    fetchSections(selectedCampus)
+    fetchSections(selectedCampus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store actions
   }, [selectedCampus]);
+
+  function handleSelectTeacher(teacher_id) {
+    clearTeacherDetails();
+    clearTeacherError();
+    setSelectedTeacher(teacher_id);
+    setMode(MODE.EDIT);
+  }
 
   function handleAddEditModel(val) {
     setMode(val);
+    clearTeacherError();
 
     if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedTeacher("");
@@ -44,17 +56,25 @@ export default function Teacher() {
     <>
       {mode ? (
         <Dialog
-          open={mode}
+          open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          
         >
-          <AddEditTeacher selectedTeacher={selectedTeacher} mode={mode} campus_id={selectedCampus}  handleAddEditModel={handleAddEditModel} campusDetails={campusDetails} />
+          <AddEditTeacher
+            selectedTeacher={selectedTeacher}
+            mode={mode}
+            campus_id={selectedCampus}
+            handleAddEditModel={handleAddEditModel}
+          />
         </Dialog>
       ) : (
         <TeacherListing
-          handleCreate={() => handleAddEditModel(1)}
+          handleCreate={() => handleAddEditModel(MODE.CREATE)}
           teachers={teachers}
+          loading={loading}
+          error={error}
+          onRetry={() => selectedCampus && fetchTeachers(selectedCampus)}
+          onDismissError={clearTeacherError}
           handleSelectTeacher={handleSelectTeacher}
           campuses={campuses}
           selectedCampus={selectedCampus}

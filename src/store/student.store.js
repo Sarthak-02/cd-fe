@@ -14,6 +14,8 @@ export const useStudentStore = create((set, get) => ({
   studentDetails: null,
   loadingStudentDetails: false,
 
+  clearStudentError: () => set({ error: null }),
+
   fetchStudents: async (campus_id) => {
     set({ loading: true, error: null });
     try {
@@ -34,25 +36,28 @@ export const useStudentStore = create((set, get) => ({
     }
   },
 
-  createStudent: async (payload,campus_id) => {
+  createStudent: async (payload) => {
     try {
       await createStudentApi(payload);
-      await get().fetchStudents(campus_id);
+      await get().fetchStudents(payload.campus_id);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  updateStudent: async (payload,campus_id) => {
+  updateStudent: async (payload) => {
     try {
       await updateStudentApi(payload);
       await Promise.all([
-        get().fetchStudents(campus_id),
+        get().fetchStudents(payload.campus_id),
+        get().fetchStudentDetails(payload.student_id),
       ]);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  clearStudentDetails: () => set({ studentDetails: null })
+  clearStudentDetails: () => set({ studentDetails: null }),
 }));

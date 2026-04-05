@@ -10,45 +10,46 @@ import { useSectionStore } from "../store/section.store";
 import { useClassStore } from "../store/class.store";
 
 export default function Student() {
-  const [mode, setMode] = useState(MODE.NONE); // 0 -> close, 1 -> create, 2 -> edit
+  const [mode, setMode] = useState(MODE.NONE);
   const [selectedStudent, setSelectedStudent] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
 
-  const { fetchCampuses, campuses,fetchCampusDetails,campusDetails } = useCampusStore();
-  const { fetchStudents, students } = useStudentStore();
+  const { fetchCampuses, campuses, fetchCampusDetails } = useCampusStore();
+  const {
+    fetchStudents,
+    students,
+    loading,
+    error,
+    clearStudentDetails,
+    clearStudentError,
+  } = useStudentStore();
   const { fetchSections } = useSectionStore();
   const { fetchClasses } = useClassStore();
-  /** ---------------------------
-   * Select a student from listing
-   ----------------------------*/
+
   function handleSelectStudent(student_id) {
+    clearStudentDetails();
+    clearStudentError();
     setSelectedStudent(student_id);
     setMode(MODE.EDIT);
   }
 
-  /** ---------------------------
-   * Load campuses on mount
-   ----------------------------*/
   useEffect(() => {
     fetchCampuses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store action
   }, []);
 
-  /** ------------------------------------------
-   * Load students when campus is selected
-   -------------------------------------------*/
   useEffect(() => {
     if (!selectedCampus) return;
     fetchCampusDetails(selectedCampus);
     fetchStudents(selectedCampus);
     fetchSections(selectedCampus);
     fetchClasses(selectedCampus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store actions
   }, [selectedCampus]);
 
-  /** ---------------------------
-   * Handle Add/Edit Modal
-   ----------------------------*/
   function handleAddEditModel(val) {
     setMode(val);
+    clearStudentError();
 
     if (val === MODE.NONE || val === MODE.CREATE) {
       setSelectedStudent("");
@@ -59,7 +60,7 @@ export default function Student() {
     <>
       {mode ? (
         <Dialog
-          open={mode}
+          open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
         >
@@ -68,13 +69,16 @@ export default function Student() {
             mode={mode}
             campus_id={selectedCampus}
             handleAddEditModel={handleAddEditModel}
-            campusDetails={campusDetails}
           />
         </Dialog>
       ) : (
         <StudentListing
           handleCreate={() => handleAddEditModel(MODE.CREATE)}
           students={students}
+          loading={loading}
+          error={error}
+          onRetry={() => selectedCampus && fetchStudents(selectedCampus)}
+          onDismissError={clearStudentError}
           handleSelectStudent={handleSelectStudent}
           campuses={campuses}
           selectedCampus={selectedCampus}

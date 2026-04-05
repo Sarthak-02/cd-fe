@@ -14,6 +14,8 @@ export const useClassStore = create((set, get) => ({
   classDetails: null,
   loadingClassDetails: false,
 
+  clearClassError: () => set({ error: null }),
+
   fetchClasses: async (campus_id) => {
     set({ loading: true, error: null });
     try {
@@ -34,26 +36,28 @@ export const useClassStore = create((set, get) => ({
     }
   },
 
-  createClass: async (payload,campus_id) => {
+  createClass: async (payload) => {
     try {
       await createClassApi(payload);
-      await get().fetchClasses(campus_id);
+      await get().fetchClasses(payload.campus_id);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  updateClass: async (payload,campus_id) => {
+  updateClass: async (payload) => {
     try {
       await updateClassApi(payload);
       await Promise.all([
-        get().fetchClasses(campus_id),
-        // get().fetchClassDetails(id)
+        get().fetchClasses(payload.campus_id),
+        get().fetchClassDetails(payload.class_id),
       ]);
     } catch (err) {
       set({ error: err });
+      throw err;
     }
   },
 
-  clearClassDetails: () => set({ classDetails: null })
+  clearClassDetails: () => set({ classDetails: null }),
 }));
