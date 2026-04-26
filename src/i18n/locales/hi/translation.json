@@ -202,6 +202,129 @@
       }
     },
   
+    "academicCalendar": {
+      "title": "शैक्षणिक कैलेंडर",
+      "subtitle": "शैक्षणिक वर्ष की घटनाएँ, परीक्षाएँ, छुट्टियाँ और अन्य प्रबंधित करें",
+      "emptyCalendar": "अभी कोई घटना नहीं जोड़ी गई। शुरू करने के लिए \"घटना जोड़ें\" पर क्लिक करें।",
+      "noMatchingEvents": "चयनित फ़िल्टर से कोई घटना मेल नहीं खाती।",
+      "views": {
+        "calendar": "कैलेंडर दृश्य",
+        "list": "सूची दृश्य"
+      },
+      "fields": {
+        "academicYear": "शैक्षणिक वर्ष",
+        "startDate": "प्रारंभ तिथि",
+        "endDate": "समाप्ति तिथि",
+        "title": "घटना का शीर्षक",
+        "type": "घटना का प्रकार",
+        "description": "विवरण"
+      },
+      "placeholders": {
+        "title": "उदा. अर्धवार्षिक परीक्षा",
+        "description": "वैकल्पिक विवरण..."
+      },
+      "eventTypes": {
+        "exam": "परीक्षा",
+        "holiday": "छुट्टी",
+        "sports": "खेल",
+        "cultural": "सांस्कृतिक",
+        "meeting": "बैठक",
+        "other": "अन्य"
+      },
+      "eventCount": {
+        "one": "घटना",
+        "many": "घटनाएँ"
+      },
+      "filters": {
+        "all": "सभी"
+      },
+      "table": {
+        "title": "शीर्षक",
+        "type": "प्रकार",
+        "startDate": "प्रारंभ तिथि",
+        "endDate": "समाप्ति तिथि",
+        "description": "विवरण",
+        "actions": "कार्रवाई"
+      },
+      "buttons": {
+        "addEvent": "घटना जोड़ें",
+        "save": "कैलेंडर सहेजें",
+        "cancel": "रद्द करें",
+        "add": "घटना जोड़ें",
+        "update": "घटना अपडेट करें",
+        "edit": "संपादित करें",
+        "delete": "हटाएँ",
+        "confirmDelete": "पुष्टि करें",
+        "manageCalendar": "शैक्षणिक कैलेंडर प्रबंधित करें"
+      },
+      "dialog": {
+        "addEvent": "घटना जोड़ें",
+        "editEvent": "घटना संपादित करें"
+      },
+      "errors": {
+        "titleRequired": "शीर्षक आवश्यक है",
+        "startDateRequired": "प्रारंभ तिथि आवश्यक है",
+        "endDateRequired": "समाप्ति तिथि आवश्यक है",
+        "endDateInvalid": "समाप्ति तिथि प्रारंभ तिथि के बाद होनी चाहिए"
+      }
+    },
+    "timetable": {
+      "title": "कक्षा समय-सारणी",
+      "subtitle": "कार्य दिवस, स्लॉट और कक्षा समय-सारणी प्रबंधित करें",
+      "sections": {
+        "timeSlots": "समय स्लॉट",
+        "workingDays": "कार्य दिवस",
+        "toolbar": "कक्षा और अनुभाग चयन"
+      },
+      "labels": {
+        "daysActive": "दिन सक्रिय",
+        "slotsConfigured": "स्लॉट"
+      },
+      "fields": {
+        "class": "कक्षा",
+        "section": "अनुभाग",
+        "startTime": "प्रारंभ समय",
+        "endTime": "समाप्ति समय",
+        "slotType": "स्लॉट प्रकार",
+        "subject": "विषय",
+        "teacher": "शिक्षक",
+        "room": "कमरा",
+        "daySlot": "दिन / स्लॉट"
+      },
+      "slotTypes": {
+        "class": "कक्षा",
+        "break": "विश्राम",
+        "lunch": "दोपहर का भोजन",
+        "assembly": "सभा"
+      },
+      "errors": {
+        "endBeforeStart": "समाप्ति समय प्रारंभ समय के बाद होना चाहिए"
+      },
+      "emptyState": {
+        "noSlots": "अभी तक कोई समय स्लॉट नहीं जोड़ा गया।",
+        "noData": "कोई समय स्लॉट कॉन्फ़िगर नहीं किया गया",
+        "noSlotsHint": "समय-सारणी ग्रिड बनाने के लिए ऊपर समय स्लॉट जोड़ें।",
+        "noActiveDays": "कोई कार्य दिवस चयनित नहीं",
+        "noActiveDaysHint": "ग्रिड दिखाने के लिए कार्य दिवस चुनें।"
+      },
+      "buttons": {
+        "addSlot": "स्लॉट जोड़ें",
+        "delete": "हटाएं",
+        "clear": "साफ़ करें",
+        "cancel": "रद्द करें",
+        "save": "सहेजें",
+        "add": "जोड़ें"
+      },
+      "placeholders": {
+        "subject": "विषय दर्ज करें",
+        "teacher": "शिक्षक का नाम दर्ज करें",
+        "room": "कमरा नंबर दर्ज करें",
+        "untitledSlot": "अनाम स्लॉट"
+      },
+      "dialog": {
+        "editCell": "समय-सारणी सेल संपादित करें"
+      }
+    },
     "user": {
       "sections": {
         "accountInformation": "उपयोगकर्ता खाता जानकारी",

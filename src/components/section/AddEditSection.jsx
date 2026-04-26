@@ -98,6 +98,7 @@ export default function AddEditSection({
         useSectionStore.getState().clearSectionError();
         setErrors({});
         setFormData(getFieldValuesMap(nextSchema));
+        useTimetableStore.getState().resetTimetable();
       }
       setBootstrapping(false);
       return;
@@ -125,6 +126,7 @@ export default function AddEditSection({
             setDetailsLoadError("Could not load section.");
           } else {
             setFormData({ ...details, ...(details.extras ?? {}) });
+            useTimetableStore.getState().loadTimetable(details.extras?.timetable);
           }
           setBootstrapping(false);
         })();
@@ -145,7 +147,9 @@ export default function AddEditSection({
     useSectionStore.getState().clearSectionError();
 
     const base = createPayload(formData, timetableData);
-    const payload = { ...base, campus_id };
+    const resolved_campus_id =
+      campus_id || formData.campus_id || campusDetails?.campus_id;
+    const payload = { ...base, campus_id: resolved_campus_id };
 
     if (!payload.campus_id) {
       setSubmitError("Campus is required.");

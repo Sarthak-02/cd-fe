@@ -246,12 +246,93 @@
         "dav": "DAV"
       }
     },
+    "academicCalendar": {
+      "title": "Academic Calendar",
+      "subtitle": "Manage academic year events, exams, holidays and more",
+      "emptyCalendar": "No events added yet. Click \"Add Event\" to get started.",
+      "noMatchingEvents": "No events match the selected filter.",
+      "views": {
+        "calendar": "Calendar View",
+        "list": "List View"
+      },
+      "fields": {
+        "academicYear": "Academic Year",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "title": "Event Title",
+        "type": "Event Type",
+        "description": "Description"
+      },
+      "placeholders": {
+        "title": "e.g. Mid-term Exams",
+        "description": "Optional description..."
+      },
+      "eventTypes": {
+        "exam": "Exam",
+        "holiday": "Holiday",
+        "sports": "Sports",
+        "cultural": "Cultural",
+        "meeting": "Meeting",
+        "other": "Other"
+      },
+      "eventCount": {
+        "one": "event",
+        "many": "events"
+      },
+      "filters": {
+        "all": "All"
+      },
+      "table": {
+        "title": "Title",
+        "type": "Type",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "description": "Description",
+        "actions": "Actions"
+      },
+      "buttons": {
+        "addEvent": "Add Event",
+        "save": "Save Calendar",
+        "cancel": "Cancel",
+        "add": "Add Event",
+        "update": "Update Event",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Confirm",
+        "manageCalendar": "Manage Academic Calendar"
+      },
+      "dialog": {
+        "addEvent": "Add Event",
+        "editEvent": "Edit Event"
+      },
+      "errors": {
+        "titleRequired": "Title is required",
+        "startDateRequired": "Start date is required",
+        "endDateRequired": "End date is required",
+        "endDateInvalid": "End date must be on or after start date"
+      }
+    },
     "timetable": {
       "title": "Class Timetable",
       "subtitle": "Manage working days, slots, and class schedule",
       "sections": {
         "timeSlots": "Time Slots",
+        "workingDays": "Working Days",
         "toolbar": "Class & Section Selection"
+      },
+      "labels": {
+        "daysActive": "days active",
+        "slotsConfigured": "slots"
+      },
+      "errors": {
+        "endBeforeStart": "End time must be after start time"
+      },
+      "emptyState": {
+        "noSlots": "No time slots added yet. Use the form above to add slots.",
+        "noData": "No time slots configured",
+        "noSlotsHint": "Add time slots above to build the schedule grid.",
+        "noActiveDays": "No working days selected",
+        "noActiveDaysHint": "Toggle working days at the top to show the grid."
       },
       "fields": {
         "class": "Class",

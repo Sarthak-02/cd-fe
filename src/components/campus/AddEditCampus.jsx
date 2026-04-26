@@ -11,6 +11,10 @@ import {
 import { validateForm } from "../../utils/validators/form_validation";
 import { getLocation } from "../../utils/map/getLocation";
 import CampusLocation from "./CampusLocation";
+import Button from "../../ui-components/Button";
+import Dialog from "../../ui-components/Dialog";
+import AcademicCalendarPanel from "./academic-calendar/AcademicCalendarPanel";
+import { useTranslation } from "react-i18next";
 
 function createPayload(form) {
   const {
@@ -60,12 +64,14 @@ export default function AddEditCampus({
   selectedCampus,
   school_id,
 }) {
+  const { t } = useTranslation();
   const [schema, setSchema] = useState(campusSchema);
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [detailsLoadError, setDetailsLoadError] = useState("");
   const [bootstrapping, setBootstrapping] = useState(true);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const { createCampus, updateCampus } = useCampusStore();
 
@@ -109,6 +115,20 @@ export default function AddEditCampus({
       cancelled = true;
     };
   }, [mode, selectedCampus]);
+
+  async function handleCalendarSave(calendarData) {
+    const currentExtras = useCampusStore.getState().campusDetails?.extras ?? {};
+    const payload = {
+      campus_id: selectedCampus,
+      extras: { ...currentExtras, academic_calendar: calendarData },
+    };
+    try {
+      await updateCampus(payload);
+      setIsCalendarOpen(false);
+    } catch (err) {
+      // error is stored in the campus store
+    }
+  }
 
   async function onSubmit() {
     const { errors, isError } = validateForm(schema, formData);
@@ -170,18 +190,45 @@ export default function AddEditCampus({
       {showFormSkeleton && <FormSkeleton />}
 
       {showMainForm && (
-        <DynamicForm
-          schema={schema}
-          formData={formData}
-          setFormData={setFormData}
-          handleSubmit={onSubmit}
-          errors={formErrors}
-        />
+        <>
+          {mode === MODE.EDIT && (
+            <div className="flex justify-end mb-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsCalendarOpen(true)}
+              >
+                {t("academicCalendar.buttons.manageCalendar")}
+              </Button>
+            </div>
+          )}
+          <DynamicForm
+            schema={schema}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={onSubmit}
+            errors={formErrors}
+          />
+        </>
       )}
 
       {showMap && (
         <CampusLocation formData={formData} setFormData={setFormData} />
       )}
+
+      <Dialog
+        open={isCalendarOpen}
+        fullScreen={true}
+        onClose={() => setIsCalendarOpen(false)}
+        title={t("academicCalendar.title")}
+      >
+        <AcademicCalendarPanel
+          campusExtras={
+            useCampusStore.getState().campusDetails?.extras ?? {}
+          }
+          onSave={handleCalendarSave}
+        />
+      </Dialog>
     </div>
   );
 }

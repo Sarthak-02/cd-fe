@@ -9,8 +9,8 @@ export const useTimetableStore = create((set, get) => ({
     { id: "day-3", label: "Wednesday", order: 3, isActive: true },
     { id: "day-4", label: "Thursday", order: 4, isActive: true },
     { id: "day-5", label: "Friday", order: 5, isActive: true },
-    { id: "day-6", label: "Saturday", order: 6, isActive: true },
-    { id: "day-7", label: "Sunday", order: 7, isActive: true },
+    { id: "day-6", label: "Saturday", order: 6, isActive: false },
+    { id: "day-7", label: "Sunday", order: 7, isActive: false },
   ],
 
   slots: [],
@@ -108,4 +108,41 @@ export const useTimetableStore = create((set, get) => ({
       (item) => item.dayId === dayId && item.slotId === slotId
     );
   },
+
+  toggleDay: (id) =>
+    set((state) => ({
+      days: state.days.map((d) =>
+        d.id === id ? { ...d, isActive: !d.isActive } : d
+      ),
+    })),
+
+  loadTimetable: (timetableData) => {
+    if (!timetableData) return;
+    const { days: savedDays, slots, entries } = timetableData;
+    set((state) => ({
+      days: state.days.map((d) => {
+        const saved = (savedDays || []).find((sd) => sd.id === d.id);
+        return saved ? { ...d, isActive: saved.isActive } : d;
+      }),
+      slots: slots || [],
+      entries: entries || [],
+    }));
+  },
+
+  resetTimetable: () =>
+    set({
+      days: [
+        { id: "day-1", label: "Monday", order: 1, isActive: true },
+        { id: "day-2", label: "Tuesday", order: 2, isActive: true },
+        { id: "day-3", label: "Wednesday", order: 3, isActive: true },
+        { id: "day-4", label: "Thursday", order: 4, isActive: true },
+        { id: "day-5", label: "Friday", order: 5, isActive: true },
+        { id: "day-6", label: "Saturday", order: 6, isActive: false },
+        { id: "day-7", label: "Sunday", order: 7, isActive: false },
+      ],
+      slots: [],
+      entries: [],
+      editorOpen: false,
+      editingCell: null,
+    }),
 }));
