@@ -3,7 +3,8 @@ import {
   getAllTeacherApi,
   getTeacherApi,
   createTeacherApi,
-  updateTeacherApi
+  updateTeacherApi,
+  getSectionTeachersApi,
 } from "../api/teacher.api";
 import { createFullName } from "../utils/utility_functions/updateSchema";
 
@@ -11,6 +12,9 @@ export const useTeacherStore = create((set, get) => ({
   teachers: [],
   loading: false,
   error: null,
+
+  sectionTeachers: [],
+  loadingSectionTeachers: false,
 
   teacherDetails: null,
   loadingTeacherDetails: false,
@@ -64,4 +68,24 @@ export const useTeacherStore = create((set, get) => ({
   },
 
   clearTeacherDetails: () => set({ teacherDetails: null }),
+
+  fetchSectionTeachers: async (section_id, campus_id) => {
+    set({ loadingSectionTeachers: true });
+    try {
+      const resp = await getSectionTeachersApi(section_id, campus_id);
+      const list = (resp?.data ?? resp ?? []).map((t) => ({
+        ...t,
+        fullname: createFullName(
+          t.teacher_first_name,
+          t.teacher_middle_name,
+          t.teacher_last_name
+        ),
+      }));
+      set({ sectionTeachers: list, loadingSectionTeachers: false });
+    } catch (err) {
+      set({ sectionTeachers: [], loadingSectionTeachers: false });
+    }
+  },
+
+  clearSectionTeachers: () => set({ sectionTeachers: [] }),
 }));

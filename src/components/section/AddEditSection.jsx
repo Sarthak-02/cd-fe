@@ -8,6 +8,7 @@ import {
 } from "../../utils/utility_functions/updateSchema";
 import { useSectionStore } from "../../store/section.store";
 import { useTimetableStore } from "../../store/timetable.store";
+import { useTeacherStore } from "../../store/teacher.store";
 import { MODE } from "../../utils/constants/globalConstants";
 import FormSkeleton from "../../ui-components/skeletons/FormSkeleton";
 import { useCampusStore } from "../../store/campus.store";
@@ -38,16 +39,19 @@ function createPayload(form, timetableData) {
   };
 }
 
-const getSchemaUpdates = (mode, classes, subjects = []) => ({
+const getSchemaUpdates = (mode, classes, subjects = [], teachers = []) => ({
   section_id: { disabled: mode === MODE.EDIT },
   class_id: { options: classes },
   section_subjects: {
     options: subjects.map((subject) => ({ value: subject, label: subject })),
   },
+  section_teacher_id: {
+    options: teachers.map((t) => ({ value: t.teacher_id, label: t.fullname })),
+  },
 });
 
-function updatedSectionSchema(mode, classes, subjects) {
-  return updateSchema(sectionSchema, getSchemaUpdates(mode, classes, subjects));
+function updatedSectionSchema(mode, classes, subjects, teachers) {
+  return updateSchema(sectionSchema, getSchemaUpdates(mode, classes, subjects, teachers));
 }
 
 function apiErrorMessage(err) {
@@ -82,10 +86,11 @@ export default function AddEditSection({
   const { createSection, updateSection } = useSectionStore();
   const { campusDetails } = useCampusStore();
   const { days, slots, entries } = useTimetableStore();
+  const { sectionTeachers } = useTeacherStore();
 
   useEffect(() => {
     const subjects = campusDetails?.extras?.campus_subjects ?? [];
-    const nextSchema = updatedSectionSchema(mode, classes, subjects);
+    const nextSchema = updatedSectionSchema(mode, classes, subjects, sectionTeachers);
     setSchema(nextSchema);
 
     const bootstrapKey = `${mode}:${selectedSection}:${campus_id}`;
@@ -99,6 +104,7 @@ export default function AddEditSection({
         setErrors({});
         setFormData(getFieldValuesMap(nextSchema));
         useTimetableStore.getState().resetTimetable();
+        useTeacherStore.getState().clearSectionTeachers();
       }
       setBootstrapping(false);
       return;
@@ -127,12 +133,14 @@ export default function AddEditSection({
           } else {
             setFormData({ ...details, ...(details.extras ?? {}) });
             useTimetableStore.getState().loadTimetable(details.extras?.timetable);
+            const resolvedCampusId = campus_id || details.campus_id || campusDetails?.campus_id;
+            useTeacherStore.getState().fetchSectionTeachers(sectionIdRequested, resolvedCampusId);
           }
           setBootstrapping(false);
         })();
       }
     }
-  }, [mode, selectedSection, campus_id, classes, campusDetails]);
+  }, [mode, selectedSection, campus_id, classes, campusDetails, sectionTeachers]);
 
   async function onSubmit() {
     const timetableData = { days, slots, entries };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTimetableStore } from "../../store/timetable.store";
 import { useSectionStore } from "../../store/section.store";
+import { useTeacherStore } from "../../store/teacher.store";
 import Dialog from "../../ui-components/Dialog";
 import TextField from "../../ui-components/TextField";
 import Dropdown from "../../ui-components/Dropdown";
@@ -16,6 +17,12 @@ export default function TimetableCellEditor() {
   const sectionDetails = useSectionStore((s) => s.sectionDetails);
   const rawSubjects = sectionDetails?.extras?.section_subjects ?? [];
   const subjectOptions = rawSubjects.map((s) => ({ value: s, label: s }));
+
+  const sectionTeachers = useTeacherStore((s) => s.sectionTeachers);
+  const teacherOptions = sectionTeachers.map((t) => ({
+    value: t.fullname,
+    label: t.fullname,
+  }));
 
   const [form, setForm] = useState({ subject: "", teacher: "", room: "" });
 
@@ -73,12 +80,22 @@ export default function TimetableCellEditor() {
           />
         )}
 
-        <TextField
-          label={t("timetable.fields.teacher")}
-          placeholder={t("timetable.placeholders.teacher")}
-          value={form.teacher}
-          onChange={(e) => setForm((p) => ({ ...p, teacher: e.target.value }))}
-        />
+        {teacherOptions.length > 0 ? (
+          <Dropdown
+            label={t("timetable.fields.teacher")}
+            options={teacherOptions}
+            selected={form.teacher}
+            onChange={(value) => setForm((p) => ({ ...p, teacher: value }))}
+            placeholder={t("timetable.placeholders.teacher")}
+          />
+        ) : (
+          <TextField
+            label={t("timetable.fields.teacher")}
+            placeholder={t("timetable.placeholders.teacher")}
+            value={form.teacher}
+            onChange={(e) => setForm((p) => ({ ...p, teacher: e.target.value }))}
+          />
+        )}
 
         <TextField
           label={t("timetable.fields.room")}

@@ -1,5 +1,15 @@
 import api from "./axios";
 
+export async function getSectionTeachersApi(section_id, campus_id) {
+    try {
+        const resp = await api.post("/teacher/list-by-section", { section_id, campus_id });
+        return resp.data;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
 export async function getAllTeacherApi(campus_id) {
     try {
         const resp = await api.get(`/teacher/all?campus_id=${campus_id}`);
