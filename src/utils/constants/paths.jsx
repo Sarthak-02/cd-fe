@@ -1,4 +1,4 @@
-import { School, Building2, Users, BookOpen } from "lucide-react";
+import { School, Building2, Users, BookOpen, LayoutDashboard } from "lucide-react";
 
 export const paths = [
   { label: "User Management", path: "/users", permission:"user_management", icon: <Users size={20} /> },
@@ -8,6 +8,7 @@ export const paths = [
   { label: "Section", path: "/section",permission:"section" ,icon: <BookOpen size={20} /> },
   { label: "Teacher", path: "/teacher",permission:"teacher", icon: <Users size={20} /> },
   { label: "Student", path: "/student",permission:"student", icon: <Users size={20} /> },
+  { label: "Report Dashboard", path: "/report-dashboard", permission:"campus", icon: <LayoutDashboard size={20} /> },
 ];
 
 

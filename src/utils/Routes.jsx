@@ -10,6 +10,7 @@ import Campus from "../pages/Campus";
 import Class from "../pages/Class";
 import Section from "../pages/Section";
 import Teacher from "../pages/Teacher";
+import ReportDashboard from "../pages/ReportDashboard";
 
 
 export const routes = [
@@ -33,6 +34,7 @@ export const routes = [
       {path:"teacher", element: <Teacher />},
       {path:"student", element: <Student />},
       {path:"users", element: <User />},
+      {path:"report-dashboard", element: <ReportDashboard />},
 
       { path: "*", element: <Home /> },
     ]
