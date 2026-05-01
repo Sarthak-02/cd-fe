@@ -8,7 +8,6 @@ import { MODE } from "../../utils/constants/globalConstants";
 import SkillsBuilder from "./SkillsBuilder";
 import RatingScaleBuilder from "./RatingScaleBuilder";
 import JsonPreview from "./JsonPreview";
-import ChartConfigPanel, { CHART_CONFIG_DEFAULTS } from "./ChartConfigPanel";
 
 const SCHOOL_LEVELS = [
   { value: "kindergarten", label: "Kindergarten" },
@@ -46,7 +45,6 @@ const EMPTY_CONFIG = {
     layout: "grid",
     show_teacher_comments: true,
     charts: [],
-    chart_configs: {},
   },
 };
 
@@ -63,6 +61,12 @@ const CHART_TYPES = [
   { value: "histogram",      label: "Histogram",      icon: "🏛️", description: "Frequency distribution of scores" },
 ];
 
+const GROUP_BY_OPTIONS = [
+  { value: "subjects", label: "Subjects", description: "Group data by subject areas" },
+  { value: "exams",    label: "Exams",    description: "Group data by exam / assessment events" },
+  { value: "skills",   label: "Skills",   description: "Group data by individual skills" },
+];
+
 const STATUS_OPTIONS = [
   { value: "draft", label: "Draft" },
   { value: "active", label: "Active" },
@@ -71,6 +75,14 @@ const STATUS_OPTIONS = [
 
 function sid() {
   return `skill_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+}
+
+function makeCharts(types, groupBy) {
+  return types.map((type) => ({
+    type,
+    group_by: [...groupBy],
+    ...(type === "bar_chart" ? { orientation: "vertical" } : {}),
+  }));
 }
 
 function makeLevelDefaults(level) {
@@ -94,7 +106,10 @@ function makeLevelDefaults(level) {
         ],
         numeric_min: 1, numeric_max: 10,
       },
-      display: { layout: "grid", show_teacher_comments: true, charts: ["progress_rings", "bar_chart"] },
+      display: {
+        layout: "grid", show_teacher_comments: true,
+        charts: makeCharts(["progress_rings", "bar_chart"], ["skills"]),
+      },
     },
     primary: {
       use_grades: false,
@@ -117,7 +132,10 @@ function makeLevelDefaults(level) {
         emoji_set: ["😢", "😐", "🙂", "😊", "🌟"],
         numeric_min: 1, numeric_max: 10,
       },
-      display: { layout: "grid", show_teacher_comments: true, charts: ["bar_chart", "progress_rings", "pie_chart"] },
+      display: {
+        layout: "grid", show_teacher_comments: true,
+        charts: makeCharts(["bar_chart", "progress_rings", "pie_chart"], ["skills"]),
+      },
     },
     middle: {
       use_grades: false,
@@ -140,7 +158,10 @@ function makeLevelDefaults(level) {
         emoji_set: ["😢", "😐", "🙂", "😊"],
         numeric_min: 1, numeric_max: 10,
       },
-      display: { layout: "list", show_teacher_comments: true, charts: ["bar_chart", "radar_chart", "line_chart", "table"] },
+      display: {
+        layout: "list", show_teacher_comments: true,
+        charts: makeCharts(["bar_chart", "radar_chart", "line_chart", "table"], ["subjects"]),
+      },
     },
     secondary: {
       use_grades: true,
@@ -158,7 +179,10 @@ function makeLevelDefaults(level) {
         emoji_set: [],
         numeric_min: 0, numeric_max: 100,
       },
-      display: { layout: "list", show_teacher_comments: true, charts: ["bar_chart", "radar_chart", "line_chart", "table", "scatter_plot"] },
+      display: {
+        layout: "list", show_teacher_comments: true,
+        charts: makeCharts(["bar_chart", "radar_chart", "line_chart", "table", "scatter_plot"], ["exams"]),
+      },
     },
     higher_secondary: {
       use_grades: true,
@@ -175,7 +199,10 @@ function makeLevelDefaults(level) {
         emoji_set: [],
         numeric_min: 0, numeric_max: 100,
       },
-      display: { layout: "list", show_teacher_comments: true, charts: ["bar_chart", "radar_chart", "line_chart", "table", "scatter_plot", "heatmap"] },
+      display: {
+        layout: "list", show_teacher_comments: true,
+        charts: makeCharts(["bar_chart", "radar_chart", "line_chart", "table", "scatter_plot", "heatmap"], ["exams"]),
+      },
     },
     graduation: {
       use_grades: true,
@@ -198,7 +225,10 @@ function makeLevelDefaults(level) {
         emoji_set: ["😢", "😐", "🙂", "😊", "🌟"],
         numeric_min: 1, numeric_max: 10,
       },
-      display: { layout: "list", show_teacher_comments: true, charts: ["bar_chart", "radar_chart", "line_chart", "table", "gauge"] },
+      display: {
+        layout: "list", show_teacher_comments: true,
+        charts: makeCharts(["bar_chart", "radar_chart", "line_chart", "table", "gauge"], ["exams"]),
+      },
     },
     post_graduation: {
       use_grades: true,
@@ -220,7 +250,10 @@ function makeLevelDefaults(level) {
         emoji_set: ["😢", "😐", "🙂", "😊"],
         numeric_min: 1, numeric_max: 10,
       },
-      display: { layout: "list", show_teacher_comments: true, charts: ["radar_chart", "table", "scatter_plot", "histogram", "gauge"] },
+      display: {
+        layout: "list", show_teacher_comments: true,
+        charts: makeCharts(["radar_chart", "table", "scatter_plot", "histogram", "gauge"], ["exams"]),
+      },
     },
   };
   return map[level] ?? map.primary;
@@ -237,6 +270,7 @@ export default function AddEditDashboardConfig({
   const [errors, setErrors] = useState({});
   const [showJsonPreview, setShowJsonPreview] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [chartModal, setChartModal] = useState(null);
 
   const {
     configDetails,
@@ -311,20 +345,83 @@ export default function AddEditDashboardConfig({
 
   function handleLevelChange(level) {
     const defaults = makeLevelDefaults(level);
-    const chart_configs = {};
-    defaults.display.charts.forEach((type) => {
-      chart_configs[type] = CHART_CONFIG_DEFAULTS[type] ?? {};
-    });
     setFormData((p) => ({
       ...p,
       school_level: level,
       use_grades: defaults.use_grades,
       skills: defaults.skills,
       rating_scale: defaults.rating_scale,
-      display: { ...defaults.display, chart_configs },
+      display: defaults.display,
     }));
     setErrors((p) => ({ ...p, skills: "" }));
   }
+
+  function isChartActive(chartType) {
+    return formData.display.charts.some((c) => c.type === chartType);
+  }
+
+  function getChartGroupBy(chartType) {
+    return formData.display.charts.find((c) => c.type === chartType)?.group_by ?? [];
+  }
+
+  function handleChartClick(chartType) {
+    if (!isChartActive(chartType)) {
+      const newChart = { type: chartType, group_by: [] };
+      if (chartType === "bar_chart") newChart.orientation = "vertical";
+      setFormData((p) => ({
+        ...p,
+        display: {
+          ...p.display,
+          charts: [...p.display.charts, newChart],
+        },
+      }));
+    }
+    setChartModal(chartType);
+  }
+
+  function handleChartOptionChange(chartType, optionKey, optionValue) {
+    setFormData((p) => ({
+      ...p,
+      display: {
+        ...p.display,
+        charts: p.display.charts.map((c) =>
+          c.type === chartType ? { ...c, [optionKey]: optionValue } : c
+        ),
+      },
+    }));
+  }
+
+  function handleRemoveChart(chartType) {
+    setFormData((p) => ({
+      ...p,
+      display: {
+        ...p.display,
+        charts: p.display.charts.filter((c) => c.type !== chartType),
+      },
+    }));
+    if (chartModal === chartType) setChartModal(null);
+  }
+
+  function handleChartGroupByToggle(chartType, groupByValue) {
+    setFormData((p) => ({
+      ...p,
+      display: {
+        ...p.display,
+        charts: p.display.charts.map((c) =>
+          c.type === chartType
+            ? {
+                ...c,
+                group_by: c.group_by.includes(groupByValue)
+                  ? c.group_by.filter((g) => g !== groupByValue)
+                  : [...c.group_by, groupByValue],
+              }
+            : c
+        ),
+      },
+    }));
+  }
+
+  const activeChartType = CHART_TYPES.find((c) => c.value === chartModal);
 
   const generatedJson = {
     config_id: mode === MODE.EDIT ? selectedConfig : "(generated on save)",
@@ -577,60 +674,62 @@ export default function AddEditDashboardConfig({
             <div>
               <FieldLabel label="Visualizations" />
               <p className="text-xs text-gray-400 mb-3">
-                Choose which chart types appear on the student dashboard. {formData.display.charts.length} selected.
+                Select a chart to add it and configure how its data is grouped. {formData.display.charts.length} selected.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
                 {CHART_TYPES.map((chart) => {
-                  const active = formData.display.charts.includes(chart.value);
+                  const active = isChartActive(chart.value);
+                  const groupBy = getChartGroupBy(chart.value);
                   return (
-                    <button
-                      key={chart.value}
-                      type="button"
-                      title={chart.description}
-                      onClick={() =>
-                        setFormData((p) => ({
-                          ...p,
-                          display: {
-                            ...p.display,
-                            charts: active
-                              ? p.display.charts.filter((c) => c !== chart.value)
-                              : [...p.display.charts, chart.value],
-                            chart_configs: active
-                              ? p.display.chart_configs
-                              : {
-                                  ...p.display.chart_configs,
-                                  [chart.value]:
-                                    p.display.chart_configs?.[chart.value] ??
-                                    CHART_CONFIG_DEFAULTS[chart.value] ??
-                                    {},
-                                },
-                          },
-                        }))
-                      }
-                      className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-center transition ${
-                        active
-                          ? "bg-blue-50 border-blue-400 text-blue-700 shadow-sm"
-                          : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className="text-xl">{chart.icon}</span>
-                      <span className="text-xs font-medium leading-tight">{chart.label}</span>
-                      {active && <span className="text-[10px] text-blue-500 font-semibold">✓ On</span>}
-                    </button>
+                    <div key={chart.value} className="relative group">
+                      <button
+                        type="button"
+                        title={chart.description}
+                        onClick={() => handleChartClick(chart.value)}
+                        className={`w-full flex flex-col items-center gap-1.5 p-3 rounded-xl border text-center transition ${
+                          active
+                            ? "bg-blue-50 border-blue-400 text-blue-700 shadow-sm"
+                            : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+                        }`}
+                      >
+                        <span className="text-xl">{chart.icon}</span>
+                        <span className="text-xs font-medium leading-tight">{chart.label}</span>
+                        {active && groupBy.length > 0 && (
+                          <div className="flex flex-wrap justify-center gap-1 mt-0.5">
+                            {groupBy.map((g) => (
+                              <span key={g} className="text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-semibold capitalize">
+                                {g}
+                              </span>
+                            ))}
+                            {chart.value === "bar_chart" && (() => {
+                              const orientation = formData.display.charts.find((c) => c.type === "bar_chart")?.orientation ?? "vertical";
+                              return (
+                                <span className="text-[9px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-semibold capitalize">
+                                  {orientation}
+                                </span>
+                              );
+                            })()}
+                          </div>
+                        )}
+                        {active && groupBy.length === 0 && (
+                          <span className="text-[10px] text-amber-500 font-semibold">⚠ Configure</span>
+                        )}
+                      </button>
+                      {active && (
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); handleRemoveChart(chart.value); }}
+                          className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-gray-500 hover:bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                          title="Remove chart"
+                        >
+                          <X size={9} />
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>
             </div>
-
-            {formData.display.charts.length > 0 && (
-              <ChartConfigPanel
-                charts={formData.display.charts}
-                chartConfigs={formData.display.chart_configs}
-                onChange={(chart_configs) =>
-                  setFormData((p) => ({ ...p, display: { ...p.display, chart_configs } }))
-                }
-              />
-            )}
 
             {/* Toggles */}
             <div className="space-y-3">
@@ -679,6 +778,107 @@ export default function AddEditDashboardConfig({
           {saving ? "Saving…" : mode === MODE.CREATE ? "Create Config" : "Save Changes"}
         </Button>
       </div>
+
+      {/* Chart Group-By Modal */}
+      {chartModal && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setChartModal(null)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-80 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{activeChartType?.icon}</span>
+                <h3 className="text-base font-semibold text-gray-900">{activeChartType?.label}</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setChartModal(null)}
+                className="p-1 rounded-full hover:bg-gray-100 text-gray-400 transition"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mb-4">
+              Select one or more ways to group data for this chart.
+            </p>
+
+            <div className="space-y-2">
+              {GROUP_BY_OPTIONS.map((opt) => {
+                const checked = getChartGroupBy(chartModal).includes(opt.value);
+                return (
+                  <label
+                    key={opt.value}
+                    className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition ${
+                      checked
+                        ? "bg-blue-50 border-blue-400"
+                        : "bg-white border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => handleChartGroupByToggle(chartModal, opt.value)}
+                      className="w-4 h-4 rounded accent-blue-600 shrink-0"
+                    />
+                    <div>
+                      <div className={`text-sm font-medium ${checked ? "text-blue-700" : "text-gray-700"}`}>
+                        {opt.label}
+                      </div>
+                      <div className="text-xs text-gray-400">{opt.description}</div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+
+            {/* Chart-specific options */}
+            {chartModal === "bar_chart" && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Chart Options</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">Orientation</p>
+                <div className="flex gap-2">
+                  {[
+                    { value: "vertical",   label: "Vertical",   icon: "📊" },
+                    { value: "horizontal", label: "Horizontal", icon: "📉" },
+                  ].map((opt) => {
+                    const current = formData.display.charts.find((c) => c.type === "bar_chart")?.orientation ?? "vertical";
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => handleChartOptionChange("bar_chart", "orientation", opt.value)}
+                        className={`flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl border text-xs transition font-medium ${
+                          current === opt.value
+                            ? "bg-purple-50 border-purple-400 text-purple-700"
+                            : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        <span className="text-base">{opt.icon}</span>
+                        <span>{opt.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-5 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => handleRemoveChart(chartModal)}
+                className="text-sm text-red-500 hover:text-red-600 font-medium transition"
+              >
+                Remove chart
+              </button>
+              <Button onClick={() => setChartModal(null)}>Done</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
