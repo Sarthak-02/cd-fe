@@ -14,6 +14,7 @@ function getPermittedPaths(user){
 
   if (isAdmin) {
     page_permissions.push("user_management");
+    page_permissions.push("price_tier_permissions");
   }
 
   const permittedPaths = paths?.filter(({ permission }) =>
@@ -92,7 +93,7 @@ export default function Layout() {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col relative" >
+      <div className="flex-1 flex flex-col min-h-0 relative">
         {/* Desktop header */}
         <Header />
 
@@ -100,7 +101,7 @@ export default function Layout() {
         <MobileNavbar onOpenMenu={() => setIsMobileMenuOpen(true)} />
 
         {/* PAGE CONTENT */}
-        <div className="p-6 mt-14 ">
+        <div className="p-6 mt-14 overflow-y-auto flex-1">
           <div className="text-gray-600">
             <Outlet />
           </div>

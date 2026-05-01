@@ -11,6 +11,7 @@ import Class from "../pages/Class";
 import Section from "../pages/Section";
 import Teacher from "../pages/Teacher";
 import ReportDashboard from "../pages/ReportDashboard";
+import PriceTierPermissions from "../pages/PriceTierPermissions";
 
 
 export const routes = [
@@ -35,6 +36,7 @@ export const routes = [
       {path:"student", element: <Student />},
       {path:"users", element: <User />},
       {path:"report-dashboard", element: <ReportDashboard />},
+      {path:"price-tier-permissions", element: <PriceTierPermissions />},
 
       { path: "*", element: <Home /> },
     ]
