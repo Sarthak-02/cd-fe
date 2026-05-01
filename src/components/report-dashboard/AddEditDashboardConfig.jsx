@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import Button from "../../ui-components/Button";
 import CheckBox from "../../ui-components/CheckBox";
 import TextField from "../../ui-components/TextField";
@@ -10,13 +11,8 @@ import RatingScaleBuilder from "./RatingScaleBuilder";
 import JsonPreview from "./JsonPreview";
 
 const SCHOOL_LEVELS = [
-  { value: "kindergarten", label: "Kindergarten" },
-  { value: "primary", label: "Primary" },
-  { value: "middle", label: "Middle School" },
-  { value: "secondary", label: "Secondary" },
-  { value: "higher_secondary", label: "Higher Secondary" },
-  { value: "graduation", label: "Graduation" },
-  { value: "post_graduation", label: "Post Graduation" },
+  "kindergarten", "primary", "middle", "secondary",
+  "higher_secondary", "graduation", "post_graduation",
 ];
 
 const EMPTY_CONFIG = {
@@ -49,29 +45,21 @@ const EMPTY_CONFIG = {
 };
 
 const CHART_TYPES = [
-  { value: "bar_chart",      label: "Bar Chart",      icon: "📊", description: "Compare scores across skills side by side" },
-  { value: "pie_chart",      label: "Pie Chart",      icon: "🥧", description: "Show distribution of rating levels" },
-  { value: "radar_chart",    label: "Radar Chart",    icon: "🕸️", description: "Skill coverage overview in a spider web" },
-  { value: "line_chart",     label: "Line Chart",     icon: "📈", description: "Track progress over time" },
-  { value: "progress_rings", label: "Progress Rings", icon: "🔵", description: "Circular progress indicator per skill" },
-  { value: "table",          label: "Score Table",    icon: "📋", description: "Detailed tabular breakdown of all scores" },
-  { value: "heatmap",        label: "Heatmap",        icon: "🟥", description: "Performance grid across classes and skills" },
-  { value: "gauge",          label: "Gauge",          icon: "🎯", description: "Single-value dial for overall performance" },
-  { value: "scatter_plot",   label: "Scatter Plot",   icon: "✦",  description: "Correlation between two skills or metrics" },
-  { value: "histogram",      label: "Histogram",      icon: "🏛️", description: "Frequency distribution of scores" },
+  { value: "bar_chart",      icon: "📊" },
+  { value: "pie_chart",      icon: "🥧" },
+  { value: "radar_chart",    icon: "🕸️" },
+  { value: "line_chart",     icon: "📈" },
+  { value: "progress_rings", icon: "🔵" },
+  { value: "table",          icon: "📋" },
+  { value: "heatmap",        icon: "🟥" },
+  { value: "gauge",          icon: "🎯" },
+  { value: "scatter_plot",   icon: "✦"  },
+  { value: "histogram",      icon: "🏛️" },
 ];
 
-const GROUP_BY_OPTIONS = [
-  { value: "subjects", label: "Subjects", description: "Group data by subject areas" },
-  { value: "exams",    label: "Exams",    description: "Group data by exam / assessment events" },
-  { value: "skills",   label: "Skills",   description: "Group data by individual skills" },
-];
+const GROUP_BY_OPTIONS = ["subjects", "exams", "skills"];
 
-const STATUS_OPTIONS = [
-  { value: "draft", label: "Draft" },
-  { value: "active", label: "Active" },
-  { value: "archived", label: "Archived" },
-];
+const STATUS_OPTIONS = ["draft", "active", "archived"];
 
 function sid() {
   return `skill_${Date.now()}_${Math.random().toString(36).slice(2)}`;
@@ -266,6 +254,7 @@ export default function AddEditDashboardConfig({
   campusClasses,
   handleAddEditModel,
 }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState(EMPTY_CONFIG);
   const [errors, setErrors] = useState({});
   const [showJsonPreview, setShowJsonPreview] = useState(false);
@@ -300,8 +289,8 @@ export default function AddEditDashboardConfig({
 
   function validate() {
     const errs = {};
-    if (!formData.config_name.trim()) errs.config_name = "Config name is required";
-    if (!formData.use_grades && formData.skills.length === 0) errs.skills = "Add at least one skill";
+    if (!formData.config_name.trim()) errs.config_name = t("reportDashboard.errors.configNameRequired");
+    if (!formData.use_grades && formData.skills.length === 0) errs.skills = t("reportDashboard.errors.skillsRequired");
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -310,10 +299,8 @@ export default function AddEditDashboardConfig({
     if (!validate()) return;
     setSaving(true);
     try {
-      const payload = { ...formData, campus_id, updated_at: new Date().toISOString() };
+      const payload = { ...formData, campus_id };
       if (mode === MODE.CREATE) {
-        payload.config_id = `config_${Date.now()}`;
-        payload.created_at = new Date().toISOString();
         await createConfig(payload);
       } else {
         payload.config_id = selectedConfig;
@@ -429,6 +416,7 @@ export default function AddEditDashboardConfig({
     config_description: formData.config_description,
     campus_id,
     school_level: formData.school_level,
+    use_grades: formData.use_grades,
     status: formData.status,
     enabled_classes: formData.enabled_classes,
     skills: formData.skills,
@@ -441,7 +429,7 @@ export default function AddEditDashboardConfig({
   if (loadingConfigDetails) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-400 text-sm">
-        Loading config...
+        {t("reportDashboard.loading")}
       </div>
     );
   }
@@ -452,10 +440,10 @@ export default function AddEditDashboardConfig({
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {mode === MODE.CREATE ? "Create Dashboard Config" : "Edit Dashboard Config"}
+            {mode === MODE.CREATE ? t("reportDashboard.createTitle") : t("reportDashboard.editTitle")}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Configure how the student-facing dashboard renders for this campus
+            {t("reportDashboard.subtitle")}
           </p>
         </div>
         <button
@@ -469,17 +457,17 @@ export default function AddEditDashboardConfig({
 
       <div className="space-y-6">
         {/* Section 1: Basic Info */}
-        <ConfigSection title="Basic Information">
+        <ConfigSection title={t("reportDashboard.sections.basicInformation")}>
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 md:col-span-6">
-              <FieldLabel label="Config Name" required />
+              <FieldLabel label={t("reportDashboard.fields.configName")} required />
               <TextField
                 value={formData.config_name}
                 onChange={(e) => {
                   setFormData((p) => ({ ...p, config_name: e.target.value }));
                   setErrors((p) => ({ ...p, config_name: "" }));
                 }}
-                placeholder="e.g. Primary Grade 1–3 Dashboard"
+                placeholder={t("reportDashboard.placeholders.configName")}
                 variant={errors.config_name ? "error" : "default"}
               />
               {errors.config_name && (
@@ -488,43 +476,43 @@ export default function AddEditDashboardConfig({
             </div>
 
             <div className="col-span-12">
-              <FieldLabel label="School Level" required />
+              <FieldLabel label={t("reportDashboard.fields.schoolLevel")} required />
               <div className="flex flex-wrap gap-2 mt-1">
                 {SCHOOL_LEVELS.map((level) => (
                   <button
-                    key={level.value}
+                    key={level}
                     type="button"
-                    onClick={() => handleLevelChange(level.value)}
+                    onClick={() => handleLevelChange(level)}
                     className={`text-xs px-3 py-2 rounded-xl border transition font-medium ${
-                      formData.school_level === level.value
+                      formData.school_level === level
                         ? "bg-blue-600 text-white border-blue-600"
                         : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                     }`}
                   >
-                    {level.label}
+                    {t(`reportDashboard.schoolLevels.${level}`)}
                   </button>
                 ))}
               </div>
               <p className="text-xs text-gray-400 mt-1.5">
-                Switching level resets Skills, Rating Scale, and Display Settings to suggested defaults.
+                {t("reportDashboard.hints.levelReset")}
               </p>
             </div>
 
             <div className="col-span-12 md:col-span-6">
-              <FieldLabel label="Status" />
+              <FieldLabel label={t("reportDashboard.fields.status")} />
               <div className="flex gap-1.5">
                 {STATUS_OPTIONS.map((s) => (
                   <button
-                    key={s.value}
+                    key={s}
                     type="button"
-                    onClick={() => setFormData((p) => ({ ...p, status: s.value }))}
+                    onClick={() => setFormData((p) => ({ ...p, status: s }))}
                     className={`flex-1 text-xs py-2 rounded-xl border transition font-medium ${
-                      formData.status === s.value
+                      formData.status === s
                         ? "bg-blue-600 text-white border-blue-600"
                         : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                     }`}
                   >
-                    {s.label}
+                    {t(`reportDashboard.statusOptions.${s}`)}
                   </button>
                 ))}
               </div>
@@ -537,19 +525,19 @@ export default function AddEditDashboardConfig({
                   setFormData((p) => ({ ...p, use_grades: val }));
                   if (val) setErrors((p) => ({ ...p, skills: "" }));
                 }}
-                title="Show grades instead of skill ratings"
-                description="Dashboard will display subject marks/grades. Skills and rating scale are not applicable."
+                title={t("reportDashboard.useGrades.title")}
+                description={t("reportDashboard.useGrades.description")}
               />
             </div>
 
             <div className="col-span-12">
-              <FieldLabel label="Description (optional)" />
+              <FieldLabel label={t("reportDashboard.fields.description")} />
               <textarea
                 value={formData.config_description}
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, config_description: e.target.value }))
                 }
-                placeholder="Describe what this dashboard configuration is for..."
+                placeholder={t("reportDashboard.placeholders.description")}
                 rows={2}
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -560,8 +548,8 @@ export default function AddEditDashboardConfig({
         {/* Section 2: Skills */}
         {!formData.use_grades && (
           <ConfigSection
-            title="Skills to Rate"
-            description="Define which skills students will be assessed on"
+            title={t("reportDashboard.sections.skillsToRate")}
+            description={t("reportDashboard.descriptions.skillsToRate")}
           >
             {errors.skills && (
               <p className="text-red-500 text-sm mb-3">{errors.skills}</p>
@@ -579,8 +567,8 @@ export default function AddEditDashboardConfig({
         {/* Section 3: Rating Scale */}
         {!formData.use_grades && (
           <ConfigSection
-            title="Rating Scale"
-            description="How students will be scored on each skill"
+            title={t("reportDashboard.sections.ratingScale")}
+            description={t("reportDashboard.descriptions.ratingScale")}
           >
             <RatingScaleBuilder
               ratingScale={formData.rating_scale}
@@ -591,12 +579,12 @@ export default function AddEditDashboardConfig({
 
         {/* Section 4: Enabled Classes */}
         <ConfigSection
-          title="Enabled Classes"
-          description="Which classes will see this dashboard config"
+          title={t("reportDashboard.sections.enabledClasses")}
+          description={t("reportDashboard.descriptions.enabledClasses")}
         >
           {campusClasses.length === 0 ? (
             <p className="text-sm text-gray-400">
-              No classes found for this campus. Create classes first, then come back to enable them here.
+              {t("reportDashboard.classes.noClasses")}
             </p>
           ) : (
             <>
@@ -607,8 +595,11 @@ export default function AddEditDashboardConfig({
                     formData.enabled_classes.length === campusClasses.length
                   }
                   onChange={toggleAllClasses}
-                  title="Enable for all classes"
-                  description={`${formData.enabled_classes.length} of ${campusClasses.length} selected`}
+                  title={t("reportDashboard.classes.enableAll")}
+                  description={t("reportDashboard.classes.selectedCount", {
+                    selected: formData.enabled_classes.length,
+                    total: campusClasses.length,
+                  })}
                 />
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -628,7 +619,7 @@ export default function AddEditDashboardConfig({
                       <div className="text-sm font-semibold">{cls.class_name}</div>
                       <div className="text-xs text-gray-400 mt-0.5 truncate">{cls.class_id}</div>
                       <div className={`text-xs mt-1 font-medium ${enabled ? "text-blue-500" : "text-gray-300"}`}>
-                        {enabled ? "✓ Enabled" : "Disabled"}
+                        {enabled ? t("reportDashboard.classes.enabled") : t("reportDashboard.classes.disabled")}
                       </div>
                     </button>
                   );
@@ -640,13 +631,13 @@ export default function AddEditDashboardConfig({
 
         {/* Section 5: Display Settings */}
         <ConfigSection
-          title="Display Settings"
-          description="Customize the visual presentation for students"
+          title={t("reportDashboard.sections.displaySettings")}
+          description={t("reportDashboard.descriptions.displaySettings")}
         >
           <div className="space-y-6">
             {/* Layout */}
             <div>
-              <FieldLabel label="Card Layout" />
+              <FieldLabel label={t("reportDashboard.fields.cardLayout")} />
               <div className="flex gap-3 mt-2">
                 {["grid", "list"].map((layout) => (
                   <button
@@ -664,7 +655,7 @@ export default function AddEditDashboardConfig({
                         : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                     }`}
                   >
-                    {layout}
+                    {t(`reportDashboard.layout.${layout}`)}
                   </button>
                 ))}
               </div>
@@ -672,9 +663,9 @@ export default function AddEditDashboardConfig({
 
             {/* Visualizations */}
             <div>
-              <FieldLabel label="Visualizations" />
+              <FieldLabel label={t("reportDashboard.fields.visualizations")} />
               <p className="text-xs text-gray-400 mb-3">
-                Select a chart to add it and configure how its data is grouped. {formData.display.charts.length} selected.
+                {t("reportDashboard.hints.visualizations", { count: formData.display.charts.length })}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
                 {CHART_TYPES.map((chart) => {
@@ -684,7 +675,7 @@ export default function AddEditDashboardConfig({
                     <div key={chart.value} className="relative group">
                       <button
                         type="button"
-                        title={chart.description}
+                        title={t(`reportDashboard.chartDescriptions.${chart.value}`)}
                         onClick={() => handleChartClick(chart.value)}
                         className={`w-full flex flex-col items-center gap-1.5 p-3 rounded-xl border text-center transition ${
                           active
@@ -693,26 +684,30 @@ export default function AddEditDashboardConfig({
                         }`}
                       >
                         <span className="text-xl">{chart.icon}</span>
-                        <span className="text-xs font-medium leading-tight">{chart.label}</span>
+                        <span className="text-xs font-medium leading-tight">
+                          {t(`reportDashboard.chartTypes.${chart.value}`)}
+                        </span>
                         {active && groupBy.length > 0 && (
                           <div className="flex flex-wrap justify-center gap-1 mt-0.5">
                             {groupBy.map((g) => (
                               <span key={g} className="text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-semibold capitalize">
-                                {g}
+                                {t(`reportDashboard.groupBy.${g}`)}
                               </span>
                             ))}
                             {chart.value === "bar_chart" && (() => {
                               const orientation = formData.display.charts.find((c) => c.type === "bar_chart")?.orientation ?? "vertical";
                               return (
                                 <span className="text-[9px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-semibold capitalize">
-                                  {orientation}
+                                  {t(`reportDashboard.groupBy.${orientation}`)}
                                 </span>
                               );
                             })()}
                           </div>
                         )}
                         {active && groupBy.length === 0 && (
-                          <span className="text-[10px] text-amber-500 font-semibold">⚠ Configure</span>
+                          <span className="text-[10px] text-amber-500 font-semibold">
+                            {t("reportDashboard.configureWarning")}
+                          </span>
                         )}
                       </button>
                       {active && (
@@ -720,7 +715,7 @@ export default function AddEditDashboardConfig({
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleRemoveChart(chart.value); }}
                           className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-gray-500 hover:bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                          title="Remove chart"
+                          title={t("reportDashboard.buttons.removeChart")}
                         >
                           <X size={9} />
                         </button>
@@ -741,8 +736,8 @@ export default function AddEditDashboardConfig({
                     display: { ...p.display, show_teacher_comments: val },
                   }))
                 }
-                title="Show Teacher Comments"
-                description="Allow teachers to leave comments visible to students and parents"
+                title={t("reportDashboard.showTeacherComments.title")}
+                description={t("reportDashboard.showTeacherComments.description")}
               />
             </div>
           </div>
@@ -755,13 +750,13 @@ export default function AddEditDashboardConfig({
             onClick={() => setShowJsonPreview((v) => !v)}
             className="w-full flex items-center justify-between px-6 py-4 bg-gray-50 text-gray-700 text-sm font-semibold hover:bg-gray-100 transition"
           >
-            <span>Preview Generated JSON</span>
+            <span>{t("reportDashboard.sections.jsonPreview")}</span>
             {showJsonPreview ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           </button>
           {showJsonPreview && (
             <div className="p-4">
               <p className="text-xs text-gray-400 mb-3">
-                This JSON will be consumed by the student-facing application to render the dashboard.
+                {t("reportDashboard.descriptions.jsonPreview")}
               </p>
               <JsonPreview data={generatedJson} />
             </div>
@@ -772,10 +767,14 @@ export default function AddEditDashboardConfig({
       {/* Footer */}
       <div className="fixed bottom-0 left-0 w-full bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] p-3 flex justify-end gap-3 z-10">
         <Button variant="secondary" onClick={() => handleAddEditModel(MODE.NONE)}>
-          Cancel
+          {t("reportDashboard.buttons.cancel")}
         </Button>
         <Button onClick={handleSubmit} disabled={saving}>
-          {saving ? "Saving…" : mode === MODE.CREATE ? "Create Config" : "Save Changes"}
+          {saving
+            ? t("reportDashboard.buttons.saving")
+            : mode === MODE.CREATE
+            ? t("reportDashboard.buttons.create")
+            : t("reportDashboard.buttons.save")}
         </Button>
       </div>
 
@@ -792,7 +791,9 @@ export default function AddEditDashboardConfig({
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 <span className="text-xl">{activeChartType?.icon}</span>
-                <h3 className="text-base font-semibold text-gray-900">{activeChartType?.label}</h3>
+                <h3 className="text-base font-semibold text-gray-900">
+                  {t(`reportDashboard.chartTypes.${chartModal}`)}
+                </h3>
               </div>
               <button
                 type="button"
@@ -803,15 +804,15 @@ export default function AddEditDashboardConfig({
               </button>
             </div>
             <p className="text-xs text-gray-400 mb-4">
-              Select one or more ways to group data for this chart.
+              {t("reportDashboard.groupBy.modalDescription")}
             </p>
 
             <div className="space-y-2">
               {GROUP_BY_OPTIONS.map((opt) => {
-                const checked = getChartGroupBy(chartModal).includes(opt.value);
+                const checked = getChartGroupBy(chartModal).includes(opt);
                 return (
                   <label
-                    key={opt.value}
+                    key={opt}
                     className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition ${
                       checked
                         ? "bg-blue-50 border-blue-400"
@@ -821,14 +822,16 @@ export default function AddEditDashboardConfig({
                     <input
                       type="checkbox"
                       checked={checked}
-                      onChange={() => handleChartGroupByToggle(chartModal, opt.value)}
+                      onChange={() => handleChartGroupByToggle(chartModal, opt)}
                       className="w-4 h-4 rounded accent-blue-600 shrink-0"
                     />
                     <div>
                       <div className={`text-sm font-medium ${checked ? "text-blue-700" : "text-gray-700"}`}>
-                        {opt.label}
+                        {t(`reportDashboard.groupBy.${opt}`)}
                       </div>
-                      <div className="text-xs text-gray-400">{opt.description}</div>
+                      <div className="text-xs text-gray-400">
+                        {t(`reportDashboard.groupBy.${opt}Desc`)}
+                      </div>
                     </div>
                   </label>
                 );
@@ -838,12 +841,16 @@ export default function AddEditDashboardConfig({
             {/* Chart-specific options */}
             {chartModal === "bar_chart" && (
               <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Chart Options</p>
-                <p className="text-sm font-medium text-gray-700 mb-2">Orientation</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                  {t("reportDashboard.groupBy.chartOptions")}
+                </p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  {t("reportDashboard.fields.orientation")}
+                </p>
                 <div className="flex gap-2">
                   {[
-                    { value: "vertical",   label: "Vertical",   icon: "📊" },
-                    { value: "horizontal", label: "Horizontal", icon: "📉" },
+                    { value: "vertical",   icon: "📊" },
+                    { value: "horizontal", icon: "📉" },
                   ].map((opt) => {
                     const current = formData.display.charts.find((c) => c.type === "bar_chart")?.orientation ?? "vertical";
                     return (
@@ -858,7 +865,7 @@ export default function AddEditDashboardConfig({
                         }`}
                       >
                         <span className="text-base">{opt.icon}</span>
-                        <span>{opt.label}</span>
+                        <span>{t(`reportDashboard.groupBy.${opt.value}`)}</span>
                       </button>
                     );
                   })}
@@ -872,9 +879,11 @@ export default function AddEditDashboardConfig({
                 onClick={() => handleRemoveChart(chartModal)}
                 className="text-sm text-red-500 hover:text-red-600 font-medium transition"
               >
-                Remove chart
+                {t("reportDashboard.buttons.removeChart")}
               </button>
-              <Button onClick={() => setChartModal(null)}>Done</Button>
+              <Button onClick={() => setChartModal(null)}>
+                {t("reportDashboard.buttons.done")}
+              </Button>
             </div>
           </div>
         </div>

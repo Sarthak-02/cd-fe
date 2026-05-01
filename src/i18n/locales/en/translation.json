@@ -312,6 +312,168 @@
         "endDateInvalid": "End date must be on or after start date"
       }
     },
+    "reportDashboard": {
+      "createTitle": "Create Dashboard Config",
+      "editTitle": "Edit Dashboard Config",
+      "subtitle": "Configure how the student-facing dashboard renders for this campus",
+      "loading": "Loading config...",
+
+      "sections": {
+        "basicInformation": "Basic Information",
+        "skillsToRate": "Skills to Rate",
+        "ratingScale": "Rating Scale",
+        "enabledClasses": "Enabled Classes",
+        "displaySettings": "Display Settings",
+        "jsonPreview": "Preview Generated JSON"
+      },
+
+      "descriptions": {
+        "skillsToRate": "Define which skills students will be assessed on",
+        "ratingScale": "How students will be scored on each skill",
+        "enabledClasses": "Which classes will see this dashboard config",
+        "displaySettings": "Customize the visual presentation for students",
+        "jsonPreview": "This JSON will be consumed by the student-facing application to render the dashboard."
+      },
+
+      "fields": {
+        "configName": "Config Name",
+        "schoolLevel": "School Level",
+        "status": "Status",
+        "description": "Description (optional)",
+        "cardLayout": "Card Layout",
+        "visualizations": "Visualizations",
+        "orientation": "Orientation"
+      },
+
+      "placeholders": {
+        "configName": "e.g. Primary Grade 1–3 Dashboard",
+        "description": "Describe what this dashboard configuration is for..."
+      },
+
+      "hints": {
+        "levelReset": "Switching level resets Skills, Rating Scale, and Display Settings to suggested defaults.",
+        "visualizations": "Select a chart to add it and configure how its data is grouped. {{count}} selected."
+      },
+
+      "schoolLevels": {
+        "kindergarten": "Kindergarten",
+        "primary": "Primary",
+        "middle": "Middle School",
+        "secondary": "Secondary",
+        "higher_secondary": "Higher Secondary",
+        "graduation": "Graduation",
+        "post_graduation": "Post Graduation"
+      },
+
+      "statusOptions": {
+        "draft": "Draft",
+        "active": "Active",
+        "archived": "Archived"
+      },
+
+      "useGrades": {
+        "title": "Show grades instead of skill ratings",
+        "description": "Dashboard will display subject marks/grades. Skills and rating scale are not applicable."
+      },
+
+      "classes": {
+        "noClasses": "No classes found for this campus. Create classes first, then come back to enable them here.",
+        "enableAll": "Enable for all classes",
+        "selectedCount": "{{selected}} of {{total}} selected",
+        "enabled": "✓ Enabled",
+        "disabled": "Disabled"
+      },
+
+      "layout": {
+        "grid": "Grid",
+        "list": "List"
+      },
+
+      "chartTypes": {
+        "bar_chart": "Bar Chart",
+        "pie_chart": "Pie Chart",
+        "radar_chart": "Radar Chart",
+        "line_chart": "Line Chart",
+        "progress_rings": "Progress Rings",
+        "table": "Score Table",
+        "heatmap": "Heatmap",
+        "gauge": "Gauge",
+        "scatter_plot": "Scatter Plot",
+        "histogram": "Histogram"
+      },
+
+      "chartDescriptions": {
+        "bar_chart": "Compare scores across skills side by side",
+        "pie_chart": "Show distribution of rating levels",
+        "radar_chart": "Skill coverage overview in a spider web",
+        "line_chart": "Track progress over time",
+        "progress_rings": "Circular progress indicator per skill",
+        "table": "Detailed tabular breakdown of all scores",
+        "heatmap": "Performance grid across classes and skills",
+        "gauge": "Single-value dial for overall performance",
+        "scatter_plot": "Correlation between two skills or metrics",
+        "histogram": "Frequency distribution of scores"
+      },
+
+      "groupBy": {
+        "modalDescription": "Select one or more ways to group data for this chart.",
+        "chartOptions": "Chart Options",
+        "subjects": "Subjects",
+        "exams": "Exams",
+        "skills": "Skills",
+        "subjectsDesc": "Group data by subject areas",
+        "examsDesc": "Group data by exam / assessment events",
+        "skillsDesc": "Group data by individual skills",
+        "vertical": "Vertical",
+        "horizontal": "Horizontal"
+      },
+
+      "showTeacherComments": {
+        "title": "Show Teacher Comments",
+        "description": "Allow teachers to leave comments visible to students and parents"
+      },
+
+      "configuredChip": "✓ On",
+      "configureWarning": "⚠ Configure",
+
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create Config",
+        "save": "Save Changes",
+        "saving": "Saving…",
+        "done": "Done",
+        "removeChart": "Remove chart",
+        "createNew": "Create",
+        "retry": "Retry",
+        "dismiss": "Dismiss"
+      },
+
+      "errors": {
+        "configNameRequired": "Config name is required",
+        "skillsRequired": "Add at least one skill"
+      },
+
+      "listing": {
+        "defaultError": "Could not load dashboard configs.",
+        "configCount": "{{count}} config",
+        "configCountPlural": "{{count}} configs",
+        "activeCount": "{{count}} active",
+        "emptyTitle": "No dashboard configs yet",
+        "emptyDescription": "Create one to define how the student dashboard looks for this campus.",
+        "selectCampusTitle": "Select a campus to get started"
+      },
+
+      "cardDetails": {
+        "skills": "Skills",
+        "skillCount": "{{count}} skill",
+        "skillCountPlural": "{{count}} skills",
+        "classes": "Classes",
+        "classesEnabled": "{{count}} enabled",
+        "ratingScale": "Rating Scale",
+        "status": "Status"
+      }
+    },
+
     "timetable": {
       "title": "Class Timetable",
       "subtitle": "Manage working days, slots, and class schedule",
