@@ -22,7 +22,8 @@
       "section": "अनुभाग",
       "teacher": "शिक्षक",
       "student": "छात्र",
-      "user": "उपयोगकर्ता"
+      "user": "उपयोगकर्ता",
+      "admission": "प्रवेश"
     },
     "nav": {
       "userManagement": "उपयोगकर्ता प्रबंधन",
@@ -32,6 +33,7 @@
       "section": "अनुभाग",
       "teacher": "शिक्षक",
       "student": "छात्र",
+      "admission": "प्रवेश",
       "reportDashboard": "रिपोर्ट डैशबोर्ड",
       "priceTierPermissions": "प्राइस टियर अनुमतियाँ"
     },
@@ -232,6 +234,44 @@
       }
     },
   
+    "admission": {
+      "sections": {
+        "applicationDetails": "आवेदन विवरण",
+        "personalDetails": "व्यक्तिगत विवरण",
+        "guardianDetails": "माता-पिता / अभिभावक विवरण",
+        "previousSchool": "पिछले विद्यालय की जानकारी",
+        "remarks": "टिप्पणियाँ एवं अतिरिक्त जानकारी"
+      },
+      "fields": {
+        "applicationNo": "आवेदन संख्या",
+        "academicYear": "शैक्षणिक वर्ष",
+        "applicationDate": "आवेदन तिथि",
+        "appliedClass": "अपेक्षित कक्षा",
+        "status": "स्थिति",
+        "firstName": "पहला नाम",
+        "middleName": "मध्य नाम",
+        "lastName": "अंतिम नाम",
+        "gender": "लिंग",
+        "dateOfBirth": "जन्म तिथि",
+        "bloodGroup": "रक्त समूह",
+        "category": "श्रेणी",
+        "fatherName": "पिता का नाम",
+        "motherName": "माता का नाम",
+        "guardianName": "अभिभावक का नाम",
+        "guardianRelation": "अभिभावक का संबंध",
+        "guardianEmail": "ईमेल",
+        "guardianPhone": "फ़ोन",
+        "address": "पता",
+        "country": "देश",
+        "state": "राज्य",
+        "city": "शहर",
+        "pincode": "पिनकोड",
+        "previousSchoolName": "पिछले विद्यालय का नाम",
+        "previousClass": "अंतिम कक्षा",
+        "previousPercentage": "प्रतिशत / ग्रेड",
+        "remarks": "टिप्पणियाँ"
+      }
+    },
     "teacher": {
       "sections": {
         "personalDetails": "व्यक्तिगत विवरण",

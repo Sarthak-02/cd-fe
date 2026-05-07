@@ -22,7 +22,8 @@
       "section": "Section",
       "teacher": "Teacher",
       "student": "Student",
-      "user": "User"
+      "user": "User",
+      "admission": "Admission"
     },
     "nav": {
       "userManagement": "User Management",
@@ -32,6 +33,7 @@
       "section": "Section",
       "teacher": "Teacher",
       "student": "Student",
+      "admission": "Admission",
       "reportDashboard": "Report Dashboard",
       "priceTierPermissions": "Price Tier Permissions"
     },
@@ -256,6 +258,44 @@
         "emergencyContactPhone": "Emergency Contact Phone",
         "medicalConditions": "Medical Conditions",
   
+        "remarks": "Remarks"
+      }
+    },
+    "admission": {
+      "sections": {
+        "applicationDetails": "Application Details",
+        "personalDetails": "Personal Details",
+        "guardianDetails": "Parent / Guardian Details",
+        "previousSchool": "Previous School Information",
+        "remarks": "Remarks & Additional Info"
+      },
+      "fields": {
+        "applicationNo": "Application Number",
+        "academicYear": "Academic Year",
+        "applicationDate": "Application Date",
+        "appliedClass": "Applied Class",
+        "status": "Status",
+        "firstName": "First Name",
+        "middleName": "Middle Name",
+        "lastName": "Last Name",
+        "gender": "Gender",
+        "dateOfBirth": "Date of Birth",
+        "bloodGroup": "Blood Group",
+        "category": "Category",
+        "fatherName": "Father's Name",
+        "motherName": "Mother's Name",
+        "guardianName": "Guardian Name",
+        "guardianRelation": "Guardian Relation",
+        "guardianEmail": "Email",
+        "guardianPhone": "Phone",
+        "address": "Address",
+        "country": "Country",
+        "state": "State",
+        "city": "City",
+        "pincode": "Pincode",
+        "previousSchoolName": "Previous School Name",
+        "previousClass": "Last Class Attended",
+        "previousPercentage": "Percentage / Grade",
         "remarks": "Remarks"
       }
     },

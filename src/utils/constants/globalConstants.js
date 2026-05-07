@@ -227,6 +227,14 @@ export const SCHOOL_TYPE = [
   { value: "igcse", label: "IGCSE" }
 ]
 
+export const ADMISSION_STATUS = [
+  { label: "Pending", value: "pending" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" },
+  { label: "Waitlisted", value: "waitlisted" },
+  { label: "Enrolled", value: "enrolled" },
+]
+
 export const PRIMARY_CONTACT = [
   { value: "father", label: "Father" },
   { value: "mother", label: "Mother" },

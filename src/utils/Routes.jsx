@@ -12,6 +12,7 @@ import Section from "../pages/Section";
 import Teacher from "../pages/Teacher";
 import ReportDashboard from "../pages/ReportDashboard";
 import PriceTierPermissions from "../pages/PriceTierPermissions";
+import Admission from "../pages/Admission";
 
 
 export const routes = [
@@ -37,6 +38,7 @@ export const routes = [
       {path:"users", element: <User />},
       {path:"report-dashboard", element: <ReportDashboard />},
       {path:"price-tier-permissions", element: <PriceTierPermissions />},
+      {path:"admission", element: <Admission />},
 
       { path: "*", element: <Home /> },
     ]
