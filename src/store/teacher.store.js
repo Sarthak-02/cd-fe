@@ -4,6 +4,7 @@ import {
   getTeacherApi,
   createTeacherApi,
   updateTeacherApi,
+  deleteTeacherApi,
   getSectionTeachersApi,
 } from "../api/teacher.api";
 import { createFullName } from "../utils/utility_functions/updateSchema";
@@ -61,6 +62,17 @@ export const useTeacherStore = create((set, get) => ({
         get().fetchTeachers(payload.campus_id),
         get().fetchTeacherDetails(payload.teacher_id),
       ]);
+    } catch (err) {
+      set({ error: err });
+      throw err;
+    }
+  },
+
+  deleteTeacher: async (teacher_id, campus_id) => {
+    try {
+      await deleteTeacherApi(teacher_id);
+      await get().fetchTeachers(campus_id);
+      set({ teacherDetails: null });
     } catch (err) {
       set({ error: err });
       throw err;

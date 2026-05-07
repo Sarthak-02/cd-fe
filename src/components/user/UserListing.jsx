@@ -21,6 +21,9 @@ function avatarColor(name) {
 
 function UserCard({ user, onClick }) {
   const initial = (user.username || "?")[0].toUpperCase();
+  const siteCount = Array.isArray(user.site_permissions) ? user.site_permissions.length : null;
+  const pageCount = Array.isArray(user.page_permissions) ? user.page_permissions.length : null;
+
   return (
     <div
       onClick={onClick}
@@ -30,14 +33,31 @@ function UserCard({ user, onClick }) {
         {initial}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors text-sm">
-          {user.username}
-        </p>
-        <p className="mt-1">
-          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors text-sm">
+            {user.username}
+          </p>
+          {user.isadmin && (
+            <span className="text-xs font-medium bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full shrink-0">
+              Admin
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md shrink-0">
             {user.userid}
           </span>
-        </p>
+          {siteCount !== null && (
+            <span className="text-xs text-gray-400 shrink-0">
+              {siteCount} site{siteCount !== 1 ? "s" : ""}
+            </span>
+          )}
+          {pageCount !== null && (
+            <span className="text-xs text-gray-400 shrink-0">
+              {pageCount} page{pageCount !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
       </div>
       <svg className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -54,11 +54,11 @@ export const studentSchema = [
             entity: "student",
             mimeType: file.type,
             fileSize: file.size,
-            entityId: state?.teacher_employee_code
+            entityId: state?.student_admission_no
           };
 
           const { original } = await generateImageSignedUrl(payload);
-          setState(prev => ({ ...prev, teacher_photo_url: original }));
+          setState(prev => ({ ...prev, student_photo_url: original }));
         },
         width: { tablet: 6, desktop: 4, mobile: 12 }
       }

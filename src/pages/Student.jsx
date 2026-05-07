@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AddEditStudent from "../components/student/AddEditStudent";
 import StudentListing from "../components/student/StudentListing";
 import Dialog from "../ui-components/Dialog";
@@ -15,6 +15,11 @@ export default function Student() {
   const [selectedCampus, setSelectedCampus] = useState("");
 
   const { fetchCampuses, campuses, fetchCampusDetails } = useCampusStore();
+
+  const campusOptions = useMemo(
+    () => (campuses ?? []).map((c) => ({ label: c.campus_name, value: c.campus_id })),
+    [campuses]
+  );
   const {
     fetchStudents,
     students,
@@ -63,6 +68,7 @@ export default function Student() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
+          title={mode === MODE.CREATE ? "Add Student" : "Edit Student"}
         >
           <AddEditStudent
             selectedStudent={selectedStudent}
@@ -80,7 +86,7 @@ export default function Student() {
           onRetry={() => selectedCampus && fetchStudents(selectedCampus)}
           onDismissError={clearStudentError}
           handleSelectStudent={handleSelectStudent}
-          campuses={campuses}
+          campuses={campusOptions}
           selectedCampus={selectedCampus}
           setSelectedCampus={setSelectedCampus}
         />

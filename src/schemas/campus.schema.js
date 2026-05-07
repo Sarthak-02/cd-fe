@@ -167,7 +167,7 @@ export const campusSchema = [
       },
       {
         id: "campus_show_map",
-        label_key: "campus.fields.showMap",
+        label: "campus.fields.showMap",
         value: false,
         type: "button",
         fn: (value, formData, setFormData) => {

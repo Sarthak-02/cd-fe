@@ -3,7 +3,8 @@ import {
   getAllUserApi,
   createUserApi,
   updateUserApi,
-  getUserApi
+  getUserApi,
+  deleteUserApi,
 } from "../api/user.api";
 
 export const useUsersStore = create((set, get) => ({
@@ -71,6 +72,20 @@ export const useUsersStore = create((set, get) => ({
         get().fetchUsers(),
         get().fetchUserDetails(payload.userid),
       ]);
+    } catch (err) {
+      set({ error: err });
+      throw err;
+    }
+  },
+
+  // ------------------------
+  // DELETE USER
+  // ------------------------
+  deleteUser: async (userid) => {
+    try {
+      await deleteUserApi(userid);
+      await get().fetchUsers();
+      get().clearUserDetails();
     } catch (err) {
       set({ error: err });
       throw err;

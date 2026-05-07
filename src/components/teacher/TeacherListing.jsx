@@ -20,6 +20,11 @@ function avatarColor(name) {
   return AVATAR_COLORS[(name || "").charCodeAt(0) % AVATAR_COLORS.length];
 }
 
+const STATUS_STYLES = {
+  active: "bg-green-50 text-green-700",
+  inactive: "bg-gray-100 text-gray-500",
+};
+
 function TeacherCard({ teacher, onClick }) {
   const parts = (teacher.fullname || "").trim().split(" ");
   const initials = [parts[0]?.[0], parts[parts.length - 1]?.[0]]
@@ -28,30 +33,47 @@ function TeacherCard({ teacher, onClick }) {
     .join("")
     .toUpperCase();
 
+  const designation = teacher.extras?.teacher_designation || teacher.teacher_designation;
+  const status = teacher.teacher_status?.toLowerCase();
+  const email = teacher.teacher_email;
+
   return (
     <div
       onClick={onClick}
-      className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all group"
+      className="bg-white border border-gray-100 rounded-2xl p-4 flex gap-4 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all group"
     >
       <div
-        className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${avatarColor(teacher.fullname)}`}
+        className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 ${avatarColor(teacher.fullname)}`}
       >
         {initials || "?"}
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors text-sm">
-          {teacher.fullname || "—"}
-        </p>
-        <p className="mt-1">
-          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors text-sm">
+            {teacher.fullname || "—"}
+          </p>
+          {status && (
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 capitalize ${STATUS_STYLES[status] ?? "bg-gray-100 text-gray-500"}`}>
+              {status}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md shrink-0">
             {teacher.teacher_employee_code}
           </span>
-        </p>
+          {designation && (
+            <span className="text-xs text-gray-400 shrink-0">{designation}</span>
+          )}
+        </div>
+        {email && (
+          <p className="text-xs text-gray-400 mt-1 truncate">{email}</p>
+        )}
       </div>
 
       <svg
-        className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 transition-colors"
+        className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 transition-colors self-center"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -197,7 +219,11 @@ export default function TeacherListing({
       {/* No search results */}
       {selectedCampus && !loading && hasTeachers && !hasResults && (
         <div className="flex flex-col items-center justify-center py-10 sm:py-16 text-center border border-dashed border-gray-200 rounded-2xl">
-          <p className="text-2xl mb-2">🔍</p>
+          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-3">
+            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+            </svg>
+          </div>
           <p className="font-medium text-gray-600">No teachers match &ldquo;{search}&rdquo;</p>
           <p className="text-sm text-gray-400 mt-1">Try a different name or employee code</p>
         </div>

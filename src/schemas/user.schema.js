@@ -36,7 +36,7 @@ export const userSchema = [
         id: "password",
         name: "user.fields.password",
         value: "",
-        type: "text",
+        type: "password",
         mandatory: true,
         width: { tablet: 6, desktop: 4, mobile: 12 }
       },

@@ -3,7 +3,8 @@ import {
   getAllSectionApi,
   getSectionApi,
   createSectionApi,
-  updateSectionApi
+  updateSectionApi,
+  deleteSectionApi,
 } from "../api/section.api";
 
 export const useSectionStore = create((set, get) => ({
@@ -53,6 +54,17 @@ export const useSectionStore = create((set, get) => ({
         get().fetchSections(payload.campus_id),
         get().fetchSectionDetails(payload.section_id),
       ]);
+    } catch (err) {
+      set({ error: err });
+      throw err;
+    }
+  },
+
+  deleteSection: async (section_id, campus_id) => {
+    try {
+      await deleteSectionApi(section_id);
+      await get().fetchSections(campus_id);
+      set({ sectionDetails: null });
     } catch (err) {
       set({ error: err });
       throw err;

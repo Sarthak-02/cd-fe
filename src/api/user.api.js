@@ -52,3 +52,15 @@ export async function createUserApi(userData) {
         throw err
     }
 }
+
+export async function deleteUserApi(userid) {
+    try{
+        const resp = await api.delete(`/user?userid=${userid}`)
+
+        return resp.data
+    }
+    catch(err){
+        console.log(err)
+        throw err
+    }
+}

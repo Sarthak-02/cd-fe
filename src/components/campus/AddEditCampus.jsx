@@ -72,8 +72,10 @@ export default function AddEditCampus({
   const [detailsLoadError, setDetailsLoadError] = useState("");
   const [bootstrapping, setBootstrapping] = useState(true);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
-  const { createCampus, updateCampus } = useCampusStore();
+  const { createCampus, updateCampus, deleteCampus } = useCampusStore();
 
   useEffect(() => {
     let cancelled = false;
@@ -130,6 +132,17 @@ export default function AddEditCampus({
     }
   }
 
+  async function onDelete() {
+    setDeleteError("");
+    try {
+      await deleteCampus(selectedCampus);
+      handleAddEditModel(MODE.NONE);
+    } catch (err) {
+      setDeleteError(apiErrorMessage(err));
+      setConfirmDelete(false);
+    }
+  }
+
   async function onSubmit() {
     const { errors, isError } = validateForm(schema, formData);
 
@@ -171,18 +184,24 @@ export default function AddEditCampus({
     <div className="w-full p-4 space-y-6">
       {submitError && (
         <div
-          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          className="rounded-xl bg-red-50 border border-red-100 text-red-800 px-4 py-3 text-sm flex items-start gap-2"
           role="alert"
         >
+          <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
           {submitError}
         </div>
       )}
 
       {detailsLoadError && (
         <div
-          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"
+          className="rounded-xl bg-red-50 border border-red-100 text-red-800 px-4 py-3 text-sm flex items-start gap-2"
           role="alert"
         >
+          <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
           {detailsLoadError}
         </div>
       )}
@@ -192,16 +211,28 @@ export default function AddEditCampus({
       {showMainForm && (
         <>
           {mode === MODE.EDIT && (
-            <div className="flex justify-end mb-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsCalendarOpen(true)}
-              >
-                {t("academicCalendar.buttons.manageCalendar")}
-              </Button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsCalendarOpen(true)}
+              className="w-full flex items-center justify-between bg-blue-50 hover:bg-blue-100 border border-blue-100 rounded-xl px-4 py-3 transition-colors group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 group-hover:bg-blue-200 flex items-center justify-center transition-colors shrink-0">
+                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-blue-800">{t("academicCalendar.title")}</p>
+                  <p className="text-xs text-blue-500">{t("academicCalendar.buttons.manageCalendar")}</p>
+                </div>
+              </div>
+              <svg className="w-4 h-4 text-blue-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           )}
+
           <DynamicForm
             schema={schema}
             formData={formData}
@@ -209,6 +240,45 @@ export default function AddEditCampus({
             handleSubmit={onSubmit}
             errors={formErrors}
           />
+
+          {mode === MODE.EDIT && (
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              {deleteError && (
+                <p className="text-sm text-red-600 mb-2">{deleteError}</p>
+              )}
+              {!confirmDelete ? (
+                <button
+                  type="button"
+                  className="text-sm text-red-500 hover:text-red-700 underline"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Delete Campus
+                </button>
+              ) : (
+                <div className="flex flex-wrap items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                  <p className="text-sm text-red-800 flex-1 min-w-0">
+                    Are you sure you want to delete this campus? This cannot be undone.
+                  </p>
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      type="button"
+                      className="text-sm font-medium text-gray-600 hover:text-gray-800 px-3 py-1 rounded-md border border-gray-200 bg-white"
+                      onClick={() => setConfirmDelete(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="text-sm font-medium text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md"
+                      onClick={onDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
 

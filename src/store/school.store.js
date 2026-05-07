@@ -3,7 +3,8 @@ import {
   getAllSchoolApi,
   getSchoolApi,
   createSchoolApi,
-  updateSchoolApi
+  updateSchoolApi,
+  deleteSchoolApi,
 } from "../api/school.api";
 
 export const useSchoolsStore = create((set, get) => ({
@@ -69,6 +70,20 @@ export const useSchoolsStore = create((set, get) => ({
         get().fetchSchools(),
         get().fetchSchoolDetails(payload.school_id),
       ]);
+    } catch (err) {
+      set({ error: err });
+      throw err;
+    }
+  },
+
+  // ------------------------
+  // DELETE SCHOOL
+  // ------------------------
+  deleteSchool: async (school_id) => {
+    try {
+      await deleteSchoolApi(school_id);
+      await get().fetchSchools();
+      get().clearSchoolDetails();
     } catch (err) {
       set({ error: err });
       throw err;

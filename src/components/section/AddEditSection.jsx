@@ -41,7 +41,9 @@ function createPayload(form, timetableData) {
 
 const getSchemaUpdates = (mode, classes, subjects = [], teachers = []) => ({
   section_id: { disabled: mode === MODE.EDIT },
-  class_id: { options: classes },
+  class_id: {
+    options: classes.map((c) => ({ value: c.class_id, label: c.class_name })),
+  },
   section_subjects: {
     options: subjects.map((subject) => ({ value: subject, label: subject })),
   },
@@ -83,7 +85,10 @@ export default function AddEditSection({
   const lastBootstrapKeyRef = useRef("");
   const sectionFetchGenRef = useRef(0);
 
-  const { createSection, updateSection } = useSectionStore();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  const { createSection, updateSection, deleteSection } = useSectionStore();
   const { campusDetails } = useCampusStore();
   const { days, slots, entries } = useTimetableStore();
   const { sectionTeachers } = useTeacherStore();
@@ -142,6 +147,21 @@ export default function AddEditSection({
     }
   }, [mode, selectedSection, campus_id, classes, campusDetails, sectionTeachers]);
 
+  async function onDelete() {
+    setDeleteError("");
+    const resolved_campus_id =
+      campus_id ||
+      useSectionStore.getState().sectionDetails?.campus_id ||
+      campusDetails?.campus_id;
+    try {
+      await deleteSection(selectedSection, resolved_campus_id);
+      handleAddEditModel(MODE.NONE);
+    } catch (err) {
+      setDeleteError(apiErrorMessage(err));
+      setConfirmDelete(false);
+    }
+  }
+
   async function onSubmit() {
     const timetableData = { days, slots, entries };
     const { errors, isError } = validateForm(schema, formData);
@@ -183,18 +203,24 @@ export default function AddEditSection({
     <>
       {submitError && (
         <div
-          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm mx-4 mt-4"
+          className="rounded-xl bg-red-50 border border-red-100 text-red-800 px-4 py-3 text-sm flex items-start gap-2 mx-4 mt-4"
           role="alert"
         >
+          <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
           {submitError}
         </div>
       )}
 
       {detailsLoadError && (
         <div
-          className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm mx-4 mt-4"
+          className="rounded-xl bg-red-50 border border-red-100 text-red-800 px-4 py-3 text-sm flex items-start gap-2 mx-4 mt-4"
           role="alert"
         >
+          <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
           {detailsLoadError}
         </div>
       )}
@@ -208,11 +234,26 @@ export default function AddEditSection({
       {showForm && (
         <div className="w-full p-4 space-y-6">
           {mode === MODE.EDIT && (
-            <div className="flex justify-end mb-4">
-              <Button onClick={() => setIsTimetableOpen(true)}>
-                {t("section.buttons.manageTimetable")}
-              </Button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsTimetableOpen(true)}
+              className="w-full flex items-center justify-between bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-xl px-4 py-3 transition-colors group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-100 group-hover:bg-indigo-200 flex items-center justify-center transition-colors shrink-0">
+                  <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18M10 3v18M14 3v18" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-indigo-800">{t("timetable.title")}</p>
+                  <p className="text-xs text-indigo-500">{t("section.buttons.manageTimetable")}</p>
+                </div>
+              </div>
+              <svg className="w-4 h-4 text-indigo-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           )}
 
           <DynamicForm
@@ -222,6 +263,45 @@ export default function AddEditSection({
             handleSubmit={onSubmit}
             errors={formErrors}
           />
+
+          {mode === MODE.EDIT && (
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              {deleteError && (
+                <p className="text-sm text-red-600 mb-2">{deleteError}</p>
+              )}
+              {!confirmDelete ? (
+                <button
+                  type="button"
+                  className="text-sm text-red-500 hover:text-red-700 underline"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Delete Section
+                </button>
+              ) : (
+                <div className="flex flex-wrap items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                  <p className="text-sm text-red-800 flex-1 min-w-0">
+                    Are you sure you want to delete this section? This cannot be undone.
+                  </p>
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      type="button"
+                      className="text-sm font-medium text-gray-600 hover:text-gray-800 px-3 py-1 rounded-md border border-gray-200 bg-white"
+                      onClick={() => setConfirmDelete(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="text-sm font-medium text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md"
+                      onClick={onDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

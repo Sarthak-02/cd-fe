@@ -51,6 +51,7 @@ export default function User() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
+          title={mode === MODE.CREATE ? "Create User" : "Edit User"}
         >
           <AddEditUser
             mode={mode}

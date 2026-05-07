@@ -3,7 +3,8 @@ import {
   getAllClassApi,
   getClassApi,
   createClassApi,
-  updateClassApi
+  updateClassApi,
+  deleteClassApi,
 } from "../api/class.api";
 
 export const useClassStore = create((set, get) => ({
@@ -53,6 +54,17 @@ export const useClassStore = create((set, get) => ({
         get().fetchClasses(payload.campus_id),
         get().fetchClassDetails(payload.class_id),
       ]);
+    } catch (err) {
+      set({ error: err });
+      throw err;
+    }
+  },
+
+  deleteClass: async (class_id, campus_id) => {
+    try {
+      await deleteClassApi(class_id);
+      await get().fetchClasses(campus_id);
+      set({ classDetails: null });
     } catch (err) {
       set({ error: err });
       throw err;

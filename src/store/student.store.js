@@ -3,7 +3,8 @@ import {
   getAllStudentApi,
   getStudentApi,
   createStudentApi,
-  updateStudentApi
+  updateStudentApi,
+  deleteStudentApi,
 } from "../api/student.api";
 
 export const useStudentStore = create((set, get) => ({
@@ -53,6 +54,17 @@ export const useStudentStore = create((set, get) => ({
         get().fetchStudents(payload.campus_id),
         get().fetchStudentDetails(payload.student_id),
       ]);
+    } catch (err) {
+      set({ error: err });
+      throw err;
+    }
+  },
+
+  deleteStudent: async (student_id, campus_id) => {
+    try {
+      await deleteStudentApi(student_id);
+      await get().fetchStudents(campus_id);
+      set({ studentDetails: null });
     } catch (err) {
       set({ error: err });
       throw err;

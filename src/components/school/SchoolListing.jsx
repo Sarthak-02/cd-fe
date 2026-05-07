@@ -21,25 +21,57 @@ function avatarColor(name) {
 
 function SchoolCard({ school, onClick }) {
   const initial = (school.school_name || "?")[0].toUpperCase();
+  const motto = school.school_motto || school.extras?.school_motto;
+  const contact = school.admin_contact || school.extras?.admin_contact;
+  const website = school.school_website || school.extras?.school_website;
+
   return (
     <div
       onClick={onClick}
-      className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all group"
+      className="bg-white border border-gray-100 rounded-2xl p-4 flex gap-4 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all group"
     >
-      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${avatarColor(school.school_name)}`}>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 ${avatarColor(school.school_name)}`}>
         {initial}
       </div>
+
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors text-sm">
           {school.school_name}
         </p>
-        <p className="mt-1">
-          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md">
+
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md shrink-0">
             {school.school_id}
           </span>
-        </p>
+        </div>
+
+        {motto && (
+          <p className="text-xs text-gray-400 italic mt-1.5 truncate">
+            &ldquo;{motto}&rdquo;
+          </p>
+        )}
+
+        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+          {contact && (
+            <span className="flex items-center gap-1 text-xs text-gray-400 truncate max-w-[180px]">
+              <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {contact}
+            </span>
+          )}
+          {website && (
+            <span className="flex items-center gap-1 text-xs text-blue-400 truncate max-w-[180px]">
+              <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+              </svg>
+              {website.replace(/^https?:\/\//, "")}
+            </span>
+          )}
+        </div>
       </div>
-      <svg className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+      <svg className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 transition-colors self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </div>

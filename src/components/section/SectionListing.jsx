@@ -22,25 +22,39 @@ function avatarColor(name) {
 
 function SectionCard({ section, onClick }) {
   const initial = (section.section_name || "?")[0].toUpperCase();
+  const roomNo = section.section_room_no || section.extras?.section_room_no;
+  const subjects = section.section_subjects || section.extras?.section_subjects;
+  const subjectCount = Array.isArray(subjects) ? subjects.length : null;
+
   return (
     <div
       onClick={onClick}
-      className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all group"
+      className="bg-white border border-gray-100 rounded-2xl p-4 flex gap-4 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all group"
     >
-      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${avatarColor(section.section_name)}`}>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 ${avatarColor(section.section_name)}`}>
         {initial}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors text-sm">
-          {section.section_name}
-        </p>
-        <p className="mt-1">
-          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors text-sm">
+            {section.section_name}
+          </p>
+          {subjectCount !== null && (
+            <span className="text-xs font-medium bg-violet-50 text-violet-700 px-2 py-0.5 rounded-full shrink-0">
+              {subjectCount} subject{subjectCount !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <span className="text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md shrink-0">
             {section.section_id}
           </span>
-        </p>
+          {roomNo && (
+            <span className="text-xs text-gray-400 shrink-0">Room {roomNo}</span>
+          )}
+        </div>
       </div>
-      <svg className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 transition-colors self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </div>
@@ -171,7 +185,11 @@ export default function SectionListing({
       {/* No search results */}
       {selectedCampus && !loading && hasSections && !hasResults && (
         <div className="flex flex-col items-center justify-center py-10 sm:py-16 text-center border border-dashed border-gray-200 rounded-2xl">
-          <p className="text-2xl mb-2">🔍</p>
+          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-3">
+            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+            </svg>
+          </div>
           <p className="font-medium text-gray-600">No sections match &ldquo;{search}&rdquo;</p>
           <p className="text-sm text-gray-400 mt-1">Try a different name or ID</p>
         </div>

@@ -47,12 +47,14 @@ export default function AddEditUser({
   const [submitError, setSubmitError] = useState("");
   const [detailsLoadError, setDetailsLoadError] = useState("");
   const [bootstrapping, setBootstrapping] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const lastBootstrapKeyRef = useRef("");
   const userFetchGenRef = useRef(0);
 
   const { schools } = useSchoolsStore();
-  const { createUser, updateUser } = useUsersStore();
+  const { createUser, updateUser, deleteUser } = useUsersStore();
 
   useEffect(() => {
     const allSites = schools ?? [];
@@ -103,6 +105,17 @@ export default function AddEditUser({
     }
   }, [mode, selectedUser, schools]);
 
+  async function onDelete() {
+    setDeleteError("");
+    try {
+      await deleteUser(selectedUser);
+      handleAddEditModel(MODE.NONE);
+    } catch (err) {
+      setDeleteError(apiErrorMessage(err));
+      setConfirmDelete(false);
+    }
+  }
+
   async function onSubmit() {
     const { errors, isError } = validateForm(schema, formData);
 
@@ -152,13 +165,54 @@ export default function AddEditUser({
       {showFormSkeleton && <FormSkeleton />}
 
       {showForm && (
-        <DynamicForm
-          schema={schema}
-          formData={formData}
-          setFormData={setFormData}
-          handleSubmit={onSubmit}
-          errors={formErrors}
-        />
+        <>
+          <DynamicForm
+            schema={schema}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={onSubmit}
+            errors={formErrors}
+          />
+
+          {mode === MODE.EDIT && (
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              {deleteError && (
+                <p className="text-sm text-red-600 mb-2">{deleteError}</p>
+              )}
+              {!confirmDelete ? (
+                <button
+                  type="button"
+                  className="text-sm text-red-500 hover:text-red-700 underline"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Delete User
+                </button>
+              ) : (
+                <div className="flex flex-wrap items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                  <p className="text-sm text-red-800 flex-1 min-w-0">
+                    Are you sure you want to delete this user? This cannot be undone.
+                  </p>
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      type="button"
+                      className="text-sm font-medium text-gray-600 hover:text-gray-800 px-3 py-1 rounded-md border border-gray-200 bg-white"
+                      onClick={() => setConfirmDelete(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="text-sm font-medium text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md"
+                      onClick={onDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -28,9 +28,6 @@ export default function DynamicForm({
 
   const { t } = useTranslation();
   const handleChange = (field, value, ...extras) => {
-    console.log("field", field);
-    console.log("value", value);
-    console.log("extras", extras);
     if (field.fn) {
       field.fn(value, ...extras);
     } else {

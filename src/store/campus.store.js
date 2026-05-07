@@ -3,7 +3,8 @@ import {
   getAllCampusApi,
   getCampusApi,
   createCampusApi,
-  updateCampusApi
+  updateCampusApi,
+  deleteCampusApi,
 } from "../api/campus.api";
 
 export const useCampusStore = create((set, get) => ({
@@ -53,6 +54,17 @@ export const useCampusStore = create((set, get) => ({
         get().fetchCampuses(),
         get().fetchCampusDetails(payload.campus_id),
       ]);
+    } catch (err) {
+      set({ error: err });
+      throw err;
+    }
+  },
+
+  deleteCampus: async (campus_id) => {
+    try {
+      await deleteCampusApi(campus_id);
+      await get().fetchCampuses();
+      get().clearCampusDetails();
     } catch (err) {
       set({ error: err });
       throw err;

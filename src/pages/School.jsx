@@ -48,6 +48,7 @@ export default function School() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
+          title={mode === MODE.CREATE ? "Add School" : "Edit School"}
         >
           <AddEditSchool
             mode={mode}

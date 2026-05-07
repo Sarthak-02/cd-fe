@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AddEditSection from "../components/section/AddEditSection";
 import SectionListing from "../components/section/SectionListing";
 import { useCampusStore } from "../store/campus.store";
@@ -13,6 +13,11 @@ export default function Section() {
   const [selectedCampus, setSelectedCampus] = useState("");
 
   const { fetchCampuses, campuses, fetchCampusDetails } = useCampusStore();
+
+  const campusOptions = useMemo(
+    () => (campuses ?? []).map((c) => ({ label: c.campus_name, value: c.campus_id })),
+    [campuses]
+  );
   const {
     fetchSections,
     sections,
@@ -59,6 +64,7 @@ export default function Section() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
+          title={mode === MODE.CREATE ? "Add Section" : "Edit Section"}
         >
           <AddEditSection
             selectedSection={selectedSection}
@@ -77,7 +83,7 @@ export default function Section() {
           onRetry={() => selectedCampus && fetchSections(selectedCampus)}
           onDismissError={clearSectionError}
           handleSelectSection={handleSelectSection}
-          campuses={campuses}
+          campuses={campusOptions}
           selectedCampus={selectedCampus}
           setSelectedCampus={setSelectedCampus}
         />
