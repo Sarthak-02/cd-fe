@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 function initials(name) {
   if (!name) return "?";
@@ -10,7 +11,8 @@ function initials(name) {
     .slice(0, 2);
 }
 
-export default function MobileNavbar({ onOpenMenu, currentPage, user }) {
+export default function MobileNavbar({ onOpenMenu, currentPageKey, user }) {
+  const { t } = useTranslation();
   const username = user?.username || "";
   const activeSchool = user?.active_school;
 
@@ -21,7 +23,7 @@ export default function MobileNavbar({ onOpenMenu, currentPage, user }) {
         <button
           onClick={onOpenMenu}
           className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0"
-          aria-label="Open menu"
+          aria-label={t("common.openMenu")}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -36,7 +38,7 @@ export default function MobileNavbar({ onOpenMenu, currentPage, user }) {
         </div>
 
         <h1 className="text-sm font-semibold text-white truncate">
-          {currentPage || "Control Desk"}
+          {currentPageKey ? t(currentPageKey) : t("common.controlDesk")}
         </h1>
       </div>
 

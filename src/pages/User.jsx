@@ -6,8 +6,10 @@ import Dialog from "../ui-components/Dialog";
 import { MODE } from "../utils/constants/globalConstants";
 import { useUsersStore } from "../store/user.store";
 import { useSchoolsStore } from "../store/school.store";
+import { useTranslation } from "react-i18next";
 
 export default function User() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(MODE.NONE);
   const [selectedUser, setSelectedUser] = useState("");
 
@@ -51,7 +53,11 @@ export default function User() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          title={mode === MODE.CREATE ? "Create User" : "Edit User"}
+          title={
+            mode === MODE.CREATE
+              ? `${t("actions.create")} ${t("entities.user")}`
+              : `${t("actions.edit")} ${t("entities.user")}`
+          }
         >
           <AddEditUser
             mode={mode}

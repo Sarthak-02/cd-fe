@@ -6,8 +6,10 @@ import { useTeacherStore } from "../store/teacher.store";
 import Dialog from "../ui-components/Dialog";
 import { MODE } from "../utils/constants/globalConstants";
 import { useSectionStore } from "../store/section.store";
+import { useTranslation } from "react-i18next";
 
 export default function Teacher() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(MODE.NONE);
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
@@ -64,7 +66,11 @@ export default function Teacher() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          title={mode === MODE.CREATE ? "Add Teacher" : "Edit Teacher"}
+          title={
+            mode === MODE.CREATE
+              ? `${t("actions.add")} ${t("entities.teacher")}`
+              : `${t("actions.edit")} ${t("entities.teacher")}`
+          }
         >
           <AddEditTeacher
             selectedTeacher={selectedTeacher}

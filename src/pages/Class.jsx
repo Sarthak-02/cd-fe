@@ -6,8 +6,10 @@ import Dialog from "../ui-components/Dialog";
 import { useCampusStore } from "../store/campus.store";
 import { useClassStore } from "../store/class.store";
 import { MODE } from "../utils/constants/globalConstants";
+import { useTranslation } from "react-i18next";
 
 export default function Class() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(MODE.NONE);
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
@@ -61,7 +63,11 @@ export default function Class() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          title={mode === MODE.CREATE ? "Add Class" : "Edit Class"}
+          title={
+            mode === MODE.CREATE
+              ? `${t("actions.add")} ${t("entities.class")}`
+              : `${t("actions.edit")} ${t("entities.class")}`
+          }
         >
           <AddEditClass
             selectedClass={selectedClass}

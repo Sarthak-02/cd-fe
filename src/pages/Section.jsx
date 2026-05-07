@@ -6,8 +6,10 @@ import { useClassStore } from "../store/class.store";
 import { useSectionStore } from "../store/section.store";
 import Dialog from "../ui-components/Dialog";
 import { MODE } from "../utils/constants/globalConstants";
+import { useTranslation } from "react-i18next";
 
 export default function Section() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(MODE.NONE);
   const [selectedSection, setSelectedSection] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
@@ -64,7 +66,11 @@ export default function Section() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          title={mode === MODE.CREATE ? "Add Section" : "Edit Section"}
+          title={
+            mode === MODE.CREATE
+              ? `${t("actions.add")} ${t("entities.section")}`
+              : `${t("actions.edit")} ${t("entities.section")}`
+          }
         >
           <AddEditSection
             selectedSection={selectedSection}

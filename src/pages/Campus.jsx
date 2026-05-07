@@ -6,8 +6,10 @@ import Dialog from "../ui-components/Dialog";
 import { MODE } from "../utils/constants/globalConstants";
 import { useCampusStore } from "../store/campus.store";
 import { useAuth } from "../store/auth.store";
+import { useTranslation } from "react-i18next";
 
 export default function Campus() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedCampus, setSelectedCampus] = useState("");
 
@@ -68,7 +70,11 @@ export default function Campus() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          title={mode === MODE.CREATE ? "Add Campus" : "Edit Campus"}
+          title={
+            mode === MODE.CREATE
+              ? `${t("actions.add")} ${t("entities.campus")}`
+              : `${t("actions.edit")} ${t("entities.campus")}`
+          }
         >
           <AddEditCampus
             mode={mode}

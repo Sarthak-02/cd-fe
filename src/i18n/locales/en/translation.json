@@ -1,4 +1,84 @@
 {
+    "common": {
+      "controlDesk": "Control Desk",
+      "dashboard": "Dashboard",
+      "admin": "Admin",
+      "logout": "Logout",
+      "openMenu": "Open menu",
+      "expandSidebar": "Expand sidebar",
+      "collapseSidebar": "Collapse sidebar",
+      "retry": "Retry",
+      "dismiss": "Dismiss"
+    },
+    "actions": {
+      "add": "Add",
+      "edit": "Edit",
+      "create": "Create"
+    },
+    "entities": {
+      "school": "School",
+      "campus": "Campus",
+      "class": "Class",
+      "section": "Section",
+      "teacher": "Teacher",
+      "student": "Student",
+      "user": "User"
+    },
+    "nav": {
+      "userManagement": "User Management",
+      "school": "School",
+      "campus": "Campus",
+      "class": "Class",
+      "section": "Section",
+      "teacher": "Teacher",
+      "student": "Student",
+      "reportDashboard": "Report Dashboard",
+      "priceTierPermissions": "Price Tier Permissions"
+    },
+    "home": {
+      "selectSchoolTitle": "Select a School",
+      "selectSchoolSubtitle": "Choose the school you want to manage",
+      "schoolLabel": "School"
+    },
+    "userListing": {
+      "loadError": "Could not load users.",
+      "searchPlaceholder": "Search by username or ID...",
+      "addUser": "Add User",
+      "emptyTitle": "No users yet",
+      "emptySubtitle": "Add the first user to get started",
+      "noMatches": "No users match “{{search}}”",
+      "tryDifferentSearch": "Try a different username or ID",
+      "totalUsers": "{{total}} user",
+      "showingFiltered": "Showing {{filtered}} of {{total}} users"
+    },
+    "welcome": {
+      "greetings": {
+        "morning": "Good morning",
+        "afternoon": "Good afternoon",
+        "evening": "Good evening"
+      },
+      "managing": "Managing",
+      "yourSchool": "your school",
+      "quickAccess": "Quick Access",
+      "entities": {
+        "campuses": "Campuses",
+        "users": "Users"
+      },
+      "quickLinks": {
+        "schoolDescription": "Review school details and board info",
+        "campusDescription": "Manage campuses and locations",
+        "classesLabel": "Classes",
+        "classesDescription": "Configure classes and grading",
+        "sectionsLabel": "Sections",
+        "sectionsDescription": "Organise sections within classes",
+        "teachersLabel": "Teachers",
+        "teachersDescription": "Add and manage teaching staff",
+        "studentsLabel": "Students",
+        "studentsDescription": "Enrol and manage students",
+        "reportDashboardDescription": "View and configure reports",
+        "userManagementDescription": "Create users and manage permissions"
+      }
+    },
     "campus": {
       "sections": {
         "basicInformation": "Basic Campus Information",

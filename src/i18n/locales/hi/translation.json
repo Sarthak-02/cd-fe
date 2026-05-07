@@ -1,4 +1,84 @@
 {
+    "common": {
+      "controlDesk": "कंट्रोल डेस्क",
+      "dashboard": "डैशबोर्ड",
+      "admin": "एडमिन",
+      "logout": "लॉगआउट",
+      "openMenu": "मेनू खोलें",
+      "expandSidebar": "साइडबार फैलाएँ",
+      "collapseSidebar": "साइडबार समेटें",
+      "retry": "पुनः प्रयास करें",
+      "dismiss": "खारिज करें"
+    },
+    "actions": {
+      "add": "जोड़ें",
+      "edit": "संपादित करें",
+      "create": "बनाएँ"
+    },
+    "entities": {
+      "school": "विद्यालय",
+      "campus": "परिसर",
+      "class": "कक्षा",
+      "section": "अनुभाग",
+      "teacher": "शिक्षक",
+      "student": "छात्र",
+      "user": "उपयोगकर्ता"
+    },
+    "nav": {
+      "userManagement": "उपयोगकर्ता प्रबंधन",
+      "school": "विद्यालय",
+      "campus": "परिसर",
+      "class": "कक्षा",
+      "section": "अनुभाग",
+      "teacher": "शिक्षक",
+      "student": "छात्र",
+      "reportDashboard": "रिपोर्ट डैशबोर्ड",
+      "priceTierPermissions": "प्राइस टियर अनुमतियाँ"
+    },
+    "home": {
+      "selectSchoolTitle": "एक विद्यालय चुनें",
+      "selectSchoolSubtitle": "जिस विद्यालय को आप प्रबंधित करना चाहते हैं उसे चुनें",
+      "schoolLabel": "विद्यालय"
+    },
+    "userListing": {
+      "loadError": "उपयोगकर्ता लोड नहीं हो सके।",
+      "searchPlaceholder": "उपयोगकर्ता नाम या आईडी से खोजें...",
+      "addUser": "उपयोगकर्ता जोड़ें",
+      "emptyTitle": "अभी कोई उपयोगकर्ता नहीं",
+      "emptySubtitle": "शुरू करने के लिए पहला उपयोगकर्ता जोड़ें",
+      "noMatches": "“{{search}}” से कोई उपयोगकर्ता मेल नहीं खाता",
+      "tryDifferentSearch": "कोई दूसरा उपयोगकर्ता नाम या आईडी आज़माएँ",
+      "totalUsers": "{{total}} उपयोगकर्ता",
+      "showingFiltered": "{{total}} में से {{filtered}} उपयोगकर्ता दिखा रहे हैं"
+    },
+    "welcome": {
+      "greetings": {
+        "morning": "सुप्रभात",
+        "afternoon": "नमस्कार",
+        "evening": "शुभ संध्या"
+      },
+      "managing": "प्रबंधित कर रहे हैं",
+      "yourSchool": "आपका विद्यालय",
+      "quickAccess": "त्वरित पहुँच",
+      "entities": {
+        "campuses": "परिसर",
+        "users": "उपयोगकर्ता"
+      },
+      "quickLinks": {
+        "schoolDescription": "विद्यालय विवरण और बोर्ड जानकारी देखें",
+        "campusDescription": "परिसर और लोकेशन प्रबंधित करें",
+        "classesLabel": "कक्षाएँ",
+        "classesDescription": "कक्षाएँ और ग्रेडिंग कॉन्फ़िगर करें",
+        "sectionsLabel": "अनुभाग",
+        "sectionsDescription": "कक्षाओं के भीतर अनुभाग व्यवस्थित करें",
+        "teachersLabel": "शिक्षक",
+        "teachersDescription": "शिक्षण स्टाफ जोड़ें और प्रबंधित करें",
+        "studentsLabel": "छात्र",
+        "studentsDescription": "छात्र नामांकन और प्रबंधन",
+        "reportDashboardDescription": "रिपोर्ट देखें और कॉन्फ़िगर करें",
+        "userManagementDescription": "उपयोगकर्ता बनाएँ और अनुमतियाँ प्रबंधित करें"
+      }
+    },
     "campus": {
       "sections": {
         "basicInformation": "मूल परिसर जानकारी",

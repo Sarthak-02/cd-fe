@@ -25,8 +25,8 @@ export default function Layout() {
 
   const { auth, logout } = useAuth();
   const permittedPaths = getPermittedPaths(auth);
-  const currentPage =
-    permittedPaths.find((p) => location.pathname.startsWith(p.path))?.label || "";
+  const currentPageKey =
+    permittedPaths.find((p) => location.pathname.startsWith(p.path))?.labelKey || "";
 
   function handleSelectPage(label, path) {
     navigate(path);
@@ -43,7 +43,7 @@ export default function Layout() {
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex flex-shrink-0 z-40 h-full">
         <Sidebar
-          currentPage={currentPage}
+          currentPageKey={currentPageKey}
           onSelect={handleSelectPage}
           collapsed={collapsed}
           toggleCollapse={() => setCollapsed((c) => !c)}
@@ -81,7 +81,7 @@ export default function Layout() {
               <Sidebar
                 collapsed={false}
                 toggleCollapse={() => {}}
-                currentPage={currentPage}
+                currentPageKey={currentPageKey}
                 onSelect={handleSelectPage}
                 paths={permittedPaths}
                 handleLogout={handleLogout}
@@ -97,7 +97,7 @@ export default function Layout() {
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Desktop header */}
         <Header
-          currentPage={currentPage}
+          currentPageKey={currentPageKey}
           user={auth}
           handleLogout={handleLogout}
         />
@@ -105,7 +105,7 @@ export default function Layout() {
         {/* Mobile header */}
         <MobileNavbar
           onOpenMenu={() => setIsMobileMenuOpen(true)}
-          currentPage={currentPage}
+          currentPageKey={currentPageKey}
           user={auth}
         />
 

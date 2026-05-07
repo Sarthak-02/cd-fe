@@ -3,6 +3,7 @@ import AddEditStudent from "../components/student/AddEditStudent";
 import StudentListing from "../components/student/StudentListing";
 import Dialog from "../ui-components/Dialog";
 import { MODE } from "../utils/constants/globalConstants";
+import { useTranslation } from "react-i18next";
 
 import { useCampusStore } from "../store/campus.store";
 import { useStudentStore } from "../store/student.store";
@@ -10,6 +11,7 @@ import { useSectionStore } from "../store/section.store";
 import { useClassStore } from "../store/class.store";
 
 export default function Student() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(MODE.NONE);
   const [selectedStudent, setSelectedStudent] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
@@ -68,7 +70,11 @@ export default function Student() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          title={mode === MODE.CREATE ? "Add Student" : "Edit Student"}
+          title={
+            mode === MODE.CREATE
+              ? `${t("actions.add")} ${t("entities.student")}`
+              : `${t("actions.edit")} ${t("entities.student")}`
+          }
         >
           <AddEditStudent
             selectedStudent={selectedStudent}

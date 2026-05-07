@@ -3,6 +3,7 @@ import { School } from "lucide-react";
 import Dropdown from "../ui-components/Dropdown";
 import { useAuth } from "../store/auth.store";
 import WelcomeGuide from "../components/WelcomeGuide";
+import { useTranslation } from "react-i18next";
 
 const CARD_COLORS = [
   "bg-blue-50 border-blue-100 hover:bg-blue-100 text-blue-900",
@@ -32,6 +33,7 @@ function SchoolCard({ school, onSelect, index }) {
 }
 
 export default function Home() {
+  const { t } = useTranslation();
   const {
     auth: { site_permissions = [], active_school = {} },
     setActiveSchool,
@@ -53,9 +55,9 @@ export default function Home() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 mb-4">
             <School size={26} className="text-white" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Select a School</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t("home.selectSchoolTitle")}</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Choose the school you want to manage
+            {t("home.selectSchoolSubtitle")}
           </p>
         </div>
 
@@ -74,7 +76,7 @@ export default function Home() {
         ) : (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <Dropdown
-              label="School"
+              label={t("home.schoolLabel")}
               options={site_permissions}
               selected={active_school?.value}
               onChange={setActiveSchool}

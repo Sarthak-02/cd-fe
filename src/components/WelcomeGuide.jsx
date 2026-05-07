@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Users, School, Building2, BookOpen, GraduationCap,
   LayoutDashboard, ChevronRight, ShieldCheck, Layers,
@@ -9,11 +10,11 @@ import { useCampusStore } from "../store/campus.store";
 import { useUsersStore } from "../store/user.store";
 
 // Greeting based on hour
-function getGreeting() {
+function getGreeting(t) {
   const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
+  if (h < 12) return t("welcome.greetings.morning");
+  if (h < 17) return t("welcome.greetings.afternoon");
+  return t("welcome.greetings.evening");
 }
 
 // Formatted date string
@@ -31,8 +32,8 @@ const QUICK_LINKS = [
   {
     permission: "school",
     path: "/school",
-    label: "School",
-    description: "Review school details and board info",
+    labelKey: "nav.school",
+    descriptionKey: "welcome.quickLinks.schoolDescription",
     icon: School,
     color: "bg-blue-50 text-blue-600",
     ring: "ring-blue-100",
@@ -40,8 +41,8 @@ const QUICK_LINKS = [
   {
     permission: "campus",
     path: "/campus",
-    label: "Campus",
-    description: "Manage campuses and locations",
+    labelKey: "nav.campus",
+    descriptionKey: "welcome.quickLinks.campusDescription",
     icon: Building2,
     color: "bg-cyan-50 text-cyan-600",
     ring: "ring-cyan-100",
@@ -49,8 +50,8 @@ const QUICK_LINKS = [
   {
     permission: "class",
     path: "/class",
-    label: "Classes",
-    description: "Configure classes and grading",
+    labelKey: "welcome.quickLinks.classesLabel",
+    descriptionKey: "welcome.quickLinks.classesDescription",
     icon: BookOpen,
     color: "bg-emerald-50 text-emerald-600",
     ring: "ring-emerald-100",
@@ -58,8 +59,8 @@ const QUICK_LINKS = [
   {
     permission: "section",
     path: "/section",
-    label: "Sections",
-    description: "Organise sections within classes",
+    labelKey: "welcome.quickLinks.sectionsLabel",
+    descriptionKey: "welcome.quickLinks.sectionsDescription",
     icon: Layers,
     color: "bg-teal-50 text-teal-600",
     ring: "ring-teal-100",
@@ -67,8 +68,8 @@ const QUICK_LINKS = [
   {
     permission: "teacher",
     path: "/teacher",
-    label: "Teachers",
-    description: "Add and manage teaching staff",
+    labelKey: "welcome.quickLinks.teachersLabel",
+    descriptionKey: "welcome.quickLinks.teachersDescription",
     icon: GraduationCap,
     color: "bg-orange-50 text-orange-600",
     ring: "ring-orange-100",
@@ -76,8 +77,8 @@ const QUICK_LINKS = [
   {
     permission: "student",
     path: "/student",
-    label: "Students",
-    description: "Enrol and manage students",
+    labelKey: "welcome.quickLinks.studentsLabel",
+    descriptionKey: "welcome.quickLinks.studentsDescription",
     icon: Users,
     color: "bg-pink-50 text-pink-600",
     ring: "ring-pink-100",
@@ -85,8 +86,8 @@ const QUICK_LINKS = [
   {
     permission: "campus",          // re-uses campus permission
     path: "/report-dashboard",
-    label: "Report Dashboard",
-    description: "View and configure reports",
+    labelKey: "nav.reportDashboard",
+    descriptionKey: "welcome.quickLinks.reportDashboardDescription",
     icon: LayoutDashboard,
     color: "bg-violet-50 text-violet-600",
     ring: "ring-violet-100",
@@ -94,8 +95,8 @@ const QUICK_LINKS = [
   {
     permission: "user_management",
     path: "/users",
-    label: "User Management",
-    description: "Create users and manage permissions",
+    labelKey: "nav.userManagement",
+    descriptionKey: "welcome.quickLinks.userManagementDescription",
     icon: ShieldCheck,
     color: "bg-indigo-50 text-indigo-600",
     ring: "ring-indigo-100",
@@ -118,6 +119,7 @@ function StatPill({ label, count, loading }) {
 }
 
 function QuickCard({ link, onClick }) {
+  const { t } = useTranslation();
   const Icon = link.icon;
   return (
     <button
@@ -129,9 +131,9 @@ function QuickCard({ link, onClick }) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-          {link.label}
+          {t(link.labelKey)}
         </p>
-        <p className="text-xs text-gray-400 mt-0.5 leading-snug">{link.description}</p>
+        <p className="text-xs text-gray-400 mt-0.5 leading-snug">{t(link.descriptionKey)}</p>
       </div>
       <ChevronRight
         size={16}
@@ -143,6 +145,7 @@ function QuickCard({ link, onClick }) {
 
 export default function WelcomeGuide() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { auth } = useAuth();
 
   const activeSchool = auth.active_school;
@@ -177,25 +180,25 @@ export default function WelcomeGuide() {
         <div className="relative">
           <p className="text-slate-400 text-sm font-medium">{getDate()}</p>
           <h2 className="mt-1 text-xl font-bold text-white">
-            {getGreeting()}, {username}!
+            {getGreeting(t)}, {username}!
           </h2>
           <p className="mt-1 text-slate-300 text-sm">
-            Managing{" "}
+            {t("welcome.managing")}{" "}
             <span className="font-semibold text-white">
-              {activeSchool?.label ?? "your school"}
+              {activeSchool?.label ?? t("welcome.yourSchool")}
             </span>
           </p>
 
           {/* Stats */}
           <div className="flex flex-wrap gap-3 mt-5">
             <StatPill
-              label={campuses.length === 1 ? "Campus" : "Campuses"}
+              label={campuses.length === 1 ? t("entities.campus") : t("welcome.entities.campuses")}
               count={campuses.length}
               loading={loadingCampuses}
             />
             {isAdmin && (
               <StatPill
-                label={users.length === 1 ? "User" : "Users"}
+                label={users.length === 1 ? t("entities.user") : t("welcome.entities.users")}
                 count={users.length}
                 loading={loadingUsers}
               />
@@ -208,7 +211,7 @@ export default function WelcomeGuide() {
       {visibleLinks.length > 0 && (
         <div>
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-0.5">
-            Quick Access
+            {t("welcome.quickAccess")}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {visibleLinks.map((link) => (

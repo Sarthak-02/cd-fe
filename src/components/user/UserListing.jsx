@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Listing from "../../ui-components/Listing";
 import CardSkeleton from "../../ui-components/skeletons/CardSkeleton";
 import SearchBar from "../../ui-components/SearchBar";
@@ -66,12 +67,12 @@ function UserCard({ user, onClick }) {
   );
 }
 
-function apiErrorMessage(err) {
+function apiErrorMessage(err, fallback) {
   const d = err?.response?.data;
   if (typeof d === "string") return d;
   if (d?.message) return d.message;
   if (d?.error) return d.error;
-  return err?.message || "Could not load users.";
+  return err?.message || fallback;
 }
 
 export default function UserListing({
@@ -83,6 +84,7 @@ export default function UserListing({
   onRetry,
   onDismissError,
 }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
 
   const allUsers = users ?? [];
@@ -112,14 +114,14 @@ export default function UserListing({
             <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
-            <span>{apiErrorMessage(error)}</span>
+            <span>{apiErrorMessage(error, t("userListing.loadError"))}</span>
           </div>
           <div className="flex gap-3 shrink-0">
             {onRetry && (
-              <button type="button" className="text-sm font-medium text-red-900 underline" onClick={onRetry}>Retry</button>
+              <button type="button" className="text-sm font-medium text-red-900 underline" onClick={onRetry}>{t("common.retry")}</button>
             )}
             {onDismissError && (
-              <button type="button" className="text-sm font-medium text-red-900 underline" onClick={onDismissError}>Dismiss</button>
+              <button type="button" className="text-sm font-medium text-red-900 underline" onClick={onDismissError}>{t("common.dismiss")}</button>
             )}
           </div>
         </div>
@@ -128,12 +130,12 @@ export default function UserListing({
       {/* Toolbar */}
       <div className="flex items-center gap-3 mb-4">
         <div className="flex-1 min-w-0">
-          <SearchBar value={search} onChange={setSearch} placeholder="Search by username or ID..." />
+          <SearchBar value={search} onChange={setSearch} placeholder={t("userListing.searchPlaceholder")} />
         </div>
         <div className="shrink-0">
           <Button onClick={handleCreate}>
-            <span className="hidden sm:inline">+ Add User</span>
-            <span className="sm:hidden">+ Add</span>
+            <span className="hidden sm:inline">+ {t("userListing.addUser")}</span>
+            <span className="sm:hidden">+ {t("actions.add")}</span>
           </Button>
         </div>
       </div>
@@ -142,8 +144,8 @@ export default function UserListing({
       {!loading && hasUsers && (
         <p className="text-xs text-gray-400 mb-3">
           {isFiltered
-            ? `Showing ${filteredUsers.length} of ${allUsers.length} user${allUsers.length !== 1 ? "s" : ""}`
-            : `${allUsers.length} user${allUsers.length !== 1 ? "s" : ""}`}
+            ? t("userListing.showingFiltered", { filtered: filteredUsers.length, total: allUsers.length })
+            : t("userListing.totalUsers", { total: allUsers.length })}
         </p>
       )}
 
@@ -155,9 +157,9 @@ export default function UserListing({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          <p className="font-medium text-gray-600">No users yet</p>
-          <p className="text-sm text-gray-400 mt-1">Add the first user to get started</p>
-          <Button className="mt-4" onClick={handleCreate}>+ Add User</Button>
+          <p className="font-medium text-gray-600">{t("userListing.emptyTitle")}</p>
+          <p className="text-sm text-gray-400 mt-1">{t("userListing.emptySubtitle")}</p>
+          <Button className="mt-4" onClick={handleCreate}>+ {t("userListing.addUser")}</Button>
         </div>
       )}
 
@@ -165,8 +167,8 @@ export default function UserListing({
       {!loading && hasUsers && !hasResults && (
         <div className="flex flex-col items-center justify-center py-10 sm:py-16 text-center border border-dashed border-gray-200 rounded-2xl">
           <p className="text-2xl mb-2">🔍</p>
-          <p className="font-medium text-gray-600">No users match &ldquo;{search}&rdquo;</p>
-          <p className="text-sm text-gray-400 mt-1">Try a different username or ID</p>
+          <p className="font-medium text-gray-600">{t("userListing.noMatches", { search })}</p>
+          <p className="text-sm text-gray-400 mt-1">{t("userListing.tryDifferentSearch")}</p>
         </div>
       )}
 

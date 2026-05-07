@@ -5,8 +5,10 @@ import Dialog from "../ui-components/Dialog";
 
 import { MODE } from "../utils/constants/globalConstants";
 import { useSchoolsStore } from "../store/school.store";
+import { useTranslation } from "react-i18next";
 
 export default function School() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(MODE.NONE); // 0 -> close , 1 -> create , 2 -> edit
   const [selectedSchool, setSelectedSchool] = useState("");
 
@@ -48,7 +50,11 @@ export default function School() {
           open={!!mode}
           fullScreen={true}
           onClose={() => handleAddEditModel(MODE.NONE)}
-          title={mode === MODE.CREATE ? "Add School" : "Edit School"}
+          title={
+            mode === MODE.CREATE
+              ? `${t("actions.add")} ${t("entities.school")}`
+              : `${t("actions.edit")} ${t("entities.school")}`
+          }
         >
           <AddEditSchool
             mode={mode}

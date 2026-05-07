@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 function initials(name) {
   if (!name) return "?";
@@ -10,7 +11,8 @@ function initials(name) {
     .slice(0, 2);
 }
 
-export default function Header({ currentPage, user, handleLogout }) {
+export default function Header({ currentPageKey, user, handleLogout }) {
+  const { t } = useTranslation();
   const username = user?.username || "User";
   const activeSchool = user?.active_school;
   const isAdmin = user?.isadmin;
@@ -20,7 +22,7 @@ export default function Header({ currentPage, user, handleLogout }) {
       {/* Left: page title */}
       <div className="flex items-center gap-3 min-w-0">
         <h1 className="text-sm font-semibold text-gray-800 truncate">
-          {currentPage || "Dashboard"}
+          {currentPageKey ? t(currentPageKey) : t("common.dashboard")}
         </h1>
         {activeSchool?.label && (
           <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 px-2.5 py-1 rounded-full shrink-0">
@@ -42,7 +44,7 @@ export default function Header({ currentPage, user, handleLogout }) {
           <div className="hidden xl:block leading-tight">
             <p className="text-xs font-semibold text-gray-800">{username}</p>
             {isAdmin && (
-              <p className="text-xs text-violet-600 font-medium">Admin</p>
+              <p className="text-xs text-violet-600 font-medium">{t("common.admin")}</p>
             )}
           </div>
         </div>
@@ -57,7 +59,7 @@ export default function Header({ currentPage, user, handleLogout }) {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
           </svg>
-          <span className="hidden xl:inline">Logout</span>
+          <span className="hidden xl:inline">{t("common.logout")}</span>
         </button>
       </div>
     </header>
