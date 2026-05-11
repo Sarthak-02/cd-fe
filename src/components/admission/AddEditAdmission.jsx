@@ -185,7 +185,7 @@ export default function AddEditAdmission({ mode, selectedAdmission, campus_id, h
   const showForm = !bootstrapping && !detailsLoadError;
 
   return (
-    <div className="w-full p-4 space-y-6">
+    <div className="w-full p-4 pb-12 space-y-6">
       {submitError && (
         <div className="rounded-xl bg-red-50 border border-red-100 text-red-800 px-4 py-3 text-sm flex items-start gap-2" role="alert">
           <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">

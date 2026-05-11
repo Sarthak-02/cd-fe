@@ -181,7 +181,7 @@ export default function AddEditCampus({
     formData?.campus_show_map;
 
   return (
-    <div className="w-full p-4 space-y-6">
+    <div className="w-full p-4 pb-12 space-y-6">
       {submitError && (
         <div
           className="rounded-xl bg-red-50 border border-red-100 text-red-800 px-4 py-3 text-sm flex items-start gap-2"

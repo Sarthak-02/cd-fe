@@ -143,7 +143,7 @@ export default function AddEditUser({
   const showForm = !bootstrapping && !detailsLoadError;
 
   return (
-    <div className="w-full p-4 space-y-6">
+    <div className="w-full p-4 pb-12 space-y-6">
       {submitError && (
         <div
           className="rounded-md bg-red-50 text-red-800 px-3 py-2 text-sm"

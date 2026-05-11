@@ -232,7 +232,7 @@ export default function AddEditSection({
       )}
 
       {showForm && (
-        <div className="w-full p-4 space-y-6">
+        <div className="w-full p-4 pb-12 space-y-6">
           {mode === MODE.EDIT && (
             <button
               type="button"
