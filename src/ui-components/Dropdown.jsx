@@ -52,7 +52,7 @@ export default function Dropdown({
   };
 
   const filteredOptions = options.filter((o) =>
-    o.label.toLowerCase().includes(searchQuery.toLowerCase())
+    (o.label ?? "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

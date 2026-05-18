@@ -4,16 +4,10 @@ import './index.css'
 import App from './App.jsx'
 import './i18n/i18n.js';
 import { BrowserRouter } from "react-router-dom";
-import { GoogleMapsProvider } from './utils/map/GoogleMapsProvider.jsx';
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter basename="/control-desk-web">
-    <GoogleMapsProvider>
       <App />
-    </GoogleMapsProvider>
-   
     </BrowserRouter>
-    
   </StrictMode>,
 )

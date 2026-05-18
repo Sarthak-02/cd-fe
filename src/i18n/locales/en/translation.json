@@ -35,6 +35,7 @@
       "student": "Student",
       "admission": "Admission",
       "reportDashboard": "Report Dashboard",
+      "reportCard": "Report Card",
       "priceTierPermissions": "Price Tier Permissions"
     },
     "home": {
@@ -591,6 +592,65 @@
         "classesEnabled": "{{count}} enabled",
         "ratingScale": "Rating Scale",
         "status": "Status"
+      }
+    },
+
+    "reportCard": {
+      "listing": {
+        "searchPlaceholder": "Search by name or admission no...",
+        "placeholders": {
+          "campus": "Campus",
+          "class": "Class",
+          "section": "Section",
+          "exam": "Select Exam(s)"
+        },
+        "selectExamHint": "Select an exam to generate report cards.",
+        "selectCampusTitle": "Select a campus",
+        "selectCampusSubtitle": "Choose a campus to load students",
+        "noStudentsTitle": "No students in this campus",
+        "noMatchesTitle": "No students match your filters",
+        "noMatchesSubtitle": "Try adjusting the class, section, or search",
+        "selectAll": "Select All",
+        "deselectAll": "Deselect All",
+        "selected_one": "{{count}} selected",
+        "selected_other": "{{count}} selected",
+        "studentCount_one": "{{count}} student",
+        "studentCount_other": "{{count}} students",
+        "generate_one": "Generate Report Card",
+        "generate_other": "Generate Report Cards",
+        "generating": "Generating…"
+      },
+      "preview": {
+        "title": "Report Cards",
+        "cardCount_one": "{{count}} report card",
+        "cardCount_other": "{{count}} report cards",
+        "printSave": "Print / Save as PDF",
+        "academicProgressReport": "Academic Progress Report",
+        "academicTerm": "Academic Term",
+        "studentName": "Student Name",
+        "admissionNo": "Admission No.",
+        "rollNo": "Roll No.",
+        "classSection": "Class / Section",
+        "dateOfIssue": "Date of Issue",
+        "noGrades": "No grades have been recorded for this student.",
+        "examAverage": "Average",
+        "total": "Total",
+        "table": {
+          "subject": "Subject",
+          "marksObtained": "Marks Obtained",
+          "maxMarks": "Max Marks",
+          "passingMarks": "Passing Marks",
+          "percentage": "Percentage",
+          "result": "Result",
+          "remarks": "Remarks"
+        },
+        "pass": "PASS",
+        "fail": "FAIL",
+        "signatures": {
+          "classTeacher": "Class Teacher",
+          "principal": "Principal",
+          "parent": "Parent / Guardian"
+        }
       }
     },
 

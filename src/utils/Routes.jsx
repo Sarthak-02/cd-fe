@@ -13,6 +13,7 @@ import Teacher from "../pages/Teacher";
 import ReportDashboard from "../pages/ReportDashboard";
 import PriceTierPermissions from "../pages/PriceTierPermissions";
 import Admission from "../pages/Admission";
+import ReportCard from "../pages/ReportCard";
 
 
 export const routes = [
@@ -39,6 +40,7 @@ export const routes = [
       {path:"report-dashboard", element: <ReportDashboard />},
       {path:"price-tier-permissions", element: <PriceTierPermissions />},
       {path:"admission", element: <Admission />},
+      {path:"report-card", element: <ReportCard />},
 
       { path: "*", element: <Home /> },
     ]

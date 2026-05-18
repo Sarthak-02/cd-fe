@@ -35,6 +35,7 @@
       "student": "छात्र",
       "admission": "प्रवेश",
       "reportDashboard": "रिपोर्ट डैशबोर्ड",
+      "reportCard": "रिपोर्ट कार्ड",
       "priceTierPermissions": "प्राइस टियर अनुमतियाँ"
     },
     "home": {
@@ -623,6 +624,65 @@
       "site": {
         "kv": "केंद्रीय विद्यालय",
         "dav": "डीएवी"
+      }
+    },
+
+    "reportCard": {
+      "listing": {
+        "searchPlaceholder": "नाम या प्रवेश संख्या से खोजें...",
+        "placeholders": {
+          "campus": "परिसर",
+          "class": "कक्षा",
+          "section": "अनुभाग",
+          "exam": "परीक्षा चुनें"
+        },
+        "selectExamHint": "रिपोर्ट कार्ड बनाने के लिए एक परीक्षा चुनें।",
+        "selectCampusTitle": "एक परिसर चुनें",
+        "selectCampusSubtitle": "छात्रों को लोड करने के लिए परिसर चुनें",
+        "noStudentsTitle": "इस परिसर में कोई छात्र नहीं",
+        "noMatchesTitle": "कोई छात्र फ़िल्टर से मेल नहीं खाता",
+        "noMatchesSubtitle": "कक्षा, अनुभाग या खोज बदलकर पुनः प्रयास करें",
+        "selectAll": "सभी चुनें",
+        "deselectAll": "सभी हटाएँ",
+        "selected_one": "{{count}} चुना गया",
+        "selected_other": "{{count}} चुने गए",
+        "studentCount_one": "{{count}} छात्र",
+        "studentCount_other": "{{count}} छात्र",
+        "generate_one": "रिपोर्ट कार्ड बनाएँ",
+        "generate_other": "रिपोर्ट कार्ड बनाएँ",
+        "generating": "बन रहा है…"
+      },
+      "preview": {
+        "title": "रिपोर्ट कार्ड",
+        "cardCount_one": "{{count}} रिपोर्ट कार्ड",
+        "cardCount_other": "{{count}} रिपोर्ट कार्ड",
+        "printSave": "प्रिंट करें / PDF में सहेजें",
+        "academicProgressReport": "शैक्षणिक प्रगति रिपोर्ट",
+        "academicTerm": "शैक्षणिक सत्र",
+        "studentName": "छात्र का नाम",
+        "admissionNo": "प्रवेश संख्या",
+        "rollNo": "क्रमांक",
+        "classSection": "कक्षा / अनुभाग",
+        "dateOfIssue": "जारी करने की तिथि",
+        "noGrades": "इस छात्र के लिए कोई अंक दर्ज नहीं किए गए हैं।",
+        "examAverage": "औसत",
+        "total": "कुल",
+        "table": {
+          "subject": "विषय",
+          "marksObtained": "प्राप्त अंक",
+          "maxMarks": "अधिकतम अंक",
+          "passingMarks": "उत्तीर्ण अंक",
+          "percentage": "प्रतिशत",
+          "result": "परिणाम",
+          "remarks": "टिप्पणी"
+        },
+        "pass": "उत्तीर्ण",
+        "fail": "अनुत्तीर्ण",
+        "signatures": {
+          "classTeacher": "कक्षा शिक्षक",
+          "principal": "प्रधानाचार्य",
+          "parent": "माता-पिता / अभिभावक"
+        }
       }
     }
   }
