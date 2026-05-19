@@ -1,6 +1,10 @@
 import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
 import axios from "axios";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** Matches `createPayload` in AddEditStudent — API expects `student_admission_no`. */
 function randomAdmissionNo() {
@@ -9,57 +13,46 @@ function randomAdmissionNo() {
   return `ADM-${ts}-${rnd}`;
 }
 
-/** Shallow clone: overwrite admission number so each POST gets a unique value. */
-function withRandomAdmissionNo(record) {
+
+function splitRecord(record) {
+  const {
+    student_admission_no,
+    student_roll_no,
+    student_first_name,
+    student_middle_name,
+    student_last_name,
+    student_gender,
+    student_dob,
+    student_current_status,
+    campus_id = "test",
+    student_section_id,
+    ...extras
+  } = record;
+
   return {
-    ...record,
-    student_admission_no: randomAdmissionNo(),
+    student_admission_no,
+    student_roll_no,
+    student_first_name,
+    student_middle_name,
+    student_last_name,
+    student_gender,
+    student_dob: student_dob ? new Date(student_dob).toISOString() : null,
+    student_current_status,
+    campus_id,
+    student_section_id,
+    extras,
   };
 }
 
-function parseArgs(argv) {
-  const args = {
-    file: null,
-    baseUrl: "http://127.0.0.1:5000",
-    endpoint:  "/onboarding/student",
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiJzYXJ0aGFrIiwiaWF0IjoxNzc0OTYyNjgyLCJleHAiOjE3NzUwNDkwODJ9.kyya7Fb_1EqBKkdgTk88IM7BKztMUJ9TEt8mpaCso1A",
-    cookie: process.env.COOKIE || "",
-    concurrency: Number(process.env.CONCURRENCY || "1"),
-    dryRun: false,
-    randomAdmission: true,
-  };
-
-  for (let i = 2; i < argv.length; i += 1) {
-    const a = argv[i];
-    if (!a) continue;
-
-    if (a === "--file" || a === "-f") args.file = argv[i + 1];
-    else if (a === "--base-url") args.baseUrl = argv[i + 1] || "";
-    else if (a === "--endpoint") args.endpoint = argv[i + 1] || args.endpoint;
-    else if (a === "--token") args.token = argv[i + 1] || "";
-    else if (a === "--cookie") args.cookie = argv[i + 1] || "";
-    else if (a === "--concurrency" || a === "-c")
-      args.concurrency = Number(argv[i + 1] || "1");
-    else if (a === "--dry-run") args.dryRun = true;
-    else if (a === "--keep-admission-from-file") args.randomAdmission = false;
-  }
-
-  if (!args.file) {
-    throw new Error(
-      "Missing --file. Usage: node scripts/upload-students-from-json.mjs --file ./students.json --base-url https://api.example.com"
-    );
-  }
-  if (!args.baseUrl) {
-    throw new Error(
-      "Missing --base-url (or BASE_URL env). Example: --base-url https://api.example.com"
-    );
-  }
-  if (!Number.isFinite(args.concurrency) || args.concurrency < 1) {
-    args.concurrency = 1;
-  }
-
-  return args;
-}
+const CONFIG = {
+  file: path.join(__dirname, "students-sample.json"),
+  baseUrl: "http://127.0.0.1:5000",
+  endpoint: "/onboarding/student",
+  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiJzYXJ0aGFrIiwiaWF0IjoxNzc5MjEwMDE2LCJleHAiOjE3NzkyOTY0MTZ9.Ych6Z3x3AgQtvn_J88JvI-_cz97RJRUDSRZLMzdKrUg",
+  concurrency: 1,
+  dryRun: false,
+  randomAdmission: false,
+};
 
 function normalizePayload(json) {
   if (Array.isArray(json)) return json;
@@ -92,52 +85,31 @@ async function asyncPool(limit, items, worker) {
 }
 
 async function main() {
-  const args = parseArgs(process.argv);
-
-  const raw = await fs.readFile(args.file, "utf8");
+  const raw = await fs.readFile(CONFIG.file, "utf8");
   const parsed = JSON.parse(raw);
   const records = normalizePayload(parsed);
 
+  const endpoint = CONFIG.endpoint.startsWith("/") ? CONFIG.endpoint : `/${CONFIG.endpoint}`;
+
   const client = axios.create({
-    baseURL: args.baseUrl.replace(/\/+$/, ""),
+    baseURL: CONFIG.baseUrl.replace(/\/+$/, ""),
     timeout: 60_000,
     validateStatus: () => true,
     headers: {
-      ...(args.token ? { Authorization: `Bearer ${args.token}` } : {}),
-      ...(args.cookie ? { Cookie: args.cookie } : {}),
+      Authorization: `Bearer ${CONFIG.token}`,
       "Content-Type": "application/json",
     },
   });
 
-  if (args.dryRun) {
-    const sample = records[0]
-      ? args.randomAdmission
-        ? withRandomAdmissionNo(records[0])
-        : records[0]
-      : null;
-    console.log(
-      JSON.stringify(
-        {
-          count: records.length,
-          baseUrl: client.defaults.baseURL,
-          endpoint: args.endpoint,
-          randomAdmission: args.randomAdmission,
-          sample,
-        },
-        null,
-        2
-      )
-    );
+  if (CONFIG.dryRun) {
+    const sample = records[0] ? splitRecord(records[0]) : null;
+    console.log(JSON.stringify({ count: records.length, baseUrl: client.defaults.baseURL, endpoint, sample }, null, 2));
     return;
   }
 
-  const endpoint =
-    args.endpoint.startsWith("/") ? args.endpoint : `/${args.endpoint}`;
-
-  const results = await asyncPool(args.concurrency, records, async (record, i) => {
-    const payload = args.randomAdmission
-      ? withRandomAdmissionNo(record)
-      : record;
+  const results = await asyncPool(CONFIG.concurrency, records, async (record, i) => {
+    const split = splitRecord(record);
+    const payload = CONFIG.randomAdmission ? { ...split, student_admission_no: randomAdmissionNo() } : split;
     const resp = await client.post(endpoint, payload);
     const ok = resp.status >= 200 && resp.status < 300;
     return {
@@ -152,16 +124,7 @@ async function main() {
   const fail = results.filter((r) => !r.ok);
 
   console.log(
-    JSON.stringify(
-      {
-        total: results.length,
-        ok: okCount,
-        failed: fail.length,
-        failures: fail.slice(0, 25),
-      },
-      null,
-      2
-    )
+    JSON.stringify({ total: results.length, ok: okCount, failed: fail.length, failures: fail.slice(0, 25) }, null, 2)
   );
 
   if (fail.length) process.exitCode = 1;
