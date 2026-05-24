@@ -28,6 +28,7 @@ export const STAFF_FEATURES = [
   { id: "staff_reporting", label: "Reporting (section & class level analytics)", classSpecific: false },
   { id: "staff_broadcast", label: "Broadcast Notifications", classSpecific: false },
   { id: "staff_scholarships", label: "Scholarships (browse)", classSpecific: false },
+  { id: "staff_study_ai", label: "Study / AI Study Companion", classSpecific: false },
 ];
 
 function buildTierFeatures(features, enabledIds) {
