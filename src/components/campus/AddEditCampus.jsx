@@ -22,6 +22,7 @@ function createPayload(form) {
     campus_name,
     campus_type,
     school_id = "",
+    extras: _rawExtras, // exclude the nested extras object that comes from { ...details, ...details.extras }
     ...extras
   } = form;
   return { campus_id, campus_name, campus_type, school_id, extras };
@@ -153,7 +154,17 @@ export default function AddEditCampus({
 
     setSubmitError("");
     useCampusStore.getState().clearCampusError();
-    const payload = { ...createPayload(formData) };
+    const payload = createPayload(formData);
+
+    // Preserve academic_calendar from the store — it's managed separately via the Calendar
+    // panel and formData can be stale (loaded before the calendar was saved).
+    if (mode === MODE.EDIT) {
+      const latestCalendar =
+        useCampusStore.getState().campusDetails?.extras?.academic_calendar;
+      if (latestCalendar !== undefined) {
+        payload.extras.academic_calendar = latestCalendar;
+      }
+    }
 
     try {
       if (mode === MODE.CREATE) {

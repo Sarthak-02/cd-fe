@@ -48,7 +48,7 @@ const CONFIG = {
   file: path.join(__dirname, "students-sample.json"),
   baseUrl: "http://127.0.0.1:5000",
   endpoint: "/onboarding/student",
-  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiJzYXJ0aGFrIiwiaWF0IjoxNzc5MjEwMDE2LCJleHAiOjE3NzkyOTY0MTZ9.Ych6Z3x3AgQtvn_J88JvI-_cz97RJRUDSRZLMzdKrUg",
+  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiJzYXJ0aGFrIiwiaWF0IjoxNzc5ODk3MzQzLCJleHAiOjE3Nzk5ODM3NDN9.QO2pCep0VHnbOhDfTBn36ofBp_QYkwgAJB4U0kObAxU",
   concurrency: 1,
   dryRun: false,
   randomAdmission: false,
