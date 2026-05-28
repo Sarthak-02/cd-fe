@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "../../ui-components/Button";
 
@@ -52,7 +52,7 @@ function SingleReportCard({ card, campusDetails, sectionName }) {
   const termEnd = formatDate(campusDetails?.term_end_date);
 
   return (
-    <div className="report-card bg-white border-2 border-gray-800 mb-8 print:mb-0 print:page-break-after-always font-sans">
+    <div className="report-card bg-white border-2 border-gray-800 mb-8 print:mb-0 print:break-after-page font-sans">
 
       {/* ── School Header ── */}
       <div className="border-b-2 border-gray-800 p-6 text-center">
@@ -312,15 +312,54 @@ function Td({ children, left, bold, mono, muted }) {
 
 export default function ReportCardPreview({ reportCards, campusDetails, sectionMap }) {
   const { t } = useTranslation();
+  const cardsRef = useRef(null);
 
   function handlePrint() {
-    window.print();
+    const content = cardsRef.current;
+    if (!content) return;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups for this site to print report cards.');
+      return;
+    }
+
+    const headContent = Array.from(
+      document.head.querySelectorAll('link[rel="stylesheet"], style')
+    ).map(el => el.outerHTML).join('\n');
+
+    printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<base href="${window.location.origin}/">
+<title>Report Cards</title>
+${headContent}
+<style>
+  body { margin: 0; background: white; }
+  @media print {
+    .report-card { break-after: page !important; page-break-after: always !important; }
+    .report-card:last-child { break-after: auto !important; page-break-after: auto !important; }
+  }
+</style>
+</head>
+<body>
+${content.innerHTML}
+<script>
+  window.onload = function () {
+    setTimeout(function () { window.print(); }, 300);
+  };
+<\/script>
+</body>
+</html>`);
+
+    printWindow.document.close();
   }
 
   return (
     <div>
       {/* Toolbar */}
-      <div className="print:hidden flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
+      <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
         <p className="text-sm text-gray-500">
           {t("reportCard.preview.cardCount", { count: reportCards.length })}
         </p>
@@ -329,14 +368,16 @@ export default function ReportCardPreview({ reportCards, campusDetails, sectionM
         </Button>
       </div>
 
-      {reportCards.map((card) => (
-        <SingleReportCard
-          key={card.student.student_id}
-          card={card}
-          campusDetails={campusDetails}
-          sectionName={sectionMap?.[card.student.student_id]}
-        />
-      ))}
+      <div ref={cardsRef}>
+        {reportCards.map((card) => (
+          <SingleReportCard
+            key={card.student.student_id}
+            card={card}
+            campusDetails={campusDetails}
+            sectionName={sectionMap?.[card.student.student_id]}
+          />
+        ))}
+      </div>
     </div>
   );
 }

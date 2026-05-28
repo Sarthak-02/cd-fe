@@ -18,7 +18,7 @@ export default function Dialog({ open, onClose, title, fullScreen = false, backd
     <AnimatePresence>
       {open && (
         <motion.div
-          className={`fixed inset-0 z-50 flex items-center justify-center ${backdropBlur ? 'backdrop-blur-md' : ''} bg-black/40 p-4`}
+          className={`fixed inset-0 z-50 flex items-center justify-center ${backdropBlur ? 'backdrop-blur-md' : ''} bg-black/40 p-4 print:static print:bg-transparent print:p-0 print:block`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -27,10 +27,10 @@ export default function Dialog({ open, onClose, title, fullScreen = false, backd
             initial={isMobile ? { y: 40, opacity: 0 } : { x: 50, opacity: 0 }}
             animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
             exit={isMobile ? { y: 40, opacity: 0 } : { x: 50, opacity: 0 }}
-            className={`bg-white rounded-2xl shadow-xl w-full ${fullScreen ? "max-w-none h-full" : "max-w-lg"} flex flex-col`}
+            className={`bg-white rounded-2xl shadow-xl w-full ${fullScreen ? "max-w-none h-full" : "max-w-lg"} flex flex-col print:rounded-none print:shadow-none print:h-auto print:max-h-none`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center justify-between p-4 border-b print:hidden">
               <h2 className="text-lg font-semibold">{title}</h2>
               <button
                 onClick={onClose}
@@ -41,7 +41,7 @@ export default function Dialog({ open, onClose, title, fullScreen = false, backd
             </div>
 
             {/* Body */}
-            <div className="p-4 overflow-auto flex-1">{children}</div>
+            <div className="p-4 overflow-auto flex-1 print:overflow-visible print:flex-none">{children}</div>
           </motion.div>
         </motion.div>
       )}
