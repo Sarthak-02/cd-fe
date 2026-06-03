@@ -40,6 +40,13 @@ export default function Campus() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- zustand store action
   }, []);
 
+  useEffect(() => {
+    if (site_permissions?.length === 1 && !selectedSchool) {
+      setSelectedSchool(site_permissions[0].value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- auto-select only when permissions load
+  }, [site_permissions]);
+
   // -----------------------------
   // When user selects a campus row
   // -----------------------------

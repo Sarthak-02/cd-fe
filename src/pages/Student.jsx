@@ -15,6 +15,8 @@ export default function Student() {
   const [mode, setMode] = useState(MODE.NONE);
   const [selectedStudent, setSelectedStudent] = useState("");
   const [selectedCampus, setSelectedCampus] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
 
   const { fetchCampuses, campuses, fetchCampusDetails } = useCampusStore();
 
@@ -30,8 +32,8 @@ export default function Student() {
     clearStudentDetails,
     clearStudentError,
   } = useStudentStore();
-  const { fetchSections } = useSectionStore();
-  const { fetchClasses } = useClassStore();
+  const { fetchSections, sections } = useSectionStore();
+  const { fetchClasses, classes } = useClassStore();
 
   function handleSelectStudent(student_id) {
     clearStudentDetails();
@@ -46,7 +48,16 @@ export default function Student() {
   }, []);
 
   useEffect(() => {
+    if (campuses?.length === 1) {
+      setSelectedCampus(campuses[0].campus_id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- auto-select only when campuses loads
+  }, [campuses]);
+
+  useEffect(() => {
     if (!selectedCampus) return;
+    setSelectedClass("");
+    setSelectedSection("");
     fetchCampusDetails(selectedCampus);
     fetchStudents(selectedCampus);
     fetchSections(selectedCampus);
@@ -95,6 +106,12 @@ export default function Student() {
           campuses={campusOptions}
           selectedCampus={selectedCampus}
           setSelectedCampus={setSelectedCampus}
+          classes={classes}
+          sections={sections}
+          selectedClass={selectedClass}
+          setSelectedClass={(val) => { setSelectedClass(val); setSelectedSection(""); }}
+          selectedSection={selectedSection}
+          setSelectedSection={setSelectedSection}
         />
       )}
     </>

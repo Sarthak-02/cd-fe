@@ -14,6 +14,7 @@ import ReportDashboard from "../pages/ReportDashboard";
 import PriceTierPermissions from "../pages/PriceTierPermissions";
 import Admission from "../pages/Admission";
 import ReportCard from "../pages/ReportCard";
+import IdCard from "../pages/IdCard";
 
 
 export const routes = [
@@ -41,6 +42,7 @@ export const routes = [
       {path:"price-tier-permissions", element: <PriceTierPermissions />},
       {path:"admission", element: <Admission />},
       {path:"report-card", element: <ReportCard />},
+      {path:"id-card", element: <IdCard />},
 
       { path: "*", element: <Home /> },
     ]

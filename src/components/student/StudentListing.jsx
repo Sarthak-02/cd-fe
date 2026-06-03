@@ -97,6 +97,12 @@ export default function StudentListing({
   campuses,
   selectedCampus,
   setSelectedCampus,
+  classes,
+  sections,
+  selectedClass,
+  setSelectedClass,
+  selectedSection,
+  setSelectedSection,
   loading,
   error,
   onRetry,
@@ -106,18 +112,39 @@ export default function StudentListing({
 
   const allStudents = students ?? [];
 
+  const classOptions = useMemo(
+    () => (classes ?? []).map((c) => ({ label: c.class_name, value: c.class_id })),
+    [classes]
+  );
+
+  const sectionOptions = useMemo(() => {
+    const list = sections ?? [];
+    const filtered = selectedClass ? list.filter((s) => s.class_id === selectedClass) : list;
+    return filtered.map((s) => ({ label: s.section_name, value: s.section_id }));
+  }, [sections, selectedClass]);
+
   const list = useMemo(() => {
+    if (!selectedCampus) return [];
+    let result = allStudents;
+    if (selectedSection) {
+      result = result.filter((s) => s.student_section_id === selectedSection);
+    } else if (selectedClass) {
+      const sectionIds = new Set(
+        (sections ?? []).filter((s) => s.class_id === selectedClass).map((s) => s.section_id)
+      );
+      result = result.filter((s) => sectionIds.has(s.student_section_id));
+    }
     const q = search.toLowerCase();
-    if (!q) return allStudents;
-    return allStudents.filter(
+    if (!q) return result;
+    return result.filter(
       ({ student_first_name, student_last_name, student_admission_no }) =>
         `${student_first_name} ${student_last_name ?? ""}`.toLowerCase().includes(q) ||
         student_admission_no?.toLowerCase().includes(q)
     );
-  }, [allStudents, search]);
+  }, [allStudents, selectedCampus, selectedSection, selectedClass, sections, search]);
 
   const showSkeleton = Boolean(selectedCampus && loading);
-  const isFiltered = search.length > 0;
+  const isFiltered = search.length > 0 || !!selectedClass || !!selectedSection;
   const hasStudents = allStudents.length > 0;
   const hasResults = list.length > 0;
 
@@ -150,27 +177,50 @@ export default function StudentListing({
       )}
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-        <div className="sm:w-48 sm:shrink-0">
-          <Dropdown
-            options={campuses}
-            selected={selectedCampus}
-            onChange={setSelectedCampus}
-          />
-        </div>
-        <div className="flex flex-1 items-center gap-3 min-w-0">
-          <div className="flex-1 min-w-0">
-            <SearchBar
-              value={search}
-              onChange={setSearch}
-              placeholder="Search by name or admission no..."
+      <div className="flex flex-col gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="sm:w-48 sm:shrink-0">
+            <Dropdown
+              options={campuses}
+              selected={selectedCampus}
+              onChange={setSelectedCampus}
+              placeholder="Select campus..."
             />
           </div>
-          <div className="shrink-0">
-            <Button onClick={handleCreate} disabled={!selectedCampus}>
-              <span className="hidden sm:inline">+ Add Student</span>
-              <span className="sm:hidden">+ Add</span>
-            </Button>
+          {selectedCampus && (
+            <>
+              <div className="sm:w-44 sm:shrink-0">
+                <Dropdown
+                  options={classOptions}
+                  selected={selectedClass}
+                  onChange={setSelectedClass}
+                  placeholder="All classes"
+                />
+              </div>
+              <div className="sm:w-44 sm:shrink-0">
+                <Dropdown
+                  options={sectionOptions}
+                  selected={selectedSection}
+                  onChange={setSelectedSection}
+                  placeholder="All sections"
+                />
+              </div>
+            </>
+          )}
+          <div className="flex flex-1 items-center gap-3 min-w-0">
+            <div className="flex-1 min-w-0">
+              <SearchBar
+                value={search}
+                onChange={setSearch}
+                placeholder="Search by name or admission no..."
+              />
+            </div>
+            <div className="shrink-0">
+              <Button onClick={handleCreate} disabled={!selectedCampus}>
+                <span className="hidden sm:inline">+ Add Student</span>
+                <span className="sm:hidden">+ Add</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

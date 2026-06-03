@@ -36,6 +36,7 @@
       "admission": "Admission",
       "reportDashboard": "Report Dashboard",
       "reportCard": "Report Card",
+      "idCard": "ID Card",
       "priceTierPermissions": "Price Tier Permissions"
     },
     "home": {
@@ -651,6 +652,35 @@
           "principal": "Principal",
           "parent": "Parent / Guardian"
         }
+      }
+    },
+
+    "idCard": {
+      "listing": {
+        "searchPlaceholder": "Search by name or admission no...",
+        "placeholders": {
+          "campus": "Campus",
+          "class": "Class",
+          "section": "Section"
+        },
+        "selectCampusTitle": "Select a campus",
+        "selectCampusSubtitle": "Choose a campus to load students",
+        "noStudentsTitle": "No students in this campus",
+        "noMatchesTitle": "No students match your filters",
+        "noMatchesSubtitle": "Try adjusting the class, section, or search",
+        "selectAll": "Select All",
+        "deselectAll": "Deselect All",
+        "selected_one": "{{count}} selected",
+        "selected_other": "{{count}} selected",
+        "studentCount_one": "{{count}} student",
+        "studentCount_other": "{{count}} students",
+        "generate_one": "Generate ID Card",
+        "generate_other": "Generate ID Cards"
+      },
+      "preview": {
+        "cardCount_one": "{{count}} ID card",
+        "cardCount_other": "{{count}} ID cards",
+        "printSave": "Print / Save as PDF"
       }
     },
 

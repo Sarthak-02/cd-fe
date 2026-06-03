@@ -36,6 +36,7 @@
       "admission": "प्रवेश",
       "reportDashboard": "रिपोर्ट डैशबोर्ड",
       "reportCard": "रिपोर्ट कार्ड",
+      "idCard": "आईडी कार्ड",
       "priceTierPermissions": "प्राइस टियर अनुमतियाँ"
     },
     "home": {
@@ -548,6 +549,35 @@
         "classesEnabled": "{{count}} सक्षम",
         "ratingScale": "रेटिंग स्केल",
         "status": "स्थिति"
+      }
+    },
+
+    "idCard": {
+      "listing": {
+        "searchPlaceholder": "नाम या प्रवेश संख्या से खोजें...",
+        "placeholders": {
+          "campus": "परिसर",
+          "class": "कक्षा",
+          "section": "अनुभाग"
+        },
+        "selectCampusTitle": "एक परिसर चुनें",
+        "selectCampusSubtitle": "छात्रों को लोड करने के लिए परिसर चुनें",
+        "noStudentsTitle": "इस परिसर में कोई छात्र नहीं",
+        "noMatchesTitle": "कोई भी छात्र फ़िल्टर से मेल नहीं खाता",
+        "noMatchesSubtitle": "कक्षा, अनुभाग या खोज समायोजित करें",
+        "selectAll": "सभी चुनें",
+        "deselectAll": "सभी हटाएँ",
+        "selected_one": "{{count}} चयनित",
+        "selected_other": "{{count}} चयनित",
+        "studentCount_one": "{{count}} छात्र",
+        "studentCount_other": "{{count}} छात्र",
+        "generate_one": "आईडी कार्ड बनाएँ",
+        "generate_other": "आईडी कार्ड बनाएँ"
+      },
+      "preview": {
+        "cardCount_one": "{{count}} आईडी कार्ड",
+        "cardCount_other": "{{count}} आईडी कार्ड",
+        "printSave": "प्रिंट / PDF में सहेजें"
       }
     },
 

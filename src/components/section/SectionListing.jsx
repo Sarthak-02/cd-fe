@@ -86,6 +86,7 @@ export default function SectionListing({
   const allSections = sections ?? [];
 
   const list = useMemo(() => {
+    if (!selectedCampus) return [];
     const q = search.toLowerCase();
     if (!q) return allSections;
     return allSections.filter(
@@ -93,7 +94,7 @@ export default function SectionListing({
         section_name?.toLowerCase().includes(q) ||
         section_id?.toLowerCase().includes(q)
     );
-  }, [allSections, search]);
+  }, [allSections, selectedCampus, search]);
 
   const showSkeleton = Boolean(selectedCampus && loading);
   const isFiltered = search.length > 0;

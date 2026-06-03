@@ -109,6 +109,7 @@ export default function TeacherListing({
   const allTeachers = teachers ?? [];
 
   const list = useMemo(() => {
+    if (!selectedCampus) return [];
     const q = search.toLowerCase();
     if (!q) return allTeachers;
     return allTeachers.filter(
@@ -116,7 +117,7 @@ export default function TeacherListing({
         fullname?.toLowerCase().includes(q) ||
         teacher_employee_code?.toLowerCase().includes(q)
     );
-  }, [allTeachers, search]);
+  }, [allTeachers, selectedCampus, search]);
 
   const showSkeleton = Boolean(selectedCampus && loading);
   const isFiltered = search.length > 0;

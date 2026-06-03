@@ -29,6 +29,13 @@ export default function ReportDashboard() {
   }, []);
 
   useEffect(() => {
+    if (campuses?.length === 1) {
+      setSelectedCampus(campuses[0].campus_id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- auto-select only when campuses loads
+  }, [campuses]);
+
+  useEffect(() => {
     if (!selectedCampus) return;
     fetchConfigs(selectedCampus);
     fetchClasses(selectedCampus);
