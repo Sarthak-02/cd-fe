@@ -76,6 +76,7 @@ export const studentSchema = [
       // { id: "student_class_id", name: "student.fields.class", value: "", type: "dropdown", mandatory: true, options: [], width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "student_section_id", name: "student.fields.section", value: "", type: "dropdown", mandatory: true, options: [], width: { tablet: 4, desktop: 4, mobile: 12 } },
 
+      { id: "student_subjects", name: "student.fields.subjects", value: [], type: "dropdown", options: [], multiple: true, mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "student_house_name", name: "student.fields.houseName", value: "", type: "dropdown", options: [], mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
       { id: "student_category", name: "student.fields.category", value: "", type: "dropdown", options: RESERVATION_CATEGORY, mandatory: false, width: { tablet: 4, desktop: 4, mobile: 12 } },
 

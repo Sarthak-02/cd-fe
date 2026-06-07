@@ -10,7 +10,7 @@ import {
 } from "../../utils/utility_functions/updateSchema";
 import { validateForm } from "../../utils/validators/form_validation";
 import { getLocation } from "../../utils/map/getLocation";
-import CampusLocation from "./CampusLocation";
+// import CampusLocation from "./CampusLocation";
 import Button from "../../ui-components/Button";
 import Dialog from "../../ui-components/Dialog";
 import AcademicCalendarPanel from "./academic-calendar/AcademicCalendarPanel";
@@ -186,10 +186,10 @@ export default function AddEditCampus({
     !detailsLoadError &&
     !formData?.campus_show_map;
 
-  const showMap =
-    !bootstrapping &&
-    !detailsLoadError &&
-    formData?.campus_show_map;
+  // const showMap =
+  //   !bootstrapping &&
+  //   !detailsLoadError &&
+  //   formData?.campus_show_map;
 
   return (
     <div className="w-full p-4 pb-12 space-y-6">
@@ -293,9 +293,9 @@ export default function AddEditCampus({
         </>
       )}
 
-      {showMap && (
+      {/* showMap && (
         <CampusLocation formData={formData} setFormData={setFormData} />
-      )}
+      ) */}
 
       <Dialog
         open={isCalendarOpen}

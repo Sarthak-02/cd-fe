@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CampusLocationMap from "../../utils/map/CampusMap";
+// import CampusLocationMap from "../../utils/map/CampusMap";
 
 export default function CampusLocation({ formData, setFormData }) {
   const [location, setLocation] = useState({
@@ -27,13 +27,13 @@ export default function CampusLocation({ formData, setFormData }) {
           </p>
         </div>
 
-        <CampusLocationMap
+        {/* <CampusLocationMap
           location={location}
           radius={radius}
           onLocationChange={({ lat, lng }) =>
             setLocation({ ...formData, lat, lng })
           }
-        />
+        /> */}
 
         <div>
           <label className="text-sm font-medium">Campus Radius</label>

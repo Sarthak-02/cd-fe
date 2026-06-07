@@ -235,6 +235,7 @@
         "admissionDate": "Admission Date",
         "class": "Class",
         "section": "Section",
+        "subjects": "Subjects",
         "houseName": "House Name",
         "category": "Category",
         "status": "Status",

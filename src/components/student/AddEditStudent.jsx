@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import DynamicForm from "../../ui-components/DynamicForm";
 import { studentSchema } from "../../schemas/student.schema";
 import { validateForm } from "../../utils/validators/form_validation";
@@ -27,6 +27,8 @@ function createPayload(form) {
     student_current_status,
     campus_id,
     student_section_id,
+    student_subjects,
+    extras: _rawExtras,
     ...extras
   } = form;
 
@@ -42,6 +44,7 @@ function createPayload(form) {
     student_current_status,
     campus_id,
     student_section_id,
+    subject_ids: student_subjects ?? [],
     extras,
   };
 }
@@ -62,6 +65,13 @@ const getSchemaUpdates = (mode, classes, sections, campusDetails) => {
         label: section_name,
         value: section_id,
       })),
+    },
+    student_subjects: {
+      options:
+        campusDetails?.extras?.campus_subjects?.map((subject) => ({
+          label: subject,
+          value: subject,
+        })) ?? [],
     },
     student_house_name: {
       options:
@@ -94,9 +104,6 @@ export default function AddEditStudent({
   campus_id,
   handleAddEditModel,
 }) {
-  const [schema, setSchema] = useState(() =>
-    buildStudentSchema(MODE.CREATE, [], [], null)
-  );
   const [formData, setFormData] = useState({});
   const [formErrors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
@@ -114,65 +121,58 @@ export default function AddEditStudent({
   const { classes } = useClassStore();
   const { createStudent, updateStudent, deleteStudent } = useStudentStore();
 
-  useEffect(() => {
-    const classList = classes ?? [];
-    const sectionList = sections ?? [];
-    const nextSchema = buildStudentSchema(
-      mode,
-      classList,
-      sectionList,
-      campusDetails
-    );
-    setSchema(nextSchema);
+  const schema = useMemo(
+    () => buildStudentSchema(mode, classes ?? [], sections ?? [], campusDetails),
+    [mode, classes, sections, campusDetails]
+  );
 
+  useEffect(() => {
     const bootstrapKey = `${mode}:${selectedStudent}:${campus_id}`;
+    if (lastBootstrapKeyRef.current === bootstrapKey) {
+      if (mode === MODE.CREATE) setBootstrapping(false);
+      return;
+    }
+    lastBootstrapKeyRef.current = bootstrapKey;
+    setDetailsLoadError("");
+    setSubmitError("");
+    useStudentStore.getState().clearStudentError();
+    setErrors({});
 
     if (mode === MODE.CREATE) {
-      if (lastBootstrapKeyRef.current !== bootstrapKey) {
-        lastBootstrapKeyRef.current = bootstrapKey;
-        setDetailsLoadError("");
-        setSubmitError("");
-        useStudentStore.getState().clearStudentError();
-        setErrors({});
-        setFormData({
-          ...getFieldValuesMap(nextSchema),
-          ...(campus_id ? { campus_id } : {}),
-        });
-      }
+      setFormData({
+        ...getFieldValuesMap(schema),
+        ...(campus_id ? { campus_id } : {}),
+      });
       setBootstrapping(false);
       return;
     }
 
     if (mode === MODE.EDIT) {
-      if (lastBootstrapKeyRef.current !== bootstrapKey) {
-        lastBootstrapKeyRef.current = bootstrapKey;
-        setDetailsLoadError("");
-        setSubmitError("");
-        useStudentStore.getState().clearStudentError();
-        setErrors({});
-        setBootstrapping(true);
-        setFormData({});
-        const gen = ++studentFetchGenRef.current;
-        const studentIdRequested = selectedStudent;
-        (async () => {
-          await useStudentStore
-            .getState()
-            .fetchStudentDetails(studentIdRequested);
-          if (studentFetchGenRef.current !== gen) return;
-          const { studentDetails: details, error: fetchErr } =
-            useStudentStore.getState();
-          if (fetchErr) {
-            setDetailsLoadError(apiErrorMessage(fetchErr));
-          } else if (!details || details.student_id !== studentIdRequested) {
-            setDetailsLoadError("Could not load student.");
-          } else {
-            setFormData({ ...details, ...(details.extras ?? {}) });
-          }
-          setBootstrapping(false);
-        })();
-      }
+      setBootstrapping(true);
+      setFormData({});
+      const gen = ++studentFetchGenRef.current;
+      const studentIdRequested = selectedStudent;
+      (async () => {
+        await useStudentStore.getState().fetchStudentDetails(studentIdRequested);
+        if (studentFetchGenRef.current !== gen) return;
+        const { studentDetails: details, error: fetchErr } =
+          useStudentStore.getState();
+        if (fetchErr) {
+          setDetailsLoadError(apiErrorMessage(fetchErr));
+        } else if (!details || details.student_id !== studentIdRequested) {
+          setDetailsLoadError("Could not load student.");
+        } else {
+          setFormData({
+            ...details,
+            ...(details.extras ?? {}),
+            student_subjects: details.subject_ids ?? [],
+          });
+        }
+        setBootstrapping(false);
+      })();
     }
-  }, [mode, selectedStudent, campus_id, campusDetails, sections, classes]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, selectedStudent, campus_id]);
 
   async function onDelete() {
     setDeleteError("");
