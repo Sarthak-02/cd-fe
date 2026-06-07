@@ -9,6 +9,7 @@ const SLOT_TYPE_HEADER = {
   break:    "bg-amber-50 text-amber-800",
   lunch:    "bg-green-50 text-green-800",
   assembly: "bg-purple-50 text-purple-800",
+  elective: "bg-orange-50 text-orange-800",
 };
 
 export default function TimetableGrid() {

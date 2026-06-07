@@ -722,7 +722,8 @@
         "class": "Class",
         "break": "Break",
         "lunch": "Lunch",
-        "assembly": "Assembly"
+        "assembly": "Assembly",
+        "elective": "Elective"
       },
       "classes": {
         "grade1": "Grade 1",
@@ -735,7 +736,13 @@
         "clear": "Clear",
         "cancel": "Cancel",
         "save": "Save",
-        "add": "Add"
+        "add": "Add",
+        "addElective": "Add Elective",
+        "removeElective": "Remove"
+      },
+      "elective": {
+        "header": "Elective Options",
+        "hint": "Students choose one of these subjects during this period."
       },
       "placeholders": {
         "subject": "Enter subject",

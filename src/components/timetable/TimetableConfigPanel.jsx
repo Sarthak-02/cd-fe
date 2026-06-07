@@ -6,10 +6,11 @@ import Dropdown from "../../ui-components/Dropdown";
 import { useTranslation } from "react-i18next";
 
 const SLOT_TYPE_STYLES = {
-  class:    { badge: "bg-blue-100 text-blue-700",   dot: "bg-blue-500" },
+  class:    { badge: "bg-blue-100 text-blue-700",    dot: "bg-blue-500" },
   break:    { badge: "bg-amber-100 text-amber-700",  dot: "bg-amber-500" },
   lunch:    { badge: "bg-green-100 text-green-700",  dot: "bg-green-500" },
   assembly: { badge: "bg-purple-100 text-purple-700", dot: "bg-purple-500" },
+  elective: { badge: "bg-orange-100 text-orange-700", dot: "bg-orange-500" },
 };
 
 function SlotTypeBadge({ type, label }) {
@@ -39,6 +40,7 @@ export default function TimetableConfigPanel() {
     { label: t("timetable.slotTypes.break"),    value: "break" },
     { label: t("timetable.slotTypes.lunch"),    value: "lunch" },
     { label: t("timetable.slotTypes.assembly"), value: "assembly" },
+    { label: t("timetable.slotTypes.elective"), value: "elective" },
   ];
 
   const DAY_SHORT = { Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun" };

@@ -60,8 +60,9 @@ export const useTimetableStore = create((set, get) => ({
       editingCell: null,
     }),
 
-  saveEntry: ({ dayId, slotId, subject, teacher, room }) =>
+  saveEntry: (payload) =>
     set((state) => {
+      const { dayId, slotId, ...rest } = payload;
       const existing = state.entries.find(
         (item) => item.dayId === dayId && item.slotId === slotId
       );
@@ -69,7 +70,7 @@ export const useTimetableStore = create((set, get) => ({
       if (existing) {
         return {
           entries: state.entries.map((item) =>
-            item.id === existing.id ? { ...item, subject, teacher, room } : item
+            item.id === existing.id ? { ...item, ...rest } : item
           ),
           editorOpen: false,
           editingCell: null,
@@ -79,14 +80,7 @@ export const useTimetableStore = create((set, get) => ({
       return {
         entries: [
           ...state.entries,
-          {
-            id: createId(),
-            dayId,
-            slotId,
-            subject,
-            teacher,
-            room,
-          },
+          { id: createId(), dayId, slotId, ...rest },
         ],
         editorOpen: false,
         editingCell: null,
